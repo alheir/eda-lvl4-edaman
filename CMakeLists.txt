@@ -21,6 +21,8 @@ add_executable(main main.cpp MQTTClient.cpp GameModel.cpp GameView.cpp Robot.cpp
 # Packages
 find_package(raylib CONFIG REQUIRED)
 find_package(raylib_cpp QUIET)
+find_package(mosquitto REQUIRED)
+find_package(OpenSSL REQUIRED)
 if (NOT raylib_cpp_FOUND)
     include(FetchContent)
     FetchContent_Declare(
@@ -30,12 +32,10 @@ if (NOT raylib_cpp_FOUND)
     )
     FetchContent_MakeAvailable(raylib_cpp)
 endif()
-find_package(OpenSSL REQUIRED)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    find_package(mosquitto REQUIRED)
-    target_include_directories(main_test PRIVATE ${RAYLIB_INCLUDE_DIRS} ${MOSQUITTO_INCLUDE_DIRS})
-    target_link_libraries(main_test PRIVATE ${RAYLIB_LIBRARIES} ${MOSQUITTO_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto raylib_cpp)
+    target_include_directories(main PRIVATE ${RAYLIB_INCLUDE_DIRS} ${MOSQUITTO_INCLUDE_DIRS})
+    target_link_libraries(main PRIVATE ${RAYLIB_LIBRARIES} raylib_cpp ${MOSQUITTO_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # From "Working with CMake" documentation:
     target_link_libraries(main PRIVATE "-framework IOKit" "-framework Cocoa" "-framework OpenGL")
