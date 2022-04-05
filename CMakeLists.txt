@@ -21,8 +21,6 @@ add_executable(main main.cpp MQTTClient.cpp GameModel.cpp GameView.cpp Robot.cpp
 # Packages
 find_package(raylib CONFIG REQUIRED)
 find_package(raylib_cpp QUIET)
-find_package(mosquitto REQUIRED)
-find_package(OpenSSL REQUIRED)
 if (NOT raylib_cpp_FOUND)
     include(FetchContent)
     FetchContent_Declare(
@@ -34,6 +32,8 @@ if (NOT raylib_cpp_FOUND)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    find_package(mosquitto REQUIRED)
+    find_package(OpenSSL REQUIRED)
     target_include_directories(main PRIVATE ${RAYLIB_INCLUDE_DIRS} ${MOSQUITTO_INCLUDE_DIRS})
     target_link_libraries(main PRIVATE ${RAYLIB_LIBRARIES} raylib_cpp ${MOSQUITTO_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
