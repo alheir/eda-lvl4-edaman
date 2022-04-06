@@ -7,6 +7,7 @@
  */
 
 #include <iostream>
+#include <cstring>
 
 #include <raylib.h>
 
@@ -15,7 +16,22 @@
 #include "GameModel.h"
 #include "GameView.h"
 
+#define STEP 0.01f;
+enum KEY_POSITION { STOP = 0, UP_MOVE, DOWN_MOVE, RIGHT_MOVE, LEFT_MOVE };
+
 using namespace std;
+
+vector<char> makeMotorPID(float x, float z, float rotation)
+{
+    float pidPackage[] = {x, z, rotation};
+
+    std::vector<char> payload;
+    payload.resize(sizeof(pidPackage));
+    memcpy(payload.data(), &pidPackage, sizeof(pidPackage));
+
+    return(payload);
+}
+
 
 int main(int, char **)
 {
@@ -80,6 +96,8 @@ int main(int, char **)
     gameModel.setGameView(&gameView);
     gameModel.start(maze);
 
+    float robot1XZ[] = {0.0f, 0.0f};
+
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
         float deltaTime = (float)GetFrameTime();
@@ -96,31 +114,57 @@ int main(int, char **)
         gameModel.update(deltaTime);
 
         // Keyboard control
-        if (IsKeyPressed(KEY_UP))
+        
+        vector<char> payload = makeMotorPID(robot1XZ[0], robot1XZ[1], 40.0f);
+        mqttClient.publish("robot1/pid/setpoint/set", payload);
+
+        // Keyboard control
+        if (IsKeyDown(KEY_UP))
         {
-            // Your code goes here...
+            robot1XZ[1] += STEP;   
         }
-        else if (IsKeyPressed(KEY_RIGHT))
-        {
-            // Your code goes here...
+        else if (IsKeyDown(KEY_RIGHT))
+        { 
+            robot1XZ[0] += STEP;
         }
-        else if (IsKeyPressed(KEY_DOWN))
+        else if (IsKeyDown(KEY_DOWN))
         {
-            // Your code goes here...
+            robot1XZ[1] -= STEP;
         }
-        else if (IsKeyPressed(KEY_LEFT))
+        else if (IsKeyDown(KEY_LEFT))
         {
-            // Your code goes here...
-        }
-        else
-        {
-            // Your code goes here...
+            robot1XZ[0] -= STEP;
         }
 
+        //if (IsKeyPressed(KEY_UP))
+        //{
+        //    setMotorsDirection(UP_MOVE);
+        //}
+        //else if (IsKeyPressed(KEY_DOWN))
+        //{
+        //    setMotorsDirection(DOWN_MOVE);
+        //}
+        //else if (IsKeyPressed(KEY_RIGHT))
+        //{
+        //    setMotorsDirection(RIGHT_MOVE);
+        //}
+        //else if (IsKeyPressed(KEY_LEFT))
+        //{
+        //    setMotorsDirection(LEFT_MOVE);
+        //}
+        //else if (IsKeyReleased(KEY_UP) || IsKeyReleased(KEY_DOWN) ||
+        //    IsKeyReleased(KEY_RIGHT) || IsKeyReleased(KEY_LEFT))
+        //{
+        //    setMotorsDirection(STOP);
+        //}
+
         gameView.update(deltaTime);
+
     }
 
     CloseWindow();
 
     cout << "Disconnected." << endl;
 }
+
+
