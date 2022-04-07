@@ -16,7 +16,9 @@
 #include "GameModel.h"
 #include "GameView.h"
 
-#define STEP 0.01f;
+// no deberia ir aca supongo pero por ahora si
+#include "Robot.h"
+
 enum KEY_POSITION { STOP = 0, UP_MOVE, DOWN_MOVE, RIGHT_MOVE, LEFT_MOVE };
 
 using namespace std;
@@ -35,6 +37,8 @@ vector<char> makeMotorPID(float x, float z, float rotation)
 
 int main(int, char **)
 {
+    const float STEP = 0.01f;
+    
     MQTTClient mqttClient("controller");
 
     const int port = 1883;
@@ -68,7 +72,8 @@ int main(int, char **)
         "     s+pq          pq+r     "
         "     s+pq dcc__cce pq+r     "
         "jbbbbw+vw r      s vw+vbbbbk"
-        "s     +   r      s   +     r"
+        "s     +   r      s   +     r"  // aca podria hacer un step de valor 2.6f
+                                        // para pasar al otro lado del mapa
         "zccccg+fg r      s fg+fcccc{"
         "     s+pq tbbbbbbu pq+r     "
         "     s+pq          pq+r     "
@@ -96,7 +101,8 @@ int main(int, char **)
     gameModel.setGameView(&gameView);
     gameModel.start(maze);
 
-    float robot1XZ[] = {0.0f, 0.0f};
+    // Robot
+    RobotSetpoint robot1XZ;
 
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
@@ -108,57 +114,32 @@ int main(int, char **)
         DrawText("EDAPark Controller", 225, 220, 20, LIGHTGRAY);
         EndDrawing();
 
-        vector<MQTTMessage> messages = mqttClient.getMessages();
-
-        // Model update
-        gameModel.update(deltaTime);
-
-        // Keyboard control
-        
-        vector<char> payload = makeMotorPID(robot1XZ[0], robot1XZ[1], 40.0f);
-        mqttClient.publish("robot1/pid/setpoint/set", payload);
+        //vector<MQTTMessage> messages = mqttClient.getMessages();
 
         // Keyboard control
         if (IsKeyDown(KEY_UP))
         {
-            robot1XZ[1] += STEP;   
+            robot1XZ.positionZ += STEP;   
         }
         else if (IsKeyDown(KEY_RIGHT))
         { 
-            robot1XZ[0] += STEP;
+            robot1XZ.positionX += STEP;
         }
         else if (IsKeyDown(KEY_DOWN))
         {
-            robot1XZ[1] -= STEP;
+            robot1XZ.positionZ -= STEP;
         }
         else if (IsKeyDown(KEY_LEFT))
         {
-            robot1XZ[0] -= STEP;
+            robot1XZ.positionX -= STEP;
         }
 
-        //if (IsKeyPressed(KEY_UP))
-        //{
-        //    setMotorsDirection(UP_MOVE);
-        //}
-        //else if (IsKeyPressed(KEY_DOWN))
-        //{
-        //    setMotorsDirection(DOWN_MOVE);
-        //}
-        //else if (IsKeyPressed(KEY_RIGHT))
-        //{
-        //    setMotorsDirection(RIGHT_MOVE);
-        //}
-        //else if (IsKeyPressed(KEY_LEFT))
-        //{
-        //    setMotorsDirection(LEFT_MOVE);
-        //}
-        //else if (IsKeyReleased(KEY_UP) || IsKeyReleased(KEY_DOWN) ||
-        //    IsKeyReleased(KEY_RIGHT) || IsKeyReleased(KEY_LEFT))
-        //{
-        //    setMotorsDirection(STOP);
-        //}
+        vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
+        mqttClient.publish("robot1/pid/setpoint/set", payload);
 
-        gameView.update(deltaTime);
+        // Updates
+        //gameModel.update(deltaTime);  // todavia no hace nada
+        //gameView.update(deltaTime);   // todavia no hace nada
 
     }
 
