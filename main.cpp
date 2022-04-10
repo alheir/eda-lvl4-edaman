@@ -71,8 +71,7 @@ int main(int, char **)
         "     s+pq          pq+r     "
         "     s+pq dcc__cce pq+r     "  // 15
         "jbbbbw+vw r      s vw+vbbbbk"
-        "s     +   r      s   +     r"  // aca podria hacer un step de valor 2.6f
-                                        // para pasar al otro lado del mapa
+        "s     +   r      s   +     r" 
         "zccccg+fg r      s fg+fcccc{"
         "     s+pq tbbbbbbu pq+r     "
         "     s+pq          pq+r     "  // 20
@@ -96,17 +95,18 @@ int main(int, char **)
     GameModel gameModel(&mqttClient);
     GameView gameView(&mqttClient);
 
+    // Robot
+    Robot1 robot1;
+    gameModel.addRobot(&robot1);
+    MazePosition position = { 13, 26 };
+    RobotSetpoint robotSetpoint = { 0.0f, -0.85f, 0.0f };
+
     // Configure
     gameModel.setGameView(&gameView);
     gameModel.start(maze);
-
-    // Robot
-    RobotSetpoint robot1XZ = {0.0f, -0.85f, 0.0f};
-    Robot1 robot1;
-    gameModel.addRobot(&robot1);
     
-    vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
-    mqttClient.publish("robot1/pid/setpoint/set", payload);
+    /*vector<char> payload = makeMotorPID(setpoint.positionX, setpoint.positionZ, setpoint.rotation);
+    mqttClient.publish("robot1/pid/setpoint/set", payload);*/
 
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
@@ -119,9 +119,9 @@ int main(int, char **)
         EndDrawing();
 
         //vector<MQTTMessage> messages = mqttClient.getMessages();
-
-        robot1XZ = robot1.move(gameModel, robot1XZ);
-        payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
+        
+        robot1.move(gameModel, &position, &robotSetpoint);
+        vector<char> payload = makeMotorPID(robotSetpoint.positionX, robotSetpoint.positionZ, robotSetpoint.rotation);
         mqttClient.publish("robot1/pid/setpoint/set", payload);
 
         // Updates

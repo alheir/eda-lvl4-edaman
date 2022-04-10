@@ -13,6 +13,8 @@
 
 using namespace std;
 
+enum {UP = 1, DOWN, RIGHT, LEFT};
+
 Robot::Robot()
 {
     // To-Do: set your path!
@@ -32,46 +34,123 @@ void Robot::update(float deltaTime)
 {
 }
 
-RobotSetpoint Robot1::move(GameModel gameModel, RobotSetpoint setpoint)
+void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint)
 {
     const float STEP = 0.01f;
-    MazePosition mazePosition = getMazePosition(setpoint);
+    static int direction = 0;
+    static bool lock = false;
+
+    //scanKeyboard(mazePosition);
 
     // Keyboard control
-    if (IsKeyDown(KEY_UP))
+    if (!lock)
     {
-        mazePosition.y -= 1;
-        if (gameModel.isTileFree(mazePosition))
-            setpoint.positionZ += STEP;
-        cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
-        mazePosition.y += 1;
+        if (IsKeyDown(KEY_UP))
+        {
+            //cout << "(" << position->x << "," << position->y << ")" << endl;
+            position->y -= 1;
+            if (gameModel.isTileFree(*position))
+            {
+                direction = UP;
+                lock = true;
+            }
+            else
+                position->y += 1;
+        }
+        if (IsKeyDown(KEY_DOWN))
+        {
+            //cout << "(" << position->x << "," << position->y << ")" << endl;
+            position->y += 1;
+            if (gameModel.isTileFree(*position))
+            {
+                direction = DOWN;
+                lock = true;
+            }
+            else
+                position->y -= 1;
+        }
+        else if (IsKeyDown(KEY_RIGHT))
+        {
+            //cout << "(" << position->x << "," << position->y << ")" << endl;
+            position->x += 1;
+            if (gameModel.isTileFree(*position))
+            {
+                direction = RIGHT;
+                lock = true;
+            }
+            else
+                position->x -= 1;
+        }
+        else if (IsKeyDown(KEY_LEFT))
+        {
+            //cout << "(" << position->x << "," << position->y << ")" << endl;
+            position->x -= 1;
+            if (gameModel.isTileFree(*position))
+            {
+                direction = LEFT;
+                lock = true;
+            }
+            else
+                position->x += 1;
+        }
     }
-    else if (IsKeyDown(KEY_RIGHT))
+    else
     {
-        mazePosition.x += 1;
-        if (gameModel.isTileFree(mazePosition))
-            setpoint.positionX += STEP;
-        cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
-        mazePosition.x -= 1;
+        RobotSetpoint setpoint = getRobotSetpoint(*position, 0.0f);
+        cout << "Comparo " << "(" << robotSetpoint->positionX << ", " << robotSetpoint->positionZ << ")";
+        cout << " con " << "(" << setpoint.positionX << ", " << setpoint.positionZ << ")" << endl;
+        switch (direction)
+        {
+            case UP: 
+            {
+                if (robotSetpoint->positionZ < setpoint.positionZ)
+                {
+                    robotSetpoint->positionZ += STEP;
+                }
+                else
+                {
+                    lock = false;
+                }
+                break;
+            }
+            case DOWN:
+            {
+                if (robotSetpoint->positionZ > setpoint.positionZ)
+                {
+                    robotSetpoint->positionZ -= STEP;
+                }
+                else
+                {
+                    lock = false;
+                }
+                break;
+            }
+            case RIGHT:
+            {
+                if (robotSetpoint->positionX < setpoint.positionX)
+                {
+                    robotSetpoint->positionX += STEP;
+                }
+                else
+                {
+                    lock = false;
+                }
+                break;
+            }
+            case LEFT:
+            {
+                if (robotSetpoint->positionX > setpoint.positionX)
+                {
+                    robotSetpoint->positionX -= STEP;
+                }
+                else
+                {
+                    lock = false;
+                }
+                break;
+            }
+        }
     }
-    else if (IsKeyDown(KEY_DOWN))
-    {
-        mazePosition.y += 1;
-        if (gameModel.isTileFree(mazePosition))
-            setpoint.positionZ -= STEP;
-        cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
-        mazePosition.y -= 1;
-    }
-    else if (IsKeyDown(KEY_LEFT))
-    {
-        mazePosition.x -= 1;
-        if (gameModel.isTileFree(mazePosition))
-            setpoint.positionX -= STEP;
-        cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
-        mazePosition.x += 1;
-    }
-
-    return setpoint;
     //vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
     //mqttClient.publish("robot1/pid/setpoint/set", payload);
 }

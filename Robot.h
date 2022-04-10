@@ -59,7 +59,7 @@ class Robot1 : public Robot
 {
 public:
     void start();
-    RobotSetpoint move(GameModel gameModel, RobotSetpoint robot1XZ);
+    void move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint);
 };
 
 #endif
