@@ -52,44 +52,45 @@ int main(int, char **)
     InitWindow(640, 480, "EDA-Man Controller");
     SetTargetFPS(60);
 
+    // 28 columns (0-27)
     string maze =
-        "                            "
+        "                            "  // 0
         "                            "
         "                            "
         "jbbbbbbbbbbbbonbbbbbbbbbbbbk"
         "s++++++++++++pq++++++++++++r"
-        "s+faag+faaag+pq+faaag+faag+r"
+        "s+faag+faaag+pq+faaag+faag+r"  // 5
         "s#p  q+p   q+pq+p   q+p  q#r"
         "s+v``w+v```w+vw+v```w+v``w+r"
         "s++++++++++++++++++++++++++r"
         "s+faag+fg+faaaaaag+fg+faag+r"
-        "s+v``w+pq+v``ih``w+pq+v``w+r"
+        "s+v``w+pq+v``ih``w+pq+v``w+r"  // 10
         "s++++++pq++++pq++++pq++++++r"
         "zccccg+pxaag pq faayq+fcccc{"
         "     s+ph``w vw v``iq+r     "
         "     s+pq          pq+r     "
-        "     s+pq dcc__cce pq+r     "
+        "     s+pq dcc__cce pq+r     "  // 15
         "jbbbbw+vw r      s vw+vbbbbk"
         "s     +   r      s   +     r"  // aca podria hacer un step de valor 2.6f
                                         // para pasar al otro lado del mapa
         "zccccg+fg r      s fg+fcccc{"
         "     s+pq tbbbbbbu pq+r     "
-        "     s+pq          pq+r     "
+        "     s+pq          pq+r     "  // 20
         "     s+pq faaaaaag pq+r     "
         "jbbbbw+vw v``ih``w vw+vbbbbk"
         "s++++++++++++pq++++++++++++r"
         "s+faag+faaag+pq+faaag+faag+r"
-        "s+v`iq+v```w+vw+v```w+ph`w+r"
+        "s+v`iq+v```w+vw+v```w+ph`w+r"  // 25
         "s#++pq+++++++  +++++++pq++#r"
         "|ag+pq+fg+faaaaaag+fg+pq+fa}"
         "l`w+vw+pq+v``ih``w+pq+vw+v`m"
         "s++++++pq++++pq++++pq++++++r"
-        "s+faaaayxaag+pq+faayxaaaag+r"
+        "s+faaaayxaag+pq+faayxaaaag+r"  // 30
         "s+v````````w+vw+v````````w+r"
         "s++++++++++++++++++++++++++r"
         "zcccccccccccccccccccccccccc{"
         "                            "
-        "                            ";
+        "                            "; // 35
 
     // Setup
     GameModel gameModel(&mqttClient);

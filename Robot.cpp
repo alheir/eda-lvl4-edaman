@@ -40,38 +40,34 @@ RobotSetpoint Robot1::move(GameModel gameModel, RobotSetpoint setpoint)
     // Keyboard control
     if (IsKeyDown(KEY_UP))
     {
-        mazePosition.y += 1;
+        mazePosition.y -= 1;
         if (gameModel.isTileFree(mazePosition))
             setpoint.positionZ += STEP;
-        else
-            cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
-        mazePosition.y -= 1;
+        cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
+        mazePosition.y += 1;
     }
     else if (IsKeyDown(KEY_RIGHT))
     {
         mazePosition.x += 1;
         if (gameModel.isTileFree(mazePosition))
             setpoint.positionX += STEP;
-        else
-            cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
+        cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
         mazePosition.x -= 1;
     }
     else if (IsKeyDown(KEY_DOWN))
     {
-        mazePosition.y -= 1;
+        mazePosition.y += 1;
         if (gameModel.isTileFree(mazePosition))
             setpoint.positionZ -= STEP;
-        else
-            cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
-        mazePosition.y += 1;
+        cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
+        mazePosition.y -= 1;
     }
     else if (IsKeyDown(KEY_LEFT))
     {
         mazePosition.x -= 1;
         if (gameModel.isTileFree(mazePosition))
             setpoint.positionX -= STEP;
-        else
-            cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
+        cout << "(" << mazePosition.x << "," << mazePosition.y << ")" << endl;
         mazePosition.x += 1;
     }
 
