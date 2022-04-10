@@ -55,6 +55,9 @@ public:
 
     bool isTileFree(MazePosition position);
 
+    // nuestros metodos
+    void refresh(std::string* maze, MazePosition* position);
+
 private:
     MQTTClient *mqttClient;
     GameView *gameView;

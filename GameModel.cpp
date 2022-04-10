@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include "GameModel.h"
 
@@ -82,4 +83,28 @@ void GameModel::update(float deltaTime)
 
     for (auto robot : robots)
         robot->update(deltaTime);
+}
+
+void GameModel::refresh(std::string* maze, MazePosition* position)
+{
+    char tile = (*maze)[position->x + MAZE_WIDTH * position->y];
+    if (tile == '+' || tile == '#')
+    {
+        (*maze)[position->x + MAZE_WIDTH * position->y] = ' ';
+        gameView->setTiles(position->x, position->y, 0, " ");
+        switch (tile)
+        {
+            case '+':
+            {
+                remainingDots--;
+                break;
+            }
+            case '#':
+            {
+                remainingEnergizers--;
+                break;
+            }
+        }
+        cout << "Dots: " << remainingDots << ", Energizers: " << remainingEnergizers << endl;
+    }
 }

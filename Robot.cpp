@@ -34,12 +34,12 @@ void Robot::update(float deltaTime)
 {
 }
 
-void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint)
+bool Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint)
 {
     const float STEP = 0.01f;
     static int direction = 0;
     static bool lock = false;
-
+    
     //scanKeyboard(mazePosition);
 
     // Keyboard control
@@ -151,6 +151,8 @@ void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
             }
         }
     }
+
+    return (!lock);
     //vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
     //mqttClient.publish("robot1/pid/setpoint/set", payload);
 }
