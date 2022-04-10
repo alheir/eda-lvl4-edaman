@@ -34,7 +34,7 @@ void Robot::update(float deltaTime)
 {
 }
 
-bool Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint)
+void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint)
 {
     const float STEP = 0.01f;
     static int direction = 0;
@@ -97,8 +97,8 @@ bool Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
     else
     {
         RobotSetpoint setpoint = getRobotSetpoint(*position, 0.0f);
-        cout << "Comparo " << "(" << robotSetpoint->positionX << ", " << robotSetpoint->positionZ << ")";
-        cout << " con " << "(" << setpoint.positionX << ", " << setpoint.positionZ << ")" << endl;
+        //cout << "Comparo " << "(" << robotSetpoint->positionX << ", " << robotSetpoint->positionZ << ")";
+        //cout << " con " << "(" << setpoint.positionX << ", " << setpoint.positionZ << ")" << endl;
         switch (direction)
         {
             case UP: 
@@ -151,8 +151,6 @@ bool Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
             }
         }
     }
-
-    return (!lock);
     //vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
     //mqttClient.publish("robot1/pid/setpoint/set", payload);
 }

@@ -86,7 +86,7 @@ void GameView::start(string maze)
     }
 
     setTiles(0, 0, SCORE_COLOR, "         HIGH SCORE         ");
-    setTiles(0, 1, SCORE_COLOR, "     00                     ");
+    setTiles(0, 1, SCORE_COLOR, "                            ");
     setTiles(0, 2, SCORE_COLOR, "                            ");
 
     setTiles(0, 34, SCORE_COLOR, "                            ");

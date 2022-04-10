@@ -49,20 +49,26 @@ bool GameModel::isTileFree(MazePosition position)
 void GameModel::start(string maze)
 {
     this->maze = maze;
-    this->maze.resize(MAZE_SIZE);
+    //this->maze.resize(MAZE_SIZE);
+    
+    remainingDots = 0;
+    remainingEnergizers = 0;
 
     for (auto c : maze)
     {
         if (c == '+')
             remainingDots++;
-        else if (c == '*')
+        else if (c == '#')
             remainingEnergizers++;
     }
 
-    gameView->start(maze);
-
+    //remainingDots = 20;   // para testear
+    score = 0;
     lives = 4;
     eatenFruits.clear();
+
+    gameView->start(maze);
+    gameView->setScore(score);
 
     gameState = GameStart;
 
@@ -85,26 +91,56 @@ void GameModel::update(float deltaTime)
         robot->update(deltaTime);
 }
 
-void GameModel::refresh(std::string* maze, MazePosition* position)
+int GameModel::refresh(MazePosition* position)
 {
-    char tile = (*maze)[position->x + MAZE_WIDTH * position->y];
+    gameState = GamePlaying;
+    char tile = this->maze[position->x + MAZE_WIDTH * position->y];
     if (tile == '+' || tile == '#')
     {
-        (*maze)[position->x + MAZE_WIDTH * position->y] = ' ';
+        this->maze[position->x + MAZE_WIDTH * position->y] = ' ';
         gameView->setTiles(position->x, position->y, 0, " ");
         switch (tile)
         {
             case '+':
             {
                 remainingDots--;
+                score += 10;
                 break;
             }
             case '#':
             {
                 remainingEnergizers--;
+                score += 50;
                 break;
             }
         }
-        cout << "Dots: " << remainingDots << ", Energizers: " << remainingEnergizers << endl;
+        gameView->setScore(score);
     }
+
+    return remainingDots;
+}
+
+void GameModel::newLevel(std::string maze)
+{
+    this->maze = maze;
+    //this->maze.resize(MAZE_SIZE);
+
+    remainingDots = 0;
+    remainingEnergizers = 0;
+
+    for (auto c : maze)
+    {
+        if (c == '+')
+            remainingDots++;
+        else if (c == '#')
+            remainingEnergizers++;
+    }
+
+    //remainingDots = 20;   // para testear
+    
+    gameView->start(maze);
+    gameView->setScore(score);
+
+    // Just for testing
+    gameView->playAudio("mainStart");
 }
