@@ -37,8 +37,6 @@ vector<char> makeMotorPID(float x, float z, float rotation)
 
 int main(int, char **)
 {
-    const float STEP = 0.01f;
-    
     MQTTClient mqttClient("controller");
 
     const int port = 1883;
@@ -102,7 +100,12 @@ int main(int, char **)
     gameModel.start(maze);
 
     // Robot
-    RobotSetpoint robot1XZ;
+    RobotSetpoint robot1XZ = {0.0f, -0.85f, 0.0f};
+    Robot1 robot1;
+    gameModel.addRobot(&robot1);
+    
+    vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
+    mqttClient.publish("robot1/pid/setpoint/set", payload);
 
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
@@ -116,25 +119,8 @@ int main(int, char **)
 
         //vector<MQTTMessage> messages = mqttClient.getMessages();
 
-        // Keyboard control
-        if (IsKeyDown(KEY_UP))
-        {
-            robot1XZ.positionZ += STEP;   
-        }
-        else if (IsKeyDown(KEY_RIGHT))
-        { 
-            robot1XZ.positionX += STEP;
-        }
-        else if (IsKeyDown(KEY_DOWN))
-        {
-            robot1XZ.positionZ -= STEP;
-        }
-        else if (IsKeyDown(KEY_LEFT))
-        {
-            robot1XZ.positionX -= STEP;
-        }
-
-        vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
+        robot1XZ = robot1.move(gameModel, robot1XZ);
+        payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
         mqttClient.publish("robot1/pid/setpoint/set", payload);
 
         // Updates

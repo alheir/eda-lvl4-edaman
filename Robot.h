@@ -55,4 +55,11 @@ protected:
     void setEyes(Color leftEye, Color rightEye);
 };
 
+class Robot1 : public Robot
+{
+public:
+    void start();
+    RobotSetpoint move(GameModel gameModel, RobotSetpoint robot1XZ);
+};
+
 #endif
