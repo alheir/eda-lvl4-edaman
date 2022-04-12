@@ -13,12 +13,9 @@
 
 using namespace std;
 
-enum {UP = 1, DOWN, RIGHT, LEFT};
-
 Robot::Robot()
 {
-    // To-Do: set your path!
-    displayImages = LoadImage("../../RobotImages.png");
+    displayImages = LoadImage("../RobotImages.png");
 }
 
 Robot::~Robot()
@@ -26,20 +23,17 @@ Robot::~Robot()
     UnloadImage(displayImages);
 }
 
-void Robot1::start()
-{
-}
-
 void Robot::update(float deltaTime)
 {
 }
 
+/*
 void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint)
 {
     const float STEP = 0.01f;
     static int direction = 0;
     static bool lock = false;
-    
+
     //scanKeyboard(mazePosition);
 
     // Keyboard control
@@ -101,7 +95,7 @@ void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
         //cout << " con " << "(" << setpoint.positionX << ", " << setpoint.positionZ << ")" << endl;
         switch (direction)
         {
-            case UP: 
+            case UP:
             {
                 if (robotSetpoint->positionZ < setpoint.positionZ)
                 {
@@ -154,6 +148,7 @@ void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
     //vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
     //mqttClient.publish("robot1/pid/setpoint/set", payload);
 }
+*/
 
 MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
 {
@@ -173,7 +168,6 @@ RobotSetpoint Robot::getRobotSetpoint(MazePosition mazePosition, float rotation)
     setpoint.rotation = rotation;
     return setpoint;
 }
-
 
 void Robot::setSetpoint(RobotSetpoint setpoint)
 {
@@ -223,4 +217,18 @@ void Robot::setEyes(Color leftEye, Color rightEye)
     payload[1] = rightEye.g;
     payload[2] = rightEye.b;
     mqttClient->publish(robotId + "/display/rightEye/set", payload);
+}
+
+void Robot::setDisplayColor(Color color)
+{
+    vector<char> payload(768);
+
+    for(int i = 0; i < 256; i += 3)
+    {
+        payload[i] = color.r;
+        payload[i + 1] = color.g;
+        payload[i + 2] = color.b;
+    }
+
+    mqttClient->publish(robotId + "/display/lcd/set", payload);
 }

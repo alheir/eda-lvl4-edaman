@@ -49,15 +49,17 @@ public:
     void setGameView(GameView* gameView);
 
     void start(std::string maze);
-    void newLevel(std::string maze);
+    
     void update(float deltaTime);
 
     void addRobot(Robot* robot);
 
-    bool isTileFree(MazePosition position);
+    bool isTileFree(const MazePosition &position);
 
     // nuestros metodos
-    int refresh(MazePosition* position);
+    bool shouldEndLevel();
+    void newLevel(std::string maze);
+    void pickItem(MazePosition* position);
 
 private:
     MQTTClient *mqttClient;

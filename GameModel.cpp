@@ -18,6 +18,9 @@ const int MAZE_WIDTH = 28;
 const int MAZE_HEIGHT = 36;
 const int MAZE_SIZE = MAZE_WIDTH * MAZE_HEIGHT;
 
+const int SCORE_PER_DOT = 10;
+const int SCORE_PER_ENERGIZER = 50;
+
 GameModel::GameModel(MQTTClient *mqttClient)
 {
     this->mqttClient = mqttClient;
@@ -33,7 +36,7 @@ void GameModel::addRobot(Robot *robot)
     robots.push_back(robot);
 }
 
-bool GameModel::isTileFree(MazePosition position)
+bool GameModel::isTileFree(const MazePosition &position)
 {
     if ((position.x < 0) || (position.x >= MAZE_WIDTH))
         return false;
@@ -49,8 +52,8 @@ bool GameModel::isTileFree(MazePosition position)
 void GameModel::start(string maze)
 {
     this->maze = maze;
-    //this->maze.resize(MAZE_SIZE);
-    
+    // this->maze.resize(MAZE_SIZE);
+
     remainingDots = 0;
     remainingEnergizers = 0;
 
@@ -62,7 +65,7 @@ void GameModel::start(string maze)
             remainingEnergizers++;
     }
 
-    //remainingDots = 20;   // para testear
+    // remainingDots = 20;   // para testear
     score = 0;
     lives = 4;
     eatenFruits.clear();
@@ -89,41 +92,51 @@ void GameModel::update(float deltaTime)
 
     for (auto robot : robots)
         robot->update(deltaTime);
+
+    if (gameState == GameStarting)
+    {
+        WaitTime(3000);
+        gameState = GamePlaying;
+    }
 }
 
-int GameModel::refresh(MazePosition* position)
+void GameModel::pickItem(MazePosition *position)
 {
-    gameState = GamePlaying;
     char tile = this->maze[position->x + MAZE_WIDTH * position->y];
     if (tile == '+' || tile == '#')
     {
         this->maze[position->x + MAZE_WIDTH * position->y] = ' ';
         gameView->setTiles(position->x, position->y, 0, " ");
+
         switch (tile)
         {
-            case '+':
-            {
-                remainingDots--;
-                score += 10;
-                break;
-            }
-            case '#':
-            {
-                remainingEnergizers--;
-                score += 50;
-                break;
-            }
+        case '+':
+        {
+            remainingDots--;
+            score += SCORE_PER_DOT;
+            break;
         }
+        case '#':
+        {
+            remainingEnergizers--;
+            score += SCORE_PER_ENERGIZER;
+            break;
+        }
+
+        default:
+            break;
+        }
+
         gameView->setScore(score);
     }
-
-    return remainingDots;
 }
 
 void GameModel::newLevel(std::string maze)
 {
+    gameState = GameStarting;
+
     this->maze = maze;
-    //this->maze.resize(MAZE_SIZE);
+    // this->maze.resize(MAZE_SIZE);
 
     remainingDots = 0;
     remainingEnergizers = 0;
@@ -136,11 +149,19 @@ void GameModel::newLevel(std::string maze)
             remainingEnergizers++;
     }
 
-    //remainingDots = 20;   // para testear
-    
+    // remainingDots = 20;   // para testear
+
     gameView->start(maze);
     gameView->setScore(score);
 
+    for (auto robot : robots)
+        robot->start();
+
     // Just for testing
     gameView->playAudio("mainStart");
+}
+
+bool GameModel::shouldEndLevel()
+{
+    return (remainingDots < 30);
 }

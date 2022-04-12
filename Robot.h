@@ -9,6 +9,8 @@
 
 class GameModel;
 
+enum {UP = 1, DOWN, RIGHT, LEFT};
+
 struct RobotSetpoint
 {
     RobotSetpoint(float positionX = 0, float positionZ = 0, float rotation = 0)
@@ -24,9 +26,6 @@ struct RobotSetpoint
 };
 
 #include <string>
-
-#include <raylib.h>
-
 #include "MQTTClient.h"
 #include "GameModel.h"
 
@@ -47,19 +46,16 @@ protected:
 
     Image displayImages;
 
+    MazePosition mazePosition;
+    RobotSetpoint setPoint;
+
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);
     void setSetpoint(RobotSetpoint setpoint);
     void liftTo(float positionX, float positionZ);
     void setDisplay(int imageIndex);
     void setEyes(Color leftEye, Color rightEye);
-};
-
-class Robot1 : public Robot
-{
-public:
-    void start();
-    void move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint);
+    void setDisplayColor(Color color);
 };
 
 #endif
