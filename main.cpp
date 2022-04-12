@@ -100,7 +100,7 @@ int main(int, char**)
     bool lock = false;
 
     // Robot
-    Robot1 robot1(&mqttClient);
+    Robot1 robot1(&mqttClient, &gameModel);
     gameModel.addRobot(&robot1);
 
     // Configure
@@ -122,11 +122,10 @@ int main(int, char**)
         {
             direction = scanKeyboard();
         }
-
-        robot1.move(&gameModel, direction, &lock);
+        lock = robot1.move(direction);
         vector<char> payload = makeMotorPID(robot1.setpoint.positionX, robot1.setpoint.positionZ, robot1.setpoint.rotation);
         mqttClient.publish("robot1/pid/setpoint/set", payload);
-
+        
         if (!gameModel.refresh(robot1.position))    // se podria usar update pero no se si marc queria que la editemos o no
         {
             // new level

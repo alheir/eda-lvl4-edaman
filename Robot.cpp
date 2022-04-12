@@ -18,7 +18,8 @@ using namespace std;
 Robot::Robot()
 {
     // To-Do: set your path!
-    displayImages = LoadImage("../../RobotImages.png");
+    displayImages = LoadImage("../../../RobotImages.png");
+    //displayImages = LoadImage("C:/Users/Francisco Mendizabal/source/repos/eda - lvl4 - edaman/RobotImages.png");
 }
 
 Robot::~Robot()
@@ -26,29 +27,34 @@ Robot::~Robot()
     UnloadImage(displayImages);
 }
 
-Robot1::Robot1(MQTTClient* mqttClient)
+Robot1::Robot1(MQTTClient* mqttClient, GameModel* gameModel)
 {
     this->mqttClient = mqttClient;
+    this->gameModel = gameModel;
+    Robot robot1();
 }
 
 void Robot1::start()
 {
+    robotId = "robot1";
     position = { 13, 26 };
     setpoint = { 0.0f, -0.85f, 0.0f };
 }
 
 void Robot::update(float deltaTime)
-{
+{  
 }
 
-void Robot1::move(GameModel* gameModel, int direction, bool* lock)
+// return true if a step began and still didn't end
+bool Robot1::move(int direction)
 {
-    
     const float STEP = 0.1f;
     const int STEPS = 10;     // changes speed
 
     const float SEMI_STEP = STEP / STEPS;
     
+    bool lock = false;
+
     if (direction)
     {
         RobotSetpoint auxSetpoint = getRobotSetpoint(position, 0.0f);
@@ -61,12 +67,11 @@ void Robot1::move(GameModel* gameModel, int direction, bool* lock)
                     if (setpoint.positionZ < (auxSetpoint.positionZ + 0.1f))
                     {
                         setpoint.positionZ += SEMI_STEP;
-                        *lock = true;
+                        lock = true;
                     }
                     else
                     {
                         position.y--;
-                        *lock = false;
                     }
                 }
                 break;
@@ -78,12 +83,11 @@ void Robot1::move(GameModel* gameModel, int direction, bool* lock)
                     if (setpoint.positionZ > (auxSetpoint.positionZ - 0.1f))
                     {
                         setpoint.positionZ -= SEMI_STEP;
-                        *lock = true;
+                        lock = true;
                     }
                     else
                     {
                         position.y++;
-                        *lock = false;
                     }
                 }
                 break;
@@ -95,12 +99,11 @@ void Robot1::move(GameModel* gameModel, int direction, bool* lock)
                     if (setpoint.positionX < (auxSetpoint.positionX + 0.1f))
                     {
                         setpoint.positionX += SEMI_STEP;
-                        *lock = true;
+                        lock = true;
                     }
                     else
                     {
                         position.x++;
-                        *lock = false;
                     }
                 }
                 break;
@@ -112,18 +115,24 @@ void Robot1::move(GameModel* gameModel, int direction, bool* lock)
                     if (setpoint.positionX > (auxSetpoint.positionX - 0.1f))
                     {
                         setpoint.positionX -= SEMI_STEP;
-                        *lock = true;
+                        lock = true;
                     }
                     else
                     {
                         position.x--;
-                        *lock = false;
                     }
                 }
                 break;
             }
+            case KEY_R:
+            {
+                setpoint.rotation += 10.0f;
+                break;
+            }
         }
     }
+
+    return lock;
 }
 
 MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
