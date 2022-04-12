@@ -28,13 +28,15 @@ Robot::~Robot()
 
 void Robot1::start()
 {
+    position = { 13, 26 };
+    setpoint = { 0.0f, -0.85f, 0.0f };
 }
 
 void Robot::update(float deltaTime)
 {
 }
 
-void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint)
+void Robot1::move(GameModel gameModel)
 {
     const float STEP = 0.01f;
     static int direction = 0;
@@ -48,64 +50,64 @@ void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
         if (IsKeyDown(KEY_UP))
         {
             //cout << "(" << position->x << "," << position->y << ")" << endl;
-            position->y -= 1;
-            if (gameModel.isTileFree(*position))
+            position.y -= 1;
+            if (gameModel.isTileFree(position))
             {
                 direction = UP;
                 lock = true;
             }
             else
-                position->y += 1;
+                position.y += 1;
         }
         if (IsKeyDown(KEY_DOWN))
         {
             //cout << "(" << position->x << "," << position->y << ")" << endl;
-            position->y += 1;
-            if (gameModel.isTileFree(*position))
+            position.y += 1;
+            if (gameModel.isTileFree(position))
             {
                 direction = DOWN;
                 lock = true;
             }
             else
-                position->y -= 1;
+                position.y -= 1;
         }
         else if (IsKeyDown(KEY_RIGHT))
         {
             //cout << "(" << position->x << "," << position->y << ")" << endl;
-            position->x += 1;
-            if (gameModel.isTileFree(*position))
+            position.x += 1;
+            if (gameModel.isTileFree(position))
             {
                 direction = RIGHT;
                 lock = true;
             }
             else
-                position->x -= 1;
+                position.x -= 1;
         }
         else if (IsKeyDown(KEY_LEFT))
         {
             //cout << "(" << position->x << "," << position->y << ")" << endl;
-            position->x -= 1;
-            if (gameModel.isTileFree(*position))
+            position.x -= 1;
+            if (gameModel.isTileFree(position))
             {
                 direction = LEFT;
                 lock = true;
             }
             else
-                position->x += 1;
+                position.x += 1;
         }
     }
     else
     {
-        RobotSetpoint setpoint = getRobotSetpoint(*position, 0.0f);
+        RobotSetpoint auxSetpoint = getRobotSetpoint(position, 0.0f);
         //cout << "Comparo " << "(" << robotSetpoint->positionX << ", " << robotSetpoint->positionZ << ")";
         //cout << " con " << "(" << setpoint.positionX << ", " << setpoint.positionZ << ")" << endl;
         switch (direction)
         {
             case UP: 
             {
-                if (robotSetpoint->positionZ < setpoint.positionZ)
+                if (setpoint.positionZ < auxSetpoint.positionZ)
                 {
-                    robotSetpoint->positionZ += STEP;
+                    setpoint.positionZ += STEP;
                 }
                 else
                 {
@@ -115,9 +117,9 @@ void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
             }
             case DOWN:
             {
-                if (robotSetpoint->positionZ > setpoint.positionZ)
+                if (setpoint.positionZ > auxSetpoint.positionZ)
                 {
-                    robotSetpoint->positionZ -= STEP;
+                    setpoint.positionZ -= STEP;
                 }
                 else
                 {
@@ -127,9 +129,9 @@ void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
             }
             case RIGHT:
             {
-                if (robotSetpoint->positionX < setpoint.positionX)
+                if (setpoint.positionX < auxSetpoint.positionX)
                 {
-                    robotSetpoint->positionX += STEP;
+                    setpoint.positionX += STEP;
                 }
                 else
                 {
@@ -139,9 +141,9 @@ void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* ro
             }
             case LEFT:
             {
-                if (robotSetpoint->positionX > setpoint.positionX)
+                if (setpoint.positionX > auxSetpoint.positionX)
                 {
-                    robotSetpoint->positionX -= STEP;
+                    setpoint.positionX -= STEP;
                 }
                 else
                 {

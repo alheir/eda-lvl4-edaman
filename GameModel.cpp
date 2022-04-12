@@ -91,14 +91,14 @@ void GameModel::update(float deltaTime)
         robot->update(deltaTime);
 }
 
-int GameModel::refresh(MazePosition* position)
+int GameModel::refresh(MazePosition position)
 {
     gameState = GamePlaying;
-    char tile = this->maze[position->x + MAZE_WIDTH * position->y];
+    char tile = this->maze[position.x + MAZE_WIDTH * position.y];
     if (tile == '+' || tile == '#')
     {
-        this->maze[position->x + MAZE_WIDTH * position->y] = ' ';
-        gameView->setTiles(position->x, position->y, 0, " ");
+        this->maze[position.x + MAZE_WIDTH * position.y] = ' ';
+        gameView->setTiles(position.x, position.y, 0, " ");
         switch (tile)
         {
             case '+':

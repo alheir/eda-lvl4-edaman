@@ -57,7 +57,7 @@ public:
     bool isTileFree(MazePosition position);
 
     // nuestros metodos
-    int refresh(MazePosition* position);
+    int refresh(MazePosition position);
 
 private:
     MQTTClient *mqttClient;

@@ -58,8 +58,11 @@ protected:
 class Robot1 : public Robot
 {
 public:
+    MazePosition position;
+    RobotSetpoint setpoint;
+
     void start();
-    void move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint);
+    void move(GameModel gameModel);
 };
 
 #endif

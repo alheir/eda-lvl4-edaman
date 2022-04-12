@@ -98,8 +98,6 @@ int main(int, char **)
     // Robot
     Robot1 robot1;
     gameModel.addRobot(&robot1);
-    MazePosition position = { 13, 26 };
-    RobotSetpoint robotSetpoint = { 0.0f, -0.85f, 0.0f };
 
     // Configure
     gameModel.setGameView(&gameView);
@@ -120,19 +118,18 @@ int main(int, char **)
 
         //vector<MQTTMessage> messages = mqttClient.getMessages();
         
-        robot1.move(gameModel, &position, &robotSetpoint);
-        vector<char> payload = makeMotorPID(robotSetpoint.positionX, robotSetpoint.positionZ, robotSetpoint.rotation);
+        robot1.move(gameModel);
+        vector<char> payload = makeMotorPID(robot1.setpoint.positionX, robot1.setpoint.positionZ, robot1.setpoint.rotation);
         mqttClient.publish("robot1/pid/setpoint/set", payload);
 
-        if (!gameModel.refresh(&position))
+        if (!gameModel.refresh(robot1.position))
         {
             // new level
-            position = { 13, 26 };
-            robotSetpoint = { 0.0f, -0.85f, 0.0f };
+            robot1.start();
             gameModel.newLevel(maze);
-            vector<char> payload = makeMotorPID(robotSetpoint.positionX, robotSetpoint.positionZ, robotSetpoint.rotation);
+            vector<char> payload = makeMotorPID(robot1.setpoint.positionX, robot1.setpoint.positionZ, robot1.setpoint.rotation);
             mqttClient.publish("robot1/pid/setpoint/set", payload);
-            WaitTime(3000);
+            WaitTime(2000);
         }
 
         // Updates
