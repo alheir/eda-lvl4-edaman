@@ -58,11 +58,13 @@ protected:
 class Robot1 : public Robot
 {
 public:
+    Robot1(MQTTClient* mqttClient);
+
     MazePosition position;
     RobotSetpoint setpoint;
 
     void start();
-    void move(GameModel gameModel);
+    void move(GameModel* gameModel, int direction, bool* lock);
 };
 
 #endif

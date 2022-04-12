@@ -94,10 +94,10 @@ void GameModel::update(float deltaTime)
 int GameModel::refresh(MazePosition position)
 {
     gameState = GamePlaying;
-    char tile = this->maze[position.x + MAZE_WIDTH * position.y];
+    char tile = maze[position.x + MAZE_WIDTH * position.y];
     if (tile == '+' || tile == '#')
     {
-        this->maze[position.x + MAZE_WIDTH * position.y] = ' ';
+        maze[position.x + MAZE_WIDTH * position.y] = ' ';
         gameView->setTiles(position.x, position.y, 0, " ");
         switch (tile)
         {

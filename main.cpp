@@ -34,8 +34,9 @@ vector<char> makeMotorPID(float x, float z, float rotation)
     return(payload);
 }
 
+int scanKeyboard();
 
-int main(int, char **)
+int main(int, char**)
 {
     MQTTClient mqttClient("controller");
 
@@ -71,7 +72,7 @@ int main(int, char **)
         "     s+pq          pq+r     "
         "     s+pq dcc__cce pq+r     "  // 15
         "jbbbbw+vw r      s vw+vbbbbk"
-        "s     +   r      s   +     r" 
+        "s     +   r      s   +     r"
         "zccccg+fg r      s fg+fcccc{"
         "     s+pq tbbbbbbu pq+r     "
         "     s+pq          pq+r     "  // 20
@@ -95,16 +96,16 @@ int main(int, char **)
     GameModel gameModel(&mqttClient);
     GameView gameView(&mqttClient);
 
+    int direction = 0;
+    bool lock = false;
+
     // Robot
-    Robot1 robot1;
+    Robot1 robot1(&mqttClient);
     gameModel.addRobot(&robot1);
 
     // Configure
     gameModel.setGameView(&gameView);
     gameModel.start(maze);
-    
-    /*vector<char> payload = makeMotorPID(setpoint.positionX, setpoint.positionZ, setpoint.rotation);
-    mqttClient.publish("robot1/pid/setpoint/set", payload);*/
 
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
@@ -116,13 +117,17 @@ int main(int, char **)
         DrawText("EDAPark Controller", 225, 220, 20, LIGHTGRAY);
         EndDrawing();
 
-        //vector<MQTTMessage> messages = mqttClient.getMessages();
-        
-        robot1.move(gameModel);
+        // to lock controls until robot is in the middle of a tile
+        if (!lock)
+        {
+            direction = scanKeyboard();
+        }
+
+        robot1.move(&gameModel, direction, &lock);
         vector<char> payload = makeMotorPID(robot1.setpoint.positionX, robot1.setpoint.positionZ, robot1.setpoint.rotation);
         mqttClient.publish("robot1/pid/setpoint/set", payload);
 
-        if (!gameModel.refresh(robot1.position))
+        if (!gameModel.refresh(robot1.position))    // se podria usar update pero no se si marc queria que la editemos o no
         {
             // new level
             robot1.start();
@@ -143,4 +148,26 @@ int main(int, char **)
     cout << "Disconnected." << endl;
 }
 
+int scanKeyboard()
+{
+    int direction = 0;
 
+    if (IsKeyDown(KEY_UP))
+    {
+        direction = KEY_UP;
+    }
+    else if (IsKeyDown(KEY_DOWN))
+    {
+        direction = KEY_DOWN;
+    }
+    else if (IsKeyDown(KEY_RIGHT))
+    {
+        direction = KEY_RIGHT;
+    }
+    else if (IsKeyDown(KEY_LEFT))
+    {
+        direction = KEY_LEFT;
+    }
+
+    return direction;
+}
