@@ -6,6 +6,10 @@
  * Controls an EDA-Man game.
  */
 
+
+//TODO: hacer clientes mqtt para cada robot
+//TODO: revisar bien lo hecho hoy (12-04-2022)
+
 #include <iostream>
 #include <cstring>
 

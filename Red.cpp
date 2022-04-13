@@ -33,21 +33,22 @@ void Red::update(float deltaTime)
     {
     case UP:
         setPoint.positionZ += step;
+        setPoint.rotation = 0.0f;
         break;
 
     case DOWN:
         setPoint.positionZ -= step;
-
+        setPoint.rotation = 180.0f;
         break;
 
     case LEFT:
         setPoint.positionX -= step;
-
+        setPoint.rotation = 90.0f;
         break;
 
     case RIGHT:
         setPoint.positionX += step;
-
+        setPoint.rotation = 270.0f;
         break;
 
     default:

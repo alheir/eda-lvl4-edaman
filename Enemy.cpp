@@ -5,6 +5,7 @@
 int Enemy::findPath(RobotSetpoint targetSetpoint)
 {
     bool freeTiles[] = {false, false, false, false};
+    mazePosition = getMazePosition(setPoint);
 
     if (setPoint.rotation != 0) // up
     {
