@@ -15,13 +15,12 @@ public:
 
     void setDirection(int xDir, int yDir);
 
-    RobotSetpoint getSetpoint();
-    MazePosition getMazePosition();
+    int getDirection();
+
 
 private:
     bool moving;
-    float step;
-    char direction;
+    int direction;
     MazePosition nextTile;
 
     bool shouldMove();

@@ -1,5 +1,7 @@
 #include "Pink.h"
 
+const MazePosition scatteringPoint = {0, 3}; 
+
 Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
 {
     this->mqttClient = mqttClient;
@@ -24,5 +26,30 @@ void Pink::start()
 
 void Pink::update(float deltaTime)
 {
-    //setSetpoint(setPoint);
+    RobotSetpoint newPosition = player -> getSetpoint();
+    switch (player->getDirection())
+    {
+    case UP:
+        newPosition.positionZ + 0.4f;
+        break;
+
+    case DOWN:
+        newPosition.positionZ - 0.4f;
+        break;
+    
+    case LEFT:
+        newPosition.positionX - 0.4f;
+        break;
+    
+    case RIGHT:
+        newPosition.positionX + 0.4f;
+        break;
+    
+    default:
+        break;
+    }
+    
+    int direction = findPath(newPosition);
+
+
 }

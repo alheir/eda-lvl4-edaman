@@ -9,7 +9,7 @@
 
 class GameModel;
 
-enum {UP = 1, DOWN, RIGHT, LEFT};
+enum {DOWN = 0, RIGHT, UP, LEFT};
 
 struct RobotSetpoint
 {
@@ -38,6 +38,9 @@ public:
     virtual void start() = 0;
     virtual void update(float deltaTime);
 
+    RobotSetpoint getSetpoint();
+    MazePosition getMazePosition();
+
 protected:
     // NOTE: These variables should be set by your child class:
     MQTTClient *mqttClient;
@@ -48,6 +51,7 @@ protected:
 
     MazePosition mazePosition;
     RobotSetpoint setPoint;
+    float step;
 
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);

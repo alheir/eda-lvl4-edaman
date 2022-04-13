@@ -23,7 +23,6 @@
 #include "Cyan.h"
 #include "Orange.h"
 
-// no deberia ir aca supongo pero por ahora si
 #include "Robot.h"
 
 enum KEY_POSITION
@@ -83,9 +82,9 @@ int main(int, char **)
         "     s+ph``w vw v``iq+r     "
         "     s+pq          pq+r     "
         "     s+pq dcc__cce pq+r     " // 15
-        "jbbbbw+vw r      s vw+vbbbbk"
-        "s     +   r      s   +     r"
-        "zccccg+fg r      s fg+fcccc{"
+        "     s+vw r      s vw+r     "
+        "     s+   r      s   +r     "
+        "     s+fg r      s fg+r     "
         "     s+pq tbbbbbbu pq+r     "
         "     s+pq          pq+r     " // 20
         "     s+pq faaaaaag pq+r     "
@@ -111,9 +110,9 @@ int main(int, char **)
     Player player(&mqttClient, &gameModel);
     Red red(&mqttClient, &gameModel, &player);
     Pink pink(&mqttClient, &gameModel, &player);
-    Cyan cyan(&mqttClient, &gameModel, &player);
+    Cyan cyan(&mqttClient, &gameModel, &player, &red);
     Orange orange(&mqttClient, &gameModel, &player);
-    
+
     gameModel.addRobot(&player);
     gameModel.addRobot(&red);
     gameModel.addRobot(&pink);

@@ -9,12 +9,15 @@
 class Enemy : public Robot
 {
 public:
-
-    virtual void start() = 0;
-
+    
 protected:
     Player *player;
     bool free;
+
+    int findPath(RobotSetpoint targetSetpoint);
+
+private: 
+    bool freeTiles[4];    // down, right, up, left
 };
 
 #endif

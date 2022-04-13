@@ -27,128 +27,16 @@ void Robot::update(float deltaTime)
 {
 }
 
-/*
-void Robot1::move(GameModel gameModel, MazePosition* position, RobotSetpoint* robotSetpoint)
+
+RobotSetpoint Robot::getSetpoint()
 {
-    const float STEP = 0.01f;
-    static int direction = 0;
-    static bool lock = false;
-
-    //scanKeyboard(mazePosition);
-
-    // Keyboard control
-    if (!lock)
-    {
-        if (IsKeyDown(KEY_UP))
-        {
-            //cout << "(" << position->x << "," << position->y << ")" << endl;
-            position->y -= 1;
-            if (gameModel.isTileFree(*position))
-            {
-                direction = UP;
-                lock = true;
-            }
-            else
-                position->y += 1;
-        }
-        if (IsKeyDown(KEY_DOWN))
-        {
-            //cout << "(" << position->x << "," << position->y << ")" << endl;
-            position->y += 1;
-            if (gameModel.isTileFree(*position))
-            {
-                direction = DOWN;
-                lock = true;
-            }
-            else
-                position->y -= 1;
-        }
-        else if (IsKeyDown(KEY_RIGHT))
-        {
-            //cout << "(" << position->x << "," << position->y << ")" << endl;
-            position->x += 1;
-            if (gameModel.isTileFree(*position))
-            {
-                direction = RIGHT;
-                lock = true;
-            }
-            else
-                position->x -= 1;
-        }
-        else if (IsKeyDown(KEY_LEFT))
-        {
-            //cout << "(" << position->x << "," << position->y << ")" << endl;
-            position->x -= 1;
-            if (gameModel.isTileFree(*position))
-            {
-                direction = LEFT;
-                lock = true;
-            }
-            else
-                position->x += 1;
-        }
-    }
-    else
-    {
-        RobotSetpoint setpoint = getRobotSetpoint(*position, 0.0f);
-        //cout << "Comparo " << "(" << robotSetpoint->positionX << ", " << robotSetpoint->positionZ << ")";
-        //cout << " con " << "(" << setpoint.positionX << ", " << setpoint.positionZ << ")" << endl;
-        switch (direction)
-        {
-            case UP:
-            {
-                if (robotSetpoint->positionZ < setpoint.positionZ)
-                {
-                    robotSetpoint->positionZ += STEP;
-                }
-                else
-                {
-                    lock = false;
-                }
-                break;
-            }
-            case DOWN:
-            {
-                if (robotSetpoint->positionZ > setpoint.positionZ)
-                {
-                    robotSetpoint->positionZ -= STEP;
-                }
-                else
-                {
-                    lock = false;
-                }
-                break;
-            }
-            case RIGHT:
-            {
-                if (robotSetpoint->positionX < setpoint.positionX)
-                {
-                    robotSetpoint->positionX += STEP;
-                }
-                else
-                {
-                    lock = false;
-                }
-                break;
-            }
-            case LEFT:
-            {
-                if (robotSetpoint->positionX > setpoint.positionX)
-                {
-                    robotSetpoint->positionX -= STEP;
-                }
-                else
-                {
-                    lock = false;
-                }
-                break;
-            }
-        }
-    }
-    //vector<char> payload = makeMotorPID(robot1XZ.positionX, robot1XZ.positionZ, robot1XZ.rotation);
-    //mqttClient.publish("robot1/pid/setpoint/set", payload);
+    return setPoint;
 }
-*/
+
+MazePosition Robot::getMazePosition()
+{
+    return mazePosition;
+}
 
 MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
 {

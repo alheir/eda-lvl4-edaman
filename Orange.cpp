@@ -1,4 +1,7 @@
 #include "Orange.h"
+#include <cmath>
+
+const MazePosition scatteringPoint = {35, 0};
 
 Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
 {
@@ -6,6 +9,7 @@ Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
     this->gameModel = gameModel;
     this->robotId = "robot5";
     this->player = player;
+
 }
 
 void Orange::start()
@@ -24,5 +28,14 @@ void Orange::start()
 
 void Orange::update(float deltaTime)
 {
-    //setSetpoint(setPoint);
+    int direction;
+    Vector2 vector = {setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ};
+    if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)  
+    {
+        direction = findPath(player->getSetpoint());
+    }
+    else
+    {
+        direction = findPath(getRobotSetpoint(scatteringPoint, 0.0f));
+    }
 }

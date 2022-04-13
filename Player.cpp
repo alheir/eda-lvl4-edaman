@@ -26,7 +26,6 @@ void Player::start()
 
 void Player::update(float deltaTime)
 {
-
     if (shouldMove())
     {
         RobotSetpoint tempSetPoint = getRobotSetpoint(nextTile, setPoint.rotation);
@@ -104,14 +103,9 @@ void Player::setDirection(int xDir, int yDir)
     }
 }
 
-RobotSetpoint Player::getSetpoint()
+int Player::getDirection()
 {
-    return setPoint;
-}
-
-MazePosition Player::getMazePosition()
-{
-    return mazePosition;
+    return direction;
 }
 
 bool Player::shouldMove()
