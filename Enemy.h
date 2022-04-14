@@ -13,11 +13,14 @@ public:
 protected:
     Player *player;
     bool free;
+    int direction;
 
-    int findPath(RobotSetpoint targetSetpoint);
-
-private: 
+    void checkFreeTiles();
     bool freeTiles[4];    // down, right, up, left
+    int lock;
+
+    void findPath(RobotSetpoint targetSetpoint);
+    void moveEnemy();
 };
 
 #endif

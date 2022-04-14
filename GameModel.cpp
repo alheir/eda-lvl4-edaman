@@ -73,7 +73,7 @@ void GameModel::start(string maze)
     gameView->start(maze);
     gameView->setScore(score);
 
-    gameState = GameStart;
+    gameState = GameStarting;
 
     gameView->setMessage(GameViewMessageReady);
     gameView->setLives(lives);
@@ -95,7 +95,7 @@ void GameModel::update(float deltaTime)
 
     if (gameState == GameStarting)
     {
-        WaitTime(3000);
+        WaitTime(5000);
         gameState = GamePlaying;
     }
 }
@@ -149,8 +149,6 @@ void GameModel::newLevel(std::string maze)
             remainingEnergizers++;
     }
 
-    // remainingDots = 20;   // para testear
-
     gameView->start(maze);
     gameView->setScore(score);
 
@@ -163,5 +161,5 @@ void GameModel::newLevel(std::string maze)
 
 bool GameModel::shouldEndLevel()
 {
-    return (remainingDots < 30);
+    return (remainingDots < 200);
 }

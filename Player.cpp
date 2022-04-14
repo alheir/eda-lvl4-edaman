@@ -14,10 +14,12 @@ Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
 
 void Player::start()
 {
+    direction = -1;
     mazePosition = {13, 26};
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     setPoint.positionX = +0.0025f;
     liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(8000);
 
     setDisplay(1);
     // setDisplayColor(YELLOW);

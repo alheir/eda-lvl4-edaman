@@ -56,5 +56,5 @@ void Cyan::update(float deltaTime)
     newPosition.positionX -= redPosition.positionX;
     newPosition.positionZ -= redPosition.positionZ;
 
-    int direction = findPath(newPosition);
+    findPath(newPosition);
 }

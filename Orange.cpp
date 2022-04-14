@@ -28,14 +28,13 @@ void Orange::start()
 
 void Orange::update(float deltaTime)
 {
-    int direction;
     Vector2 vector = {setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ};
     if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)  
     {
-        direction = findPath(player->getSetpoint());
+        findPath(player->getSetpoint());
     }
     else
     {
-        direction = findPath(getRobotSetpoint(scatteringPoint, 0.0f));
+        findPath(getRobotSetpoint(scatteringPoint, 0.0f));
     }
 }
