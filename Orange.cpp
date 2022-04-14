@@ -9,17 +9,22 @@ Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
     this->gameModel = gameModel;
     this->robotId = "robot5";
     this->player = player;
-
+    step = 0.1f / 12;
 }
 
 void Orange::start()
 {
     free = false;
+    free = true;    // para debug
 
-    mazePosition = {15, 17};
+    direction = UP;
+    lock = 0;
+    //mazePosition = {15, 17};
+    mazePosition = { 1, 32 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    setPoint.positionX = +0.0025f;
+    //setPoint.positionX = +0.0025f;
     liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(8000);
 
     setDisplay(22);
     // setDisplayColor(ORANGE);
@@ -28,13 +33,18 @@ void Orange::start()
 
 void Orange::update(float deltaTime)
 {
-    Vector2 vector = {setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ};
-    if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)  
+    if (!lock)
     {
-        findPath(player->getSetpoint());
+        Vector2 vector = { setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ };
+        if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)
+        {
+            findPath(player->getSetpoint());
+        }
+        else
+        {
+            findPath(getRobotSetpoint(scatteringPoint, 0.0f));
+        }
     }
-    else
-    {
-        findPath(getRobotSetpoint(scatteringPoint, 0.0f));
-    }
+
+    moveEnemy();
 }

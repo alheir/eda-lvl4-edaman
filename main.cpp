@@ -118,10 +118,10 @@ int main(int, char **)
     Orange orange(&mqttClient, &gameModel, &player);
 
     gameModel.addRobot(&player);
-    //gameModel.addRobot(&red);
+    gameModel.addRobot(&red);
     gameModel.addRobot(&pink);
-    /*gameModel.addRobot(&cyan);
-    gameModel.addRobot(&orange);*/
+    gameModel.addRobot(&cyan);
+    gameModel.addRobot(&orange);
 
     // Configure
     gameModel.setGameView(&gameView);

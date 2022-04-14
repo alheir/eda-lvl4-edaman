@@ -161,5 +161,5 @@ void GameModel::newLevel(std::string maze)
 
 bool GameModel::shouldEndLevel()
 {
-    return (remainingDots < 200);
+    return (remainingDots + remainingEnergizers) == 0;
 }

@@ -16,8 +16,8 @@ protected:
     int direction;
 
     void checkFreeTiles();
-    bool freeTiles[4];    // down, right, up, left
-    int lock;
+    bool freeTiles[4] = { 0.0f, 0.0f, 0.0f, 0.0f };    // down, right, up, left
+    int lock = 0;
 
     void findPath(RobotSetpoint targetSetpoint);
     void moveEnemy();

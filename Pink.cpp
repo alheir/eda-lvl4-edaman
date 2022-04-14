@@ -8,7 +8,7 @@ Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
     this->gameModel = gameModel;
     this->robotId = "robot3";
     this->player = player;
-    step = 0.1f / 15;
+    step = 0.1f / 12;
 }
 
 void Pink::start()
@@ -17,10 +17,10 @@ void Pink::start()
 
     direction = UP;
     lock = 0;
-    mazePosition = {13, 17};
-    mazePosition = { 13, 14 };  // para debug
+    //mazePosition = {13, 17};
+    mazePosition = { 26, 4 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    setPoint.positionX = +0.0025f;
+    //setPoint.positionX = +0.0025f;
     liftTo(setPoint.positionX, setPoint.positionZ);
     WaitTime(8000);
 
