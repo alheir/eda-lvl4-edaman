@@ -9,7 +9,7 @@
 
 class GameModel;
 
-enum {DOWN = 0, RIGHT, UP, LEFT};
+enum DIRECTIONS {DOWN = 0, RIGHT, UP, LEFT};
 
 struct RobotSetpoint
 {

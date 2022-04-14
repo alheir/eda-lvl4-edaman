@@ -8,7 +8,7 @@ Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
     this->robotId = "robot1";
 
     moving = false;
-    step = 0.01f;
+    step = 0.1f / 10;
     direction = UP;
 }
 

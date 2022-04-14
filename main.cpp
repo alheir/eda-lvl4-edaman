@@ -119,9 +119,9 @@ int main(int, char **)
 
     gameModel.addRobot(&player);
     gameModel.addRobot(&red);
-    gameModel.addRobot(&pink);
+    /*gameModel.addRobot(&pink);
     gameModel.addRobot(&cyan);
-    gameModel.addRobot(&orange);
+    gameModel.addRobot(&orange);*/
 
     // Configure
     gameModel.setGameView(&gameView);
