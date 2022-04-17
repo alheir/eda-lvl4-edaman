@@ -1,5 +1,8 @@
 #include "Player.h"
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 Player::Player(MQTTClient* mqttClient, GameModel* gameModel)
 {
@@ -39,17 +42,13 @@ void Player::update(float deltaTime)
     {
         RobotSetpoint tempSetPoint = getRobotSetpoint(nextTile, setPoint.rotation);
         static bool shouldUpdateTile = false;
-        bool isMoving = false;
 
         switch (direction)
         {
             case UP:
             {
                 if (setPoint.positionZ < tempSetPoint.positionZ)
-                {
                     setPoint.positionZ += step;
-                    isMoving = true;
-                }
 
                 shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
 
@@ -58,10 +57,7 @@ void Player::update(float deltaTime)
             case DOWN:
             {
                 if (setPoint.positionZ > tempSetPoint.positionZ)
-                {
                     setPoint.positionZ -= step;
-                    isMoving = true;
-                }
 
                 shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
 
@@ -70,10 +66,7 @@ void Player::update(float deltaTime)
             case LEFT:
             {
                 if (setPoint.positionX > tempSetPoint.positionX)
-                {
                     setPoint.positionX -= step;
-                    isMoving = true;
-                }
 
                 shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
 
@@ -82,10 +75,7 @@ void Player::update(float deltaTime)
             case RIGHT:
             {
                 if (setPoint.positionX < tempSetPoint.positionX)
-                {
                     setPoint.positionX += step;
-                    isMoving = true;
-                }
 
                 shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
 
@@ -97,9 +87,11 @@ void Player::update(float deltaTime)
         {
             mazePosition = nextTile;
             shouldUpdateTile = false;
-            setRobotMode(isMoving);
+            setRobotMode(true);
         }
     }
+    else
+        setRobotMode(false);
 
     gameModel->pickItem(&mazePosition);
     setSetpoint(setPoint);
