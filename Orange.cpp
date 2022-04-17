@@ -10,6 +10,17 @@ Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
     this->robotId = "robot5";
     this->player = player;
     step = 0.1f / 12;
+
+    setDisplay(22);
+    // setDisplayColor(ORANGE);
+    setEyes(ORANGE, ORANGE);
+
+    //mazePosition = {15, 17};
+    mazePosition = { 1, 32 };  // para debug
+    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    //setPoint.positionX = +0.0025f;
+    //liftTo(setPoint.positionX, setPoint.positionZ);
+    //WaitTime(7000);
 }
 
 void Orange::start()
@@ -23,39 +34,41 @@ void Orange::start()
     mazePosition = { 1, 32 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(8000);
 
     setDisplay(22);
     // setDisplayColor(ORANGE);
     setEyes(ORANGE, ORANGE);
 }
 
-void Orange::update(float deltaTime)
+RobotSetpoint Orange::getTargetSetpoint(int levelMode)
 {
-    time += deltaTime;
-    
-    if (!lock)
+    if (levelMode == NORMAL_MODE)
     {
-        mode = getTimeState();
-        if (mode == DISPERSION)
+        switch (getTimeState())
         {
-            findPath(getRobotSetpoint((1, 32), 0.0f));
-        }
-        else if (mode == PERSECUTION)
-        {
-
-            Vector2 vector = { setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ };
-            if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)
+            case DISPERSION:
             {
-                findPath(player->getSetpoint());
+                return getRobotSetpoint((1, 32), setPoint.rotation);
             }
-            else
+            case PERSECUTION:
             {
-                findPath(getRobotSetpoint(scatteringPoint, 0.0f));
+                Vector2 vector = { setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ };
+                if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)
+                {
+                    return player->getSetpoint();
+                }
+                else
+                {
+                    getRobotSetpoint(scatteringPoint, setPoint.rotation);
+                }
             }
         }
     }
-
-    moveEnemy();
+    else if (levelMode == BLINKING_MODE)
+    {
+        MazePosition targetTile = { GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT) };
+        return getRobotSetpoint(targetTile, setPoint.rotation);
+    }
+    else
+        return setPoint;
 }

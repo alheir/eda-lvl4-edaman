@@ -27,7 +27,7 @@ void Robot::update(float deltaTime)
 {
 }
 
-void Robot::setTime()
+void Robot::resetTime()
 {
 }
 

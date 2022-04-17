@@ -9,7 +9,16 @@ Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
 
     moving = false;
     step = 0.1f / 10;
-    direction = UP;
+    
+    setDisplay(1);
+    // setDisplayColor(YELLOW);
+    setEyes(YELLOW, YELLOW);
+
+    mazePosition = { 13, 26 };
+    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    //setPoint.positionX = +0.0025f;
+    //liftTo(setPoint.positionX, setPoint.positionZ);
+    //WaitTime(7000);
 }
 
 void Player::start()
@@ -18,8 +27,6 @@ void Player::start()
     mazePosition = {13, 26};
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(8000);
 
     setDisplay(1);
     // setDisplayColor(YELLOW);
@@ -35,40 +42,42 @@ void Player::update(float deltaTime)
 
         switch (direction)
         {
-        case UP:
-            if (setPoint.positionZ < tempSetPoint.positionZ)
-                setPoint.positionZ += step;
+            case UP:
+            {
+                if (setPoint.positionZ < tempSetPoint.positionZ)
+                    setPoint.positionZ += step;
 
-            shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
+                shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
 
-            break;
+                break;
+            }
+            case DOWN:
+            {
+                if (setPoint.positionZ > tempSetPoint.positionZ)
+                    setPoint.positionZ -= step;
 
-        case DOWN:
-            if (setPoint.positionZ > tempSetPoint.positionZ)
-                setPoint.positionZ -= step;
+                shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
 
-            shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
+                break;
+            }
+            case LEFT:
+            {
+                if (setPoint.positionX > tempSetPoint.positionX)
+                    setPoint.positionX -= step;
 
-            break;
+                shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
 
-        case LEFT:
-            if (setPoint.positionX > tempSetPoint.positionX)
-                setPoint.positionX -= step;
+                break;
+            }
+            case RIGHT:
+            {
+                if (setPoint.positionX < tempSetPoint.positionX)
+                    setPoint.positionX += step;
 
-            shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
+                shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
 
-            break;
-
-        case RIGHT:
-            if (setPoint.positionX < tempSetPoint.positionX)
-                setPoint.positionX += step;
-
-            shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
-
-            break;
-
-        default:
-            break;
+                break;
+            }
         }
 
         if (shouldUpdateTile)
@@ -116,25 +125,26 @@ bool Player::shouldMove()
 
     switch (direction)
     {
-    case UP:
-        nextTile.y--;
-        break;
-
-    case DOWN:
-        nextTile.y++;
-        break;
-
-    case LEFT:
-        nextTile.x--;
-        break;
-
-    case RIGHT:
-        nextTile.x++;
-        break;
-
-    default:
-        break;
+        case UP:
+        {
+            nextTile.y--;
+            break;
+        }
+        case DOWN:
+        {
+            nextTile.y++;
+            break;
+        }
+        case LEFT:
+        {
+            nextTile.x--;
+            break;
+        }
+        case RIGHT:
+        {
+            nextTile.x++;
+            break;
+        }
     }
-
     return (gameModel->isTileFree(nextTile));
 }

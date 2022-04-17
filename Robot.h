@@ -9,7 +9,7 @@
 
 class GameModel;
 
-enum DIRECTIONS {DOWN = 0, RIGHT, UP, LEFT};
+enum DIRECTIONS {DOWN = 1, RIGHT, UP, LEFT};
 
 struct RobotSetpoint
 {
@@ -37,7 +37,7 @@ public:
 
     virtual void start() = 0;
     virtual void update(float deltaTime);
-    virtual void setTime();
+    virtual void resetTime();
 
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();

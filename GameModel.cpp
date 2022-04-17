@@ -14,10 +14,6 @@
 
 using namespace std;
 
-const int MAZE_WIDTH = 28;
-const int MAZE_HEIGHT = 36;
-const int MAZE_SIZE = MAZE_WIDTH * MAZE_HEIGHT;
-
 const int SCORE_PER_DOT = 10;
 const int SCORE_PER_ENERGIZER = 50;
 
@@ -65,7 +61,6 @@ void GameModel::start(string maze)
             remainingEnergizers++;
     }
 
-    // remainingDots = 20;   // para testear
     score = 0;
     lives = 4;
     eatenFruits.clear();
@@ -74,6 +69,7 @@ void GameModel::start(string maze)
     gameView->setScore(score);
 
     gameState = GameStarting;
+    levelMode = NORMAL_MODE;
 
     gameView->setMessage(GameViewMessageReady);
     gameView->setLives(lives);
@@ -90,6 +86,18 @@ void GameModel::update(float deltaTime)
 {
     gameStateTime += deltaTime;
 
+    if (levelMode == BLINKING_MODE)
+    {
+        if (gameStateTime > 7)
+        {
+            levelMode == NORMAL_MODE;
+            gameStateTime = 0.0f;
+
+            for (auto robot : robots)
+                robot->resetTime();
+        }
+    }
+
     for (auto robot : robots)
         robot->update(deltaTime);
 
@@ -99,7 +107,7 @@ void GameModel::update(float deltaTime)
         gameState = GamePlaying;
 
         for (auto robot : robots)
-            robot->setTime();
+            robot->resetTime();
     }
 }
 
@@ -123,6 +131,8 @@ void GameModel::pickItem(MazePosition *position)
         {
             remainingEnergizers--;
             score += SCORE_PER_ENERGIZER;
+            gameStateTime = 0.0f;
+            levelMode = BLINKING_MODE;
             break;
         }
 
@@ -164,5 +174,10 @@ void GameModel::newLevel(std::string maze)
 
 bool GameModel::shouldEndLevel()
 {
-    return (remainingDots + remainingEnergizers) == 0;
+    return (remainingDots + remainingEnergizers) == 230;
+}
+
+int GameModel::getLevelMode()
+{
+    return levelMode;
 }

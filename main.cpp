@@ -111,6 +111,7 @@ int main(int, char **)
     GameModel gameModel(&mqttClient);
     GameView gameView(&mqttClient);
 
+    // Robots
     Player player(&mqttClient, &gameModel);
     Red red(&mqttClient, &gameModel, &player);
     Pink pink(&mqttClient, &gameModel, &player);

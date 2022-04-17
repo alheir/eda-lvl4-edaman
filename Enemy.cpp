@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void Enemy::setTime()
+void Enemy::resetTime()
 {
     time = 0;
 }
@@ -47,6 +47,16 @@ int Enemy::getTimeState()
     }
 }
 
+void Enemy::update(float deltaTime)
+{
+    time += deltaTime;
+
+    if (!lock)
+        findPath(gameModel->getLevelMode());
+
+    moveEnemy();
+}
+
 void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
     mazePosition = getMazePosition(setPoint);
@@ -62,16 +72,15 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     
     int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
     
+    // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
+
     if (count == 1)
     {
-        if(freeTiles[0] == true)
-            direction = DOWN;
-        else if(freeTiles[1] == true)
-            direction = RIGHT;
-        else if(freeTiles[2] == true)
-            direction = UP;
-        else if(freeTiles[3] == true)
-            direction = LEFT;
+        for (int i = 0; i < 4; i++)
+        {
+            if (freeTiles[i])
+                direction = i + 1;
+        }
     }
     else
     {
@@ -89,7 +98,6 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
             }
         }
 
-        // Constants DOWN = 0, RIGHT = 1, UP = 2, LEFT = 3 are used implicitly in values from variable "i"
         float minDistance = 0.0f;
         for (int i = 0; i < 4; i++)
         {
@@ -98,7 +106,7 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
                 if ((minDistance == 0.0f) || (distances[i] < minDistance))
                 {
                     minDistance = distances[i];
-                    direction = i;
+                    direction = i + 1;
                 }
             }
             
@@ -184,3 +192,7 @@ void Enemy::moveEnemy()
     setSetpoint(setPoint);
     lock--;
 }
+
+//RobotSetpoint getTargetSetpoint(int levelMode)
+//{
+//}

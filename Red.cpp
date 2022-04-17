@@ -12,6 +12,17 @@ Red::Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     this->robotId = "robot2";
     this->player = player;
     step = 0.1f / 12;
+
+    setDisplay(16);
+    // setDisplayColor(RED);
+    setEyes(RED, RED);
+
+    //mazePosition = {13, 14};
+    mazePosition = { 26, 4 };  // para debug
+    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    //setPoint.positionX = +0.0025f;
+    //liftTo(setPoint.positionX, setPoint.positionZ);
+    //WaitTime(7000);
 }
 
 void Red::start()
@@ -24,30 +35,33 @@ void Red::start()
     mazePosition = { 26, 4 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(8000);
 
     setDisplay(16);
     // setDisplayColor(RED);
     setEyes(RED, RED);
 }
 
-void Red::update(float deltaTime)
+RobotSetpoint Red::getTargetSetpoint(int levelMode)
 {
-    time += deltaTime;
-    
-    if (!lock)
+    if (levelMode == NORMAL_MODE)
     {
-        mode = getTimeState();
-        if (mode == DISPERSION)
+        switch (getTimeState())
         {
-            findPath(getRobotSetpoint((26, 4), 0.0f));
-        }
-        else if (mode == PERSECUTION)
-        {
-            findPath(player->getSetpoint());
+            case DISPERSION:
+            {
+                return getRobotSetpoint(scatteringPoint, setPoint.rotation);
+            }
+            case PERSECUTION:
+            {
+                return player->getSetpoint();
+            }
         }
     }
-
-    moveEnemy();
+    else if (levelMode == BLINKING_MODE)
+    {
+        MazePosition targetTile = { GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT) };
+        return getRobotSetpoint(targetTile, setPoint.rotation);
+    }
+    else
+        return setPoint;
 }

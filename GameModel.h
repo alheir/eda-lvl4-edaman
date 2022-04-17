@@ -9,6 +9,13 @@
 #ifndef _GAMEMODEL_H
 #define _GAMEMODEL_H
 
+#define MAZE_WIDTH 28
+#define MAZE_HEIGHT 36
+#define MAZE_SIZE (MAZE_WIDTH * MAZE_HEIGHT)
+
+#define NORMAL_MODE 1
+#define BLINKING_MODE 2
+
 class Robot;
 
 struct MazePosition
@@ -56,6 +63,7 @@ public:
     bool shouldEndLevel();
     void newLevel(std::string maze);
     void pickItem(MazePosition* position);
+    int getLevelMode();
 
 private:
     MQTTClient *mqttClient;
@@ -66,6 +74,7 @@ private:
 
     int gameState;
     float gameStateTime;
+    int levelMode;
 
     int remainingDots;
     int remainingEnergizers;

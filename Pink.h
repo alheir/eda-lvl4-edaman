@@ -11,9 +11,9 @@ public:
     Pink(MQTTClient *mqttClient, GameModel *gameModel, Player *player);
 
     void start();
-    void update(float deltaTime);
 
 private:
+    RobotSetpoint getTargetSetpoint(int levelMode);
 };
 
 #endif

@@ -8,14 +8,13 @@
 class Cyan : public Enemy
 {
 public:
-    Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *red);
+    Cyan(MQTTClient* mqttClient, GameModel* gameModel, Player* player, Enemy* red);
 
     void start();
-    void update(float deltaTime);
 
 private:
-    Enemy *red;
-
+    RobotSetpoint getTargetSetpoint(int levelMode);
+    Enemy* red;
 };
 
 #endif

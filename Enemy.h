@@ -8,6 +8,7 @@
 
 #define DISPERSION 1
 #define PERSECUTION 2
+#define ESCAPE 3
 
 class Enemy : public Robot
 {
@@ -18,17 +19,23 @@ protected:
     bool free;
     int direction;
     float time;
-    int mode;
+    int levelState;
 
-    void setTime();
+    void resetTime();
     int getTimeState();
 
     bool freeTiles[4] = { 0.0f, 0.0f, 0.0f, 0.0f };    // down, right, up, left
     void checkFreeTiles();
 
     int lock = 0;
-    void findPath(RobotSetpoint targetSetpoint);
+    void update(float deltaTime);
+
+    RobotSetpoint getTargetSetpoint(int levelMode);
+
+private:
     void moveEnemy();
+    void findPath(RobotSetpoint targetSetpoint);
+
 };
 
 #endif

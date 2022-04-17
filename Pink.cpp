@@ -9,6 +9,17 @@ Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
     this->robotId = "robot3";
     this->player = player;
     step = 0.1f / 12;
+
+    setDisplay(18);
+    // setDisplayColor(PINK);
+    setEyes(PINK, PINK);
+
+    //mazePosition = {13, 17};
+    mazePosition = { 1, 4 };  // para debug
+    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    //setPoint.positionX = +0.0025f;
+    //liftTo(setPoint.positionX, setPoint.positionZ);
+    //WaitTime(7000);
 }
 
 void Pink::start()
@@ -21,56 +32,56 @@ void Pink::start()
     mazePosition = { 1, 4 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(8000);
 
     setDisplay(18);
     // setDisplayColor(PINK);
     setEyes(PINK, PINK);
 }
 
-void Pink::update(float deltaTime)
+RobotSetpoint Pink::getTargetSetpoint(int levelMode)
 {
-    time = deltaTime;
-    
-    if (!lock)
+    if (levelMode == NORMAL_MODE)
     {
-        mode = getTimeState();
-        if (mode == DISPERSION)
+        switch (getTimeState())
         {
-            findPath(getRobotSetpoint((1, 4), 0.0f));
-        }
-        else if (mode == PERSECUTION)
-        {
-
-            RobotSetpoint newPosition = player->getSetpoint();
-            switch (player->getDirection())
+            case DISPERSION:
             {
-            case UP:
+                return getRobotSetpoint(scatteringPoint, setPoint.rotation);
+            }
+            case PERSECUTION:
             {
-                newPosition.positionZ + 0.4f;
-                break;
+                RobotSetpoint newPosition = player->getSetpoint();
+                switch (player->getDirection())
+                {
+                    case UP:
+                    {
+                        newPosition.positionZ + 0.4f;
+                    }
+                    case DOWN:
+                    {
+                        newPosition.positionZ - 0.4f;
+                        break;
+                    }
+                    case LEFT:
+                    {
+                        newPosition.positionX - 0.4f;
+                        break;
+                    }
+                    case RIGHT:
+                    {
+                        newPosition.positionX + 0.4f;
+                        break;
+                    }
+                }
+                return newPosition;
             }
-            case DOWN:
-            {
-                newPosition.positionZ - 0.4f;
-                break;
-            }
-            case LEFT:
-            {
-                newPosition.positionX - 0.4f;
-                break;
-            }
-            case RIGHT:
-            {
-                newPosition.positionX + 0.4f;
-                break;
-            }
-            }
-
-            findPath(newPosition);
         }
     }
-      
-    moveEnemy();
+    else if (levelMode == BLINKING_MODE)
+    {
+        MazePosition targetTile = { GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT) };
+        return getRobotSetpoint(targetTile, setPoint.rotation);
+    }
+    else
+        return setPoint;
 }

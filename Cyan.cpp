@@ -10,6 +10,16 @@ Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *
     this->player = player;
     this->red = red;
     step = 0.1f / 12;
+
+    setDisplay(20);
+    // setDisplayColor(SKYBLUE);
+    setEyes(SKYBLUE, SKYBLUE);
+
+    //mazePosition = {11, 17};
+    mazePosition = { 26, 32 };  // para debug
+    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    //liftTo(setPoint.positionX, setPoint.positionZ);
+    //WaitTime(7000);
 }
 
 void Cyan::start()
@@ -23,61 +33,63 @@ void Cyan::start()
     mazePosition = { 26, 32 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(8000);
 
     setDisplay(20);
     // setDisplayColor(SKYBLUE);
     setEyes(SKYBLUE, SKYBLUE);
 }
 
-void Cyan::update(float deltaTime)
+RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
 {
-    time += deltaTime;
-    
-    if (!lock)
+    if (levelMode == NORMAL_MODE)
     {
-        mode = getTimeState();
-        if (mode == DISPERSION)
+        switch (getTimeState())
         {
-            findPath(getRobotSetpoint((26, 32), 0.0f));
-        }
-        else if (mode == PERSECUTION)
-        {
-
-            RobotSetpoint newPosition = player->getSetpoint();
-            RobotSetpoint redPosition = red->getSetpoint();
-
-            switch (player->getDirection())
+            case DISPERSION:
             {
-                case UP:
-                {
-                    newPosition.positionZ + 0.2f;
-                    break;
-                }
-                case DOWN:
-                {
-                    newPosition.positionZ - 0.2f;
-                    break;
-                }
-                case LEFT:
-                {
-                    newPosition.positionX - 0.2f;
-                    break;
-                }
-                case RIGHT:
-                {
-                    newPosition.positionX + 0.2f;
-                    break;
-                }
+                return getRobotSetpoint(scatteringPoint, setPoint.rotation);
             }
+            case PERSECUTION:
+            {
+                RobotSetpoint newPosition = player->getSetpoint();
+                RobotSetpoint redPosition = red->getSetpoint();
 
-            newPosition.positionX += (newPosition.positionX - redPosition.positionX);
-            newPosition.positionZ += (newPosition.positionZ - redPosition.positionZ);
+                switch (player->getDirection())
+                {
+                    case UP:
+                    {
+                        newPosition.positionZ + 0.2f;
+                        break;
+                    }
+                    case DOWN:
+                    {
+                        newPosition.positionZ - 0.2f;
+                        break;
+                    }
+                    case LEFT:
+                    {
+                        newPosition.positionX - 0.2f;
+                        break;
+                    }
+                    case RIGHT:
+                    {
+                        newPosition.positionX + 0.2f;
+                        break;
+                    }
+                }
 
-            findPath(newPosition);
+                newPosition.positionX += (newPosition.positionX - redPosition.positionX);
+                newPosition.positionZ += (newPosition.positionZ - redPosition.positionZ);
+
+                return newPosition;
+            }
         }
     }
-
-    moveEnemy();
+    else if (levelMode == BLINKING_MODE)
+    {
+        MazePosition targetTile = { GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT) };
+        return getRobotSetpoint(targetTile, setPoint.rotation);
+    }
+    else
+        return setPoint;
 }
