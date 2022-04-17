@@ -95,8 +95,11 @@ void GameModel::update(float deltaTime)
 
     if (gameState == GameStarting)
     {
-        WaitTime(5000);
+        WaitTime(4000);
         gameState = GamePlaying;
+
+        for (auto robot : robots)
+            robot->setTime();
     }
 }
 

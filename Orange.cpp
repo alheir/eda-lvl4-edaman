@@ -33,16 +33,27 @@ void Orange::start()
 
 void Orange::update(float deltaTime)
 {
+    time += deltaTime;
+    
     if (!lock)
     {
-        Vector2 vector = { setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ };
-        if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)
+        mode = getTimeState();
+        if (mode == DISPERSION)
         {
-            findPath(player->getSetpoint());
+            findPath(getRobotSetpoint((1, 32), 0.0f));
         }
-        else
+        else if (mode == PERSECUTION)
         {
-            findPath(getRobotSetpoint(scatteringPoint, 0.0f));
+
+            Vector2 vector = { setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ };
+            if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)
+            {
+                findPath(player->getSetpoint());
+            }
+            else
+            {
+                findPath(getRobotSetpoint(scatteringPoint, 0.0f));
+            }
         }
     }
 

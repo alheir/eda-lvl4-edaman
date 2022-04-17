@@ -37,6 +37,7 @@ public:
 
     virtual void start() = 0;
     virtual void update(float deltaTime);
+    virtual void setTime();
 
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();

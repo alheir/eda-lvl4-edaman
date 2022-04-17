@@ -6,6 +6,47 @@
 
 using namespace std;
 
+void Enemy::setTime()
+{
+    time = 0;
+}
+
+int Enemy::getTimeState()
+{
+    if (time < 7)
+    {
+        return DISPERSION;
+    }
+    else if (time < 27)
+    {
+        return PERSECUTION;
+    }
+    else if (time < 34)
+    {
+        return DISPERSION;
+    }
+    else if (time < 54)
+    {
+        return PERSECUTION;
+    }
+    else if (time < 59)
+    {
+        return DISPERSION;
+    }
+    else if (time < 79)
+    {
+        return PERSECUTION;
+    }
+    else if (time < 84)
+    {
+        return DISPERSION;
+    }
+    else
+    {
+        return PERSECUTION;
+    }
+}
+
 void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
     mazePosition = getMazePosition(setPoint);

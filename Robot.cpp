@@ -27,6 +27,9 @@ void Robot::update(float deltaTime)
 {
 }
 
+void Robot::setTime()
+{
+}
 
 RobotSetpoint Robot::getSetpoint()
 {

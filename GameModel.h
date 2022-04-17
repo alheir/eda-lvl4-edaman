@@ -47,13 +47,9 @@ public:
     GameModel(MQTTClient* mqttClient);
 
     void setGameView(GameView* gameView);
-
     void start(std::string maze);
-    
     void update(float deltaTime);
-
     void addRobot(Robot* robot);
-
     bool isTileFree(const MazePosition &position);
 
     // nuestros metodos

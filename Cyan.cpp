@@ -33,38 +33,51 @@ void Cyan::start()
 
 void Cyan::update(float deltaTime)
 {
-    RobotSetpoint newPosition = player->getSetpoint();
-
-    switch (player->getDirection())
+    time += deltaTime;
+    
+    if (!lock)
     {
-        case UP:
+        mode = getTimeState();
+        if (mode == DISPERSION)
         {
-            newPosition.positionZ + 0.2f;
-            break;
+            findPath(getRobotSetpoint((26, 32), 0.0f));
         }
-        case DOWN:
+        else if (mode == PERSECUTION)
         {
-            newPosition.positionZ - 0.2f;
-            break;
-        }
-        case LEFT:
-        {
-            newPosition.positionX - 0.2f;
-            break;
-        }
-        case RIGHT:
-        {
-            newPosition.positionX + 0.2f;
-            break;
+
+            RobotSetpoint newPosition = player->getSetpoint();
+            RobotSetpoint redPosition = red->getSetpoint();
+
+            switch (player->getDirection())
+            {
+                case UP:
+                {
+                    newPosition.positionZ + 0.2f;
+                    break;
+                }
+                case DOWN:
+                {
+                    newPosition.positionZ - 0.2f;
+                    break;
+                }
+                case LEFT:
+                {
+                    newPosition.positionX - 0.2f;
+                    break;
+                }
+                case RIGHT:
+                {
+                    newPosition.positionX + 0.2f;
+                    break;
+                }
+            }
+
+            newPosition.positionX += (newPosition.positionX - redPosition.positionX);
+            newPosition.positionZ += (newPosition.positionZ - redPosition.positionZ);
+
+            findPath(newPosition);
         }
     }
-
-    RobotSetpoint redPosition = red->getSetpoint();
-    newPosition.positionX -= redPosition.positionX;
-    newPosition.positionZ -= redPosition.positionZ;
-
-    if(!lock)
-        findPath(newPosition);
 
     moveEnemy();
 }

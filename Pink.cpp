@@ -18,7 +18,7 @@ void Pink::start()
     direction = UP;
     lock = 0;
     //mazePosition = {13, 17};
-    mazePosition = { 26, 4 };  // para debug
+    mazePosition = { 1, 4 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
     liftTo(setPoint.positionX, setPoint.positionZ);
@@ -31,11 +31,21 @@ void Pink::start()
 
 void Pink::update(float deltaTime)
 {
+    time = deltaTime;
+    
     if (!lock)
     {
-        RobotSetpoint newPosition = player->getSetpoint();
-        switch (player->getDirection())
+        mode = getTimeState();
+        if (mode == DISPERSION)
         {
+            findPath(getRobotSetpoint((1, 4), 0.0f));
+        }
+        else if (mode == PERSECUTION)
+        {
+
+            RobotSetpoint newPosition = player->getSetpoint();
+            switch (player->getDirection())
+            {
             case UP:
             {
                 newPosition.positionZ + 0.4f;
@@ -56,9 +66,10 @@ void Pink::update(float deltaTime)
                 newPosition.positionX + 0.4f;
                 break;
             }
-        }
+            }
 
-        findPath(newPosition);
+            findPath(newPosition);
+        }
     }
       
     moveEnemy();

@@ -21,7 +21,7 @@ void Red::start()
     direction = UP;
     lock = 0;
     //mazePosition = {13, 14};
-    mazePosition = { 1, 4 };  // para debug
+    mazePosition = { 26, 4 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
     liftTo(setPoint.positionX, setPoint.positionZ);
@@ -34,8 +34,20 @@ void Red::start()
 
 void Red::update(float deltaTime)
 {
-    if(!lock)
-        findPath(player->getSetpoint());
+    time += deltaTime;
+    
+    if (!lock)
+    {
+        mode = getTimeState();
+        if (mode == DISPERSION)
+        {
+            findPath(getRobotSetpoint((26, 4), 0.0f));
+        }
+        else if (mode == PERSECUTION)
+        {
+            findPath(player->getSetpoint());
+        }
+    }
 
     moveEnemy();
 }
