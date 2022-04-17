@@ -19,11 +19,12 @@ public:
 
 
 private:
-    bool moving;
+    //bool moving;
     int direction;
     MazePosition nextTile;
 
     bool shouldMove();
+    void setRobotMode(bool isMoving);
 };
 
 #endif

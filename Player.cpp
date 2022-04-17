@@ -1,36 +1,36 @@
 #include "Player.h"
 #include <cmath>
 
-Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
+Player::Player(MQTTClient* mqttClient, GameModel* gameModel)
 {
     this->mqttClient = mqttClient;
     this->gameModel = gameModel;
     this->robotId = "robot1";
 
-    moving = false;
-    step = 0.1f / 10;
-    
-    setDisplay(1);
-    // setDisplayColor(YELLOW);
-    setEyes(YELLOW, YELLOW);
+    eyesColor = YELLOW;
 
     mazePosition = { 13, 26 };
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
+
+    setRobotMode(false);
+
     //liftTo(setPoint.positionX, setPoint.positionZ);
     //WaitTime(7000);
 }
 
 void Player::start()
 {
-    direction = -1;
-    mazePosition = {13, 26};
+    direction = 0;
+
+    mazePosition = { 13, 26 };
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
 
-    setDisplay(1);
-    // setDisplayColor(YELLOW);
-    setEyes(YELLOW, YELLOW);
+    setRobotMode(false);
+    //setDisplay(imageIndex);
+    //// setDisplayColor(eyesColor);
+    //setEyes(eyesColor, eyesColor); 
 }
 
 void Player::update(float deltaTime)
@@ -39,13 +39,17 @@ void Player::update(float deltaTime)
     {
         RobotSetpoint tempSetPoint = getRobotSetpoint(nextTile, setPoint.rotation);
         static bool shouldUpdateTile = false;
+        bool isMoving = false;
 
         switch (direction)
         {
             case UP:
             {
                 if (setPoint.positionZ < tempSetPoint.positionZ)
+                {
                     setPoint.positionZ += step;
+                    isMoving = true;
+                }
 
                 shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
 
@@ -54,7 +58,10 @@ void Player::update(float deltaTime)
             case DOWN:
             {
                 if (setPoint.positionZ > tempSetPoint.positionZ)
+                {
                     setPoint.positionZ -= step;
+                    isMoving = true;
+                }
 
                 shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
 
@@ -63,7 +70,10 @@ void Player::update(float deltaTime)
             case LEFT:
             {
                 if (setPoint.positionX > tempSetPoint.positionX)
+                {
                     setPoint.positionX -= step;
+                    isMoving = true;
+                }
 
                 shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
 
@@ -72,7 +82,10 @@ void Player::update(float deltaTime)
             case RIGHT:
             {
                 if (setPoint.positionX < tempSetPoint.positionX)
+                {
                     setPoint.positionX += step;
+                    isMoving = true;
+                }
 
                 shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
 
@@ -84,11 +97,39 @@ void Player::update(float deltaTime)
         {
             mazePosition = nextTile;
             shouldUpdateTile = false;
+            setRobotMode(isMoving);
         }
     }
 
     gameModel->pickItem(&mazePosition);
     setSetpoint(setPoint);
+}
+
+void Player::setRobotMode(bool isMoving)
+{
+    if (isMoving)
+    {
+        if (imageIndex == 1)
+            imageIndex = 2;
+        else
+            imageIndex = 1;
+
+        setDisplay(imageIndex);
+        //setDisplayColor(eyesColor);
+        setEyes(eyesColor, eyesColor);
+    }
+    else
+    {
+        imageIndex = 0;
+        setDisplay(imageIndex);
+        //setDisplayColor(eyesColor);
+        setEyes(eyesColor, eyesColor);
+    }
+
+    if (gameModel->getLevelMode() == NORMAL_MODE)
+        step = 0.1f / 10;
+    else
+        step = 0.1f / 9;
 }
 
 void Player::setDirection(int xDir, int yDir)

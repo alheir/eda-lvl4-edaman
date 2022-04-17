@@ -38,6 +38,7 @@ public:
     virtual void start() = 0;
     virtual void update(float deltaTime);
     virtual void resetTime();
+    virtual void setRobotMode(int levelMode);
 
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();
@@ -49,6 +50,8 @@ protected:
     std::string robotId;
 
     Image displayImages;
+    int imageIndex;
+    Color eyesColor;
 
     MazePosition mazePosition;
     RobotSetpoint setPoint;

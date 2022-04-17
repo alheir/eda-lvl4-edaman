@@ -11,6 +11,29 @@ void Enemy::resetTime()
     time = 0;
 }
 
+void Enemy::setRobotMode(int levelMode)
+{
+    switch (levelMode)
+    {
+        case NORMAL_MODE:
+        {
+            setDisplay(imageIndex);
+            //setDisplayColor(eyesColor);
+            setEyes(eyesColor, eyesColor);
+            step = 0.1f / 12;
+            break;
+        }
+        case BLINKING_MODE:
+        {
+            setDisplay(24);
+            //setDisplayColor(BLUE);
+            setEyes(BLUE, BLUE);
+            step = 0.1f / 16;
+            break;
+        }
+    }
+}
+
 int Enemy::getTimeState()
 {
     if (time < 7)
@@ -63,10 +86,10 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     MazePosition mazePosition2 = getMazePosition(targetSetpoint);
     lock = (int) (0.1f / step);
 
-    cout << "Pink en (" << setPoint.positionX << ", " << setPoint.positionZ << ", " << setPoint.rotation << ")" << endl;
+    /*cout << "Pink en (" << setPoint.positionX << ", " << setPoint.positionZ << ", " << setPoint.rotation << ")" << endl;
     cout << "(" << mazePosition.x << ", " << mazePosition.y << ")" << endl;
     cout << "Player en (" << targetSetpoint.positionX << ", " << targetSetpoint.positionZ << ")" << endl;
-    cout << "(" << mazePosition2.x << ", " << mazePosition2.y << ")" << endl;
+    cout << "(" << mazePosition2.x << ", " << mazePosition2.y << ")" << endl;*/
 
     checkFreeTiles();
     
@@ -113,13 +136,13 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
         }
     }
 
-    switch (direction)
+    /*switch (direction)
     {
         case DOWN: { cout << "DOWN" << endl; break; }
         case RIGHT: { cout << "RIGHT" << endl; break; }
         case UP: { cout << "UP" << endl; break; }
         case LEFT: { cout << "LEFT" << endl; break; }
-    }
+    }*/
 }
 
 void Enemy::checkFreeTiles()
@@ -135,7 +158,7 @@ void Enemy::checkFreeTiles()
         {
             freeTiles[0] = true;    // read down
         }
-        cout << "read down: " << freeTiles[0] << endl;
+        //cout << "read down: " << freeTiles[0] << endl;
     }
     if (direction != LEFT)
     {
@@ -143,7 +166,7 @@ void Enemy::checkFreeTiles()
         {
             freeTiles[1] = true;    // read right
         }
-        cout << "read right: " << freeTiles[1] << endl;
+        //cout << "read right: " << freeTiles[1] << endl;
     }
     if (direction != DOWN)
     {
@@ -151,7 +174,7 @@ void Enemy::checkFreeTiles()
         {
             freeTiles[2] = true;    // read up
         }
-        cout << "read up: " << freeTiles[2] << endl;
+        //cout << "read up: " << freeTiles[2] << endl;
     }
     if (direction != RIGHT)
     {
@@ -159,7 +182,7 @@ void Enemy::checkFreeTiles()
         {
             freeTiles[3] = true;    // read left
         }
-        cout << "read left: " << freeTiles[3] << endl;
+        //cout << "read left: " << freeTiles[3] << endl;
     }
 }
 

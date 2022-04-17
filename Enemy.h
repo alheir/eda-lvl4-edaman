@@ -29,13 +29,13 @@ protected:
 
     int lock = 0;
     void update(float deltaTime);
+    void setRobotMode(int levelMode);
 
     RobotSetpoint getTargetSetpoint(int levelMode);
 
 private:
     void moveEnemy();
     void findPath(RobotSetpoint targetSetpoint);
-
 };
 
 #endif

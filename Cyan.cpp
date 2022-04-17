@@ -9,34 +9,37 @@ Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *
     this->robotId = "robot4";
     this->player = player;
     this->red = red;
-    step = 0.1f / 12;
-
-    setDisplay(20);
-    // setDisplayColor(SKYBLUE);
-    setEyes(SKYBLUE, SKYBLUE);
 
     //mazePosition = {11, 17};
     mazePosition = { 26, 32 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    //setPoint.positionX = +0.0025f;
+
+    imageIndex = 20;
+    eyesColor = SKYBLUE;
+
+    setRobotMode(NORMAL_MODE);
+
     //liftTo(setPoint.positionX, setPoint.positionZ);
     //WaitTime(7000);
 }
 
 void Cyan::start()
 {
-    free = false;
+    free = true;
     free = true;    // para debug
-
     direction = UP;
     lock = 0;
+
     //mazePosition = {11, 17};
     mazePosition = { 26, 32 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
 
-    setDisplay(20);
-    // setDisplayColor(SKYBLUE);
-    setEyes(SKYBLUE, SKYBLUE);
+    imageIndex = 20;
+    eyesColor = SKYBLUE;
+
+    setRobotMode(NORMAL_MODE);
 }
 
 RobotSetpoint Cyan::getTargetSetpoint(int levelMode)

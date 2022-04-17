@@ -9,16 +9,17 @@ Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
     this->gameModel = gameModel;
     this->robotId = "robot5";
     this->player = player;
-    step = 0.1f / 12;
-
-    setDisplay(22);
-    // setDisplayColor(ORANGE);
-    setEyes(ORANGE, ORANGE);
 
     //mazePosition = {15, 17};
     mazePosition = { 1, 32 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
+
+    imageIndex = 22;
+    eyesColor = ORANGE;
+
+    setRobotMode(NORMAL_MODE);
+
     //liftTo(setPoint.positionX, setPoint.positionZ);
     //WaitTime(7000);
 }
@@ -27,17 +28,18 @@ void Orange::start()
 {
     free = false;
     free = true;    // para debug
-
     direction = UP;
     lock = 0;
+
     //mazePosition = {15, 17};
     mazePosition = { 1, 32 };  // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     //setPoint.positionX = +0.0025f;
 
-    setDisplay(22);
-    // setDisplayColor(ORANGE);
-    setEyes(ORANGE, ORANGE);
+    imageIndex = 22;
+    eyesColor = ORANGE;
+
+    setRobotMode(NORMAL_MODE);
 }
 
 RobotSetpoint Orange::getTargetSetpoint(int levelMode)

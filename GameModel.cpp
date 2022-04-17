@@ -90,7 +90,7 @@ void GameModel::update(float deltaTime)
     {
         if (gameStateTime > 7)
         {
-            levelMode == NORMAL_MODE;
+            levelMode = NORMAL_MODE;
             gameStateTime = 0.0f;
 
             for (auto robot : robots)
@@ -99,8 +99,11 @@ void GameModel::update(float deltaTime)
     }
 
     for (auto robot : robots)
+    {
         robot->update(deltaTime);
-
+        robot->setRobotMode(levelMode);
+    }
+        
     if (gameState == GameStarting)
     {
         WaitTime(4000);
@@ -174,7 +177,7 @@ void GameModel::newLevel(std::string maze)
 
 bool GameModel::shouldEndLevel()
 {
-    return (remainingDots + remainingEnergizers) == 230;
+    return (remainingDots + remainingEnergizers) == 0; //200;
 }
 
 int GameModel::getLevelMode()

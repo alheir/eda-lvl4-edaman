@@ -31,6 +31,10 @@ void Robot::resetTime()
 {
 }
 
+void Robot::setRobotMode(int levelMode)
+{
+}
+
 RobotSetpoint Robot::getSetpoint()
 {
     return setPoint;
