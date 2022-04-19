@@ -24,7 +24,7 @@ protected:
     void resetTime();
     int getTimeState();
 
-    bool freeTiles[4] = { 0.0f, 0.0f, 0.0f, 0.0f };    // down, right, up, left
+    bool freeTiles[4] = {false, false, false, false};    // down, right, up, left
     void checkFreeTiles();
 
     int lock = 0;
