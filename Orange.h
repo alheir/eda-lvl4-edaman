@@ -11,9 +11,10 @@ public:
     Orange(MQTTClient* mqttClient, GameModel* gameModel, Player* player);
 
     void start();
+    RobotSetpoint getTargetSetpoint(int levelMode);
 
 private:
-    RobotSetpoint getTargetSetpoint(int levelMode);
+    
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "Cyan.h"
 
-const MazePosition scatteringPoint = {35, 24};
+const MazePosition scatteringPoint = {24,35};
 
 Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *red)
 {

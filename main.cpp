@@ -29,27 +29,7 @@
 
 #include "Robot.h"
 
-enum KEY_POSITION
-{
-    STOP = 0,
-    UP_MOVE,
-    DOWN_MOVE,
-    RIGHT_MOVE,
-    LEFT_MOVE
-};
-
 using namespace std;
-
-vector<char> makeMotorPID(float x, float z, float rotation)
-{
-    float pidPackage[] = {x, z, rotation};
-
-    std::vector<char> payload;
-    payload.resize(sizeof(pidPackage));
-    memcpy(payload.data(), &pidPackage, sizeof(pidPackage));
-
-    return (payload);
-}
 
 int main(int, char **)
 {
@@ -131,6 +111,8 @@ int main(int, char **)
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
         float deltaTime = (float)GetFrameTime();
+        if(deltaTime > 3.5)
+            deltaTime = 0;
 
         // raylib
         BeginDrawing();

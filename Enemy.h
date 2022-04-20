@@ -13,6 +13,7 @@
 class Enemy : public Robot
 {
 public:
+    virtual RobotSetpoint getTargetSetpoint(int levelMode) = 0;
     
 protected:
     Player *player;
@@ -30,8 +31,6 @@ protected:
     int lock = 0;
     void update(float deltaTime);
     void setRobotMode(int levelMode);
-
-    RobotSetpoint getTargetSetpoint(int levelMode);
 
 private:
     void moveEnemy();

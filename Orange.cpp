@@ -1,7 +1,7 @@
 #include "Orange.h"
 #include <cmath>
 
-const MazePosition scatteringPoint = {35, 0};
+const MazePosition scatteringPoint = {0,35};
 
 Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
 {

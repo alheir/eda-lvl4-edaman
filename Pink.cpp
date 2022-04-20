@@ -1,6 +1,6 @@
 #include "Pink.h"
 
-const MazePosition scatteringPoint = {0, 3}; 
+const MazePosition scatteringPoint = {3, 0}; 
 
 Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
 {

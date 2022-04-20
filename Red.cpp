@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const MazePosition scatteringPoint = {0, 24};
+const MazePosition scatteringPoint = {24,0};
 
 Red::Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 {
@@ -66,4 +66,5 @@ RobotSetpoint Red::getTargetSetpoint(int levelMode)
     }
     else
         return setPoint;
+
 }

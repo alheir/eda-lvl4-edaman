@@ -75,7 +75,7 @@ void Enemy::update(float deltaTime)
     time += deltaTime;
 
     if (!lock)
-        findPath(gameModel->getLevelMode());
+        findPath(getTargetSetpoint(gameModel->getLevelMode()));
 
     moveEnemy();
 }

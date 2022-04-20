@@ -12,8 +12,10 @@ public:
 
     void start();
 
-private:
     RobotSetpoint getTargetSetpoint(int levelMode);
+
+private:
+    
     Enemy* red;
 };
 
