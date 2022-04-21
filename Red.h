@@ -9,7 +9,6 @@ class Red : public Enemy
 {
 public:
     Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player);
-
     void start();
 
     RobotSetpoint getTargetSetpoint(int levelMode);

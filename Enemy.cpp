@@ -75,14 +75,25 @@ void Enemy::update(float deltaTime)
     time += deltaTime;
 
     if (!lock)
+    {
+        mazePosition = getMazePosition(setPoint);
+    }
+}
+
+void Enemy::move()
+{
+    if (!lock)
+    {
         findPath(getTargetSetpoint(gameModel->getLevelMode()));
+    }
 
     moveEnemy();
+    if (crash)
+        cout << "HOLA ME CHOQUE" << endl;
 }
 
 void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
-    mazePosition = getMazePosition(setPoint);
     MazePosition targetPosition = getMazePosition(targetSetpoint);
     lock = (int) (0.1f / step);
 
@@ -91,7 +102,7 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     cout << "Player en (" << targetSetpoint.positionX << ", " << targetSetpoint.positionZ << ")" << endl;
     cout << "(" << mazePosition2.x << ", " << mazePosition2.y << ")" << endl;*/
 
-    if (!crash)
+    //if (!crash)
     {
         checkFreeTiles();
 
@@ -138,19 +149,19 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
             }
         }
     }
-    else
+    /*else
     {
         direction = (direction + 1) % 4 + 1;
         crash = false;
-    }
+    }*/
 
-    /*switch (direction)
+    switch (direction)
     {
         case DOWN: { cout << "DOWN" << endl; break; }
         case RIGHT: { cout << "RIGHT" << endl; break; }
         case UP: { cout << "UP" << endl; break; }
         case LEFT: { cout << "LEFT" << endl; break; }
-    }*/
+    }
 }
 
 void Enemy::checkFreeTiles()
@@ -160,38 +171,42 @@ void Enemy::checkFreeTiles()
     freeTiles[2] = false;
     freeTiles[3] = false;
 
-    if (direction != UP)
+    // if crashes, don't want to analyze the original direction
+    // if doesn't crash, don't want to analyze the opposite direction
+    if (((direction != UP) && !crash) || ((direction != DOWN) && crash))
     {
         if (gameModel->isTileFree({ mazePosition.x, mazePosition.y + 1 }))
         {
             freeTiles[0] = true;    // read down
         }
-        //cout << "read down: " << freeTiles[0] << endl;
+        cout << "read down: " << freeTiles[0] << endl;
     }
-    if (direction != LEFT)
+    if (((direction != LEFT) && !crash) || ((direction != RIGHT) && crash))
     {
         if (gameModel->isTileFree({ mazePosition.x + 1, mazePosition.y }))
         {
             freeTiles[1] = true;    // read right
         }
-        //cout << "read right: " << freeTiles[1] << endl;
+        cout << "read right: " << freeTiles[1] << endl;
     }
-    if (direction != DOWN)
+    if (((direction != DOWN) && !crash) || ((direction != UP) && crash))
     {
         if (gameModel->isTileFree({ mazePosition.x, mazePosition.y - 1 }))
         {
             freeTiles[2] = true;    // read up
         }
-        //cout << "read up: " << freeTiles[2] << endl;
+        cout << "read up: " << freeTiles[2] << endl;
     }
-    if (direction != RIGHT)
+    if (((direction != RIGHT) && !crash) || ((direction != LEFT) && crash))
     {
         if (gameModel->isTileFree({ mazePosition.x - 1, mazePosition.y }))
         {
             freeTiles[3] = true;    // read left
         }
-        //cout << "read left: " << freeTiles[3] << endl;
+        cout << "read left: " << freeTiles[3] << endl;
     }
+
+    crash = false;
 }
 
 void Enemy::moveEnemy()

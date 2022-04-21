@@ -28,8 +28,9 @@ void Orange::start()
 {
     free = false;
     free = true;    // para debug
-    direction = UP;
+    direction = 0;
     lock = 0;
+    crash = false;
 
     //mazePosition = {15, 17};
     mazePosition = { 1, 32 };  // para debug

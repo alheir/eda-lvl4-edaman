@@ -26,8 +26,9 @@ Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel , Player *player)
 void Pink::start()
 {
     free = true;
-    direction = UP;
+    direction = 0;
     lock = 0;
+    crash = false;
 
     //mazePosition = {13, 17};
     mazePosition = { 1, 4 };  // para debug

@@ -29,6 +29,7 @@ protected:
 
     int lock = 0;
     void update(float deltaTime);
+    void move();
     void setRobotMode(int levelMode);
 
 private:

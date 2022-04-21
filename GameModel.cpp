@@ -42,6 +42,41 @@ bool GameModel::isTileFree(const MazePosition& position)
 
     char tile = maze[position.y * MAZE_WIDTH + position.x];
 
+    /*for (int i = 1; i < robots.size(); i++)
+    {
+        MazePosition mazePosition = robots[i]->getMazePosition();
+        if ((position.x == mazePosition.x) && (position.y == mazePosition.y))
+            return false;
+        else
+            switch (direction)
+            {
+                case UP:
+                {
+                    if ((position.x == mazePosition.x) && (position.y == mazePosition.y + 1))
+                        return false;
+                    break;
+                }
+                case LEFT:
+                {
+                    if ((position.x == mazePosition.x + 1) && (position.y == mazePosition.y))
+                        return false;
+                    break;
+                }
+                case DOWN:
+                {
+                    if ((position.x == mazePosition.x) && (position.y == mazePosition.y - 1))
+                        return false;
+                    break;
+                }
+                case RIGHT:
+                {
+                    if ((position.x == mazePosition.x - 1) && (position.y == mazePosition.y))
+                        return false;
+                    break;
+                }
+            }
+    }*/
+
     return (tile == ' ') || (tile == '+') || (tile == '#');
 }
 
@@ -87,14 +122,14 @@ void GameModel::checkRobotCollision()
             }
         }
         
-        for (int j = 1; j < robots.size(); j++)
+        for (int j = 0; j < robots.size(); j++)
         {
             if (i != j)
             {
                 MazePosition targetPosition = robots[j]->getMazePosition();
 
-                if ((targetPosition.x == mazePosition1.x && targetPosition.y == mazePosition1.y) ||
-                    (targetPosition.x == mazePosition2.x && targetPosition.y == mazePosition2.y))
+                if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)) ||
+                    ((targetPosition.x == mazePosition2.x) && (targetPosition.y == mazePosition2.y)))
                 {
                     robots[i]->crash = true;
                 }
@@ -103,6 +138,7 @@ void GameModel::checkRobotCollision()
 
         cout << robots[i]->crash;
     }
+    cout << endl;
 }
 
 void GameModel::start(string maze)
@@ -158,16 +194,22 @@ void GameModel::update(float deltaTime)
         }
     }
 
-    
+    for (auto robot : robots)
+    {
+        int direction = robot->getDirection();        
+        robot->update(deltaTime);
+    }
+
+    checkRobotCollision();
 
     for (auto robot : robots)
     {
-        int direction = robot->getDirection();
-        cout << endl << direction << ", " << robot->crash << endl;
-        checkRobotCollision();
-        robot->update(deltaTime);
+        robot->move();
         robot->setRobotMode(levelMode);
     }
+
+    cout << endl;
+    WaitTime(10);
         
     if (gameState == GameStarting)
     {

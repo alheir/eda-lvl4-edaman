@@ -29,8 +29,9 @@ Red::Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 void Red::start()
 {
     free = true;
-    direction = UP;
+    direction = 0;
     lock = 0;
+    crash = false;
 
     //mazePosition = {13, 14};
     mazePosition = { 26, 4 };  // para debug

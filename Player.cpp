@@ -17,7 +17,6 @@ Player::Player(MQTTClient* mqttClient, GameModel* gameModel)
     //setPoint.positionX = +0.0025f;
 
     setRobotMode(false);
-    crash = false;
 
     //liftTo(setPoint.positionX, setPoint.positionZ);
     //WaitTime(7000);
@@ -26,6 +25,7 @@ Player::Player(MQTTClient* mqttClient, GameModel* gameModel)
 void Player::start()
 {
     direction = 0;
+    crash = false;
 
     mazePosition = { 13, 26 };
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
@@ -38,6 +38,12 @@ void Player::start()
 }
 
 void Player::update(float deltaTime)
+{
+    gameModel->pickItem(&mazePosition);
+    setSetpoint(setPoint);
+}
+
+void Player::move()
 {
     if (shouldMove())
     {
@@ -93,9 +99,6 @@ void Player::update(float deltaTime)
     }
     else
         setRobotMode(false);
-
-    gameModel->pickItem(&mazePosition);
-    setSetpoint(setPoint);
 }
 
 void Player::setRobotMode(bool isMoving)

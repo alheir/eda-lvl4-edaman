@@ -26,10 +26,11 @@ Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *
 
 void Cyan::start()
 {
-    free = true;
+    free = false;
     free = true;    // para debug
-    direction = UP;
+    direction = 0;
     lock = 0;
+    crash = false;
 
     //mazePosition = {11, 17};
     mazePosition = { 26, 32 };  // para debug
