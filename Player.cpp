@@ -4,6 +4,8 @@
 
 using namespace std;
 
+const MazePosition initialPoint = { 13, 26 };
+
 Player::Player(MQTTClient* mqttClient, GameModel* gameModel)
 {
     this->mqttClient = mqttClient;
@@ -40,7 +42,18 @@ void Player::start()
 void Player::update(float deltaTime)
 {
     gameModel->pickItem(&mazePosition);
-    setSetpoint(setPoint);
+
+    if (crash)
+    {
+        if (gameModel->getLevelMode() == NORMAL_MODE)
+        {
+            cout << "AAAAAAAAAAAAAAAA ME MUEEEEEEEERO :C" << endl;
+        }
+        else if (gameModel->getLevelMode() == BLINKING_MODE)
+        {
+            cout << "TE COMI FANTASMA QLIA" << endl;
+        }
+    }
 }
 
 void Player::move()
@@ -99,6 +112,8 @@ void Player::move()
     }
     else
         setRobotMode(false);
+
+    setSetpoint(setPoint);
 }
 
 void Player::setRobotMode(bool isMoving)

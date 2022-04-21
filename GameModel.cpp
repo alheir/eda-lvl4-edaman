@@ -42,47 +42,12 @@ bool GameModel::isTileFree(const MazePosition& position)
 
     char tile = maze[position.y * MAZE_WIDTH + position.x];
 
-    /*for (int i = 1; i < robots.size(); i++)
-    {
-        MazePosition mazePosition = robots[i]->getMazePosition();
-        if ((position.x == mazePosition.x) && (position.y == mazePosition.y))
-            return false;
-        else
-            switch (direction)
-            {
-                case UP:
-                {
-                    if ((position.x == mazePosition.x) && (position.y == mazePosition.y + 1))
-                        return false;
-                    break;
-                }
-                case LEFT:
-                {
-                    if ((position.x == mazePosition.x + 1) && (position.y == mazePosition.y))
-                        return false;
-                    break;
-                }
-                case DOWN:
-                {
-                    if ((position.x == mazePosition.x) && (position.y == mazePosition.y - 1))
-                        return false;
-                    break;
-                }
-                case RIGHT:
-                {
-                    if ((position.x == mazePosition.x - 1) && (position.y == mazePosition.y))
-                        return false;
-                    break;
-                }
-            }
-    }*/
-
     return (tile == ' ') || (tile == '+') || (tile == '#');
 }
 
 void GameModel::checkRobotCollision()
 {
-    for (int i = 1; i < robots.size(); i++)
+    for (int i = 0; i < robots.size(); i++)
     {
         MazePosition mazePosition = robots[i]->getMazePosition();
         MazePosition mazePosition1 = mazePosition;
@@ -128,17 +93,26 @@ void GameModel::checkRobotCollision()
             {
                 MazePosition targetPosition = robots[j]->getMazePosition();
 
-                if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)) ||
-                    ((targetPosition.x == mazePosition2.x) && (targetPosition.y == mazePosition2.y)))
+                if (i == 0 || j == 0)
                 {
-                    robots[i]->crash = true;
+                    // detect collision between pacman and enemy
+                    if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)))
+                    {
+                        robots[0]->crash = true;
+                    }
+                }
+                else
+                {
+                    // avoid collisions between enemies
+                    if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)) ||
+                        ((targetPosition.x == mazePosition2.x) && (targetPosition.y == mazePosition2.y)))
+                    {
+                        robots[i]->crash = true;
+                    }
                 }
             }
         }
-
-        cout << robots[i]->crash;
     }
-    cout << endl;
 }
 
 void GameModel::start(string maze)
@@ -173,9 +147,6 @@ void GameModel::start(string maze)
 
     for (auto robot : robots)
         robot->start();
-
-    // Just for testing
-    gameView->playAudio("mainStart");
 }
 
 void GameModel::update(float deltaTime)
@@ -202,17 +173,32 @@ void GameModel::update(float deltaTime)
 
     checkRobotCollision();
 
-    for (auto robot : robots)
+    if (robots[0]->crash)
     {
-        robot->move();
-        robot->setRobotMode(levelMode);
+        if (levelMode == NORMAL_MODE)
+        {
+            loseLife();
+        }
+        else
+        {
+            robots[0]->crash = false;
+            eatEnemy();
+        }
+    }
+    else
+    {
+        for (auto robot : robots)
+        {
+            robot->move();
+            robot->setRobotMode(levelMode);
+        }
     }
 
-    cout << endl;
-    WaitTime(10);
-        
     if (gameState == GameStarting)
     {
+        // Just for testing
+        gameView->playAudio("mainStart");
+
         WaitTime(4000);
         gameState = GamePlaying;
 
@@ -252,6 +238,35 @@ void GameModel::pickItem(MazePosition *position)
 
         gameView->setScore(score);
     }
+}
+
+void GameModel::loseLife()
+{
+    if (--lives)
+    {
+        for (int i = 0; i < robots.size(); i++)
+        {
+            robots[i]->start();
+            robots[i]->move();
+        }
+
+        gameState = GameStarting;
+        levelMode = NORMAL_MODE;
+
+        gameView->setMessage(GameViewMessageReady);
+        gameView->setLives(lives);
+        gameView->setEatenFruits(eatenFruits);
+    }
+    else
+    {
+        cout << "GAME OVER" << endl;
+        cout << "Te dejo seguir jugando pq no se como cerrar el programa nomas" << endl;
+    }
+}
+
+void GameModel::eatEnemy()
+{
+    
 }
 
 void GameModel::newLevel(std::string maze)

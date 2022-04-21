@@ -88,8 +88,6 @@ void Enemy::move()
     }
 
     moveEnemy();
-    if (crash)
-        cout << "HOLA ME CHOQUE" << endl;
 }
 
 void Enemy::findPath(RobotSetpoint targetSetpoint)
@@ -102,66 +100,58 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     cout << "Player en (" << targetSetpoint.positionX << ", " << targetSetpoint.positionZ << ")" << endl;
     cout << "(" << mazePosition2.x << ", " << mazePosition2.y << ")" << endl;*/
 
-    //if (!crash)
+    checkFreeTiles();
+
+    int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
+
+    // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
+
+    if (count == 1)
     {
-        checkFreeTiles();
-
-        int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
-
-        // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
-
-        if (count == 1)
+        for (int i = 0; i < 4; i++)
         {
-            for (int i = 0; i < 4; i++)
-            {
-                if (freeTiles[i])
-                    direction = i + 1;
-            }
-        }
-        else
-        {
-            float distances[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-            Vector2 nextStep[] = { { 0.0f, -0.1f }, { 0.1f, 0.0f }, { 0.0f, 0.1f }, { -0.1f, 0.0f } };
-
-            for (int i = 0; i < 4; i++)
-            {
-                if (freeTiles[i])
-                {
-                    Vector2 distance = { setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
-                                         setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ };
-
-                    distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
-                }
-            }
-
-            float minDistance = 0.0f;
-            for (int i = 0; i < 4; i++)
-            {
-                if (distances[i] != 0.0f)
-                {
-                    if ((minDistance == 0.0f) || (distances[i] < minDistance))
-                    {
-                        minDistance = distances[i];
-                        direction = i + 1;
-                    }
-                }
-
-            }
+            if (freeTiles[i])
+                direction = i + 1;
         }
     }
-    /*else
+    else
     {
-        direction = (direction + 1) % 4 + 1;
-        crash = false;
-    }*/
+        float distances[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+        Vector2 nextStep[] = { { 0.0f, -0.1f }, { 0.1f, 0.0f }, { 0.0f, 0.1f }, { -0.1f, 0.0f } };
 
-    switch (direction)
+        for (int i = 0; i < 4; i++)
+        {
+            if (freeTiles[i])
+            {
+                Vector2 distance = { setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
+                                        setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ };
+
+                distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
+            }
+        }
+
+        float minDistance = 0.0f;
+        for (int i = 0; i < 4; i++)
+        {
+            if (distances[i] != 0.0f)
+            {
+                if ((minDistance == 0.0f) || (distances[i] < minDistance))
+                {
+                    minDistance = distances[i];
+                    direction = i + 1;
+                }
+            }
+
+        }
+    }
+
+    /*switch (direction)
     {
         case DOWN: { cout << "DOWN" << endl; break; }
         case RIGHT: { cout << "RIGHT" << endl; break; }
         case UP: { cout << "UP" << endl; break; }
         case LEFT: { cout << "LEFT" << endl; break; }
-    }
+    }*/
 }
 
 void Enemy::checkFreeTiles()

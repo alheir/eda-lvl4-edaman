@@ -84,6 +84,8 @@ private:
     std::list<int> eatenFruits;
 
     void checkRobotCollision();
+    void loseLife();
+    void eatEnemy();
 };
 
 #endif
