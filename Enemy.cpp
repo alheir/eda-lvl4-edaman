@@ -83,7 +83,7 @@ void Enemy::update(float deltaTime)
 void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
     mazePosition = getMazePosition(setPoint);
-    MazePosition mazePosition2 = getMazePosition(targetSetpoint);
+    MazePosition targetPosition = getMazePosition(targetSetpoint);
     lock = (int) (0.1f / step);
 
     /*cout << "Pink en (" << setPoint.positionX << ", " << setPoint.positionZ << ", " << setPoint.rotation << ")" << endl;
@@ -91,49 +91,57 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     cout << "Player en (" << targetSetpoint.positionX << ", " << targetSetpoint.positionZ << ")" << endl;
     cout << "(" << mazePosition2.x << ", " << mazePosition2.y << ")" << endl;*/
 
-    checkFreeTiles();
-    
-    int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
-    
-    // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
-
-    if (count == 1)
+    if (!crash)
     {
-        for (int i = 0; i < 4; i++)
+        checkFreeTiles();
+
+        int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
+
+        // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
+
+        if (count == 1)
         {
-            if (freeTiles[i])
-                direction = i + 1;
+            for (int i = 0; i < 4; i++)
+            {
+                if (freeTiles[i])
+                    direction = i + 1;
+            }
+        }
+        else
+        {
+            float distances[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            Vector2 nextStep[] = { { 0.0f, -0.1f }, { 0.1f, 0.0f }, { 0.0f, 0.1f }, { -0.1f, 0.0f } };
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (freeTiles[i])
+                {
+                    Vector2 distance = { setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
+                                         setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ };
+
+                    distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
+                }
+            }
+
+            float minDistance = 0.0f;
+            for (int i = 0; i < 4; i++)
+            {
+                if (distances[i] != 0.0f)
+                {
+                    if ((minDistance == 0.0f) || (distances[i] < minDistance))
+                    {
+                        minDistance = distances[i];
+                        direction = i + 1;
+                    }
+                }
+
+            }
         }
     }
     else
     {
-        float distances[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-        Vector2 nextStep[] = { { 0.0f, -0.1f }, { 0.1f, 0.0f }, { 0.0f, 0.1f }, { -0.1f, 0.0f } };
-
-        for (int i = 0; i < 4; i++)
-        {
-            if(freeTiles[i])
-            {
-                Vector2 distance = { setPoint.positionX + nextStep[i].x - targetSetpoint.positionX, 
-                                     setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ };
-
-                distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
-            }
-        }
-
-        float minDistance = 0.0f;
-        for (int i = 0; i < 4; i++)
-        {
-            if (distances[i] != 0.0f)
-            {
-                if ((minDistance == 0.0f) || (distances[i] < minDistance))
-                {
-                    minDistance = distances[i];
-                    direction = i + 1;
-                }
-            }
-            
-        }
+        direction = (direction + 1) % 4 + 1;
+        crash = false;
     }
 
     /*switch (direction)

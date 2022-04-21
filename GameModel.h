@@ -82,6 +82,8 @@ private:
     int score;  // agregado
     int lives;
     std::list<int> eatenFruits;
+
+    void checkRobotCollision();
 };
 
 #endif

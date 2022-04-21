@@ -45,6 +45,11 @@ MazePosition Robot::getMazePosition()
     return mazePosition;
 }
 
+int Robot::getDirection()
+{
+    return direction;
+}
+
 MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
 {
     MazePosition mazePosition;

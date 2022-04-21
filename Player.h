@@ -15,9 +15,6 @@ public:
 
     void setDirection(int xDir, int yDir);
 
-    int getDirection();
-
-
 private:
     //bool moving;
     int direction;

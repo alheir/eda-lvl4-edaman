@@ -17,6 +17,7 @@ Player::Player(MQTTClient* mqttClient, GameModel* gameModel)
     //setPoint.positionX = +0.0025f;
 
     setRobotMode(false);
+    crash = false;
 
     //liftTo(setPoint.positionX, setPoint.positionZ);
     //WaitTime(7000);
@@ -145,11 +146,6 @@ void Player::setDirection(int xDir, int yDir)
         else
             direction = lastDirection;
     }
-}
-
-int Player::getDirection()
-{
-    return direction;
 }
 
 bool Player::shouldMove()

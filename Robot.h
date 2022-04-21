@@ -42,6 +42,8 @@ public:
 
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();
+    int getDirection();
+    bool crash;
 
 protected:
     // NOTE: These variables should be set by your child class:
@@ -56,6 +58,7 @@ protected:
     MazePosition mazePosition;
     RobotSetpoint setPoint;
     float step;
+    int direction;
 
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);
