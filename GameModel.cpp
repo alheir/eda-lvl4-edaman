@@ -45,8 +45,10 @@ bool GameModel::isTileFree(const MazePosition& position)
     return (tile == ' ') || (tile == '+') || (tile == '#');
 }
 
-void GameModel::checkRobotCollision()
+int GameModel::checkRobotCollision()
 {
+    int crashedRobot = 0;
+
     for (int i = 0; i < robots.size(); i++)
     {
         MazePosition mazePosition = robots[i]->getMazePosition();
@@ -99,6 +101,7 @@ void GameModel::checkRobotCollision()
                     if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)))
                     {
                         robots[0]->crash = true;
+                        crashedRobot = max(i, j);
                     }
                 }
                 else
@@ -113,6 +116,8 @@ void GameModel::checkRobotCollision()
             }
         }
     }
+
+    return crashedRobot;
 }
 
 void GameModel::start(string maze)
@@ -171,7 +176,7 @@ void GameModel::update(float deltaTime)
         robot->update(deltaTime);
     }
 
-    checkRobotCollision();
+    int crashedRobot = checkRobotCollision();
 
     if (robots[0]->crash)
     {
@@ -182,16 +187,13 @@ void GameModel::update(float deltaTime)
         else
         {
             robots[0]->crash = false;
-            eatEnemy();
+            eatEnemy(crashedRobot);
         }
     }
-    else
+    for (auto robot : robots)
     {
-        for (auto robot : robots)
-        {
-            robot->move();
-            robot->setRobotMode(levelMode);
-        }
+        robot->move();
+        robot->setRobotMode(levelMode);
     }
 
     if (gameState == GameStarting)
@@ -217,23 +219,23 @@ void GameModel::pickItem(MazePosition *position)
 
         switch (tile)
         {
-        case '+':
-        {
-            remainingDots--;
-            score += SCORE_PER_DOT;
-            break;
-        }
-        case '#':
-        {
-            remainingEnergizers--;
-            score += SCORE_PER_ENERGIZER;
-            gameStateTime = 0.0f;
-            levelMode = BLINKING_MODE;
-            break;
-        }
-
-        default:
-            break;
+            case '+':
+            {
+                remainingDots--;
+                score += SCORE_PER_DOT;
+                break;
+            }
+            case '#':
+            {
+                remainingEnergizers--;
+                score += SCORE_PER_ENERGIZER;
+                gameStateTime = 0.0f;
+                levelMode = BLINKING_MODE;
+                for (int i = 0; i < 4; i++)
+                    eatenEnemies[i] = false;
+                enemyScore = 200;
+                break;
+            }
         }
 
         gameView->setScore(score);
@@ -264,9 +266,20 @@ void GameModel::loseLife()
     }
 }
 
-void GameModel::eatEnemy()
+void GameModel::eatEnemy(int crashedRobot)
 {
-    
+    if (!eatenEnemies[crashedRobot - 1])
+    {
+        eatenEnemies[crashedRobot - 1] = true;
+
+        int eatenEnemiesCount = (int)eatenEnemies[0] + (int)eatenEnemies[1] +
+                                (int)eatenEnemies[2] + (int)eatenEnemies[3];
+
+        enemyScore *= 2;
+        score += enemyScore;
+        gameView->setScore(score);
+    }
+    robots[crashedRobot]->setFree(false);
 }
 
 void GameModel::newLevel(std::string maze)

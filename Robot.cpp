@@ -50,6 +50,11 @@ int Robot::getDirection()
     return direction;
 }
 
+void Robot::setFree(bool free)
+{
+    this->free = free;
+}
+
 MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
 {
     MazePosition mazePosition;

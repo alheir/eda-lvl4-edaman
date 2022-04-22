@@ -49,22 +49,22 @@ RobotSetpoint Orange::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-            case DISPERSION:
+        case DISPERSION:
+        {
+            return getRobotSetpoint((1, 32), setPoint.rotation);
+        }
+        case PERSECUTION:
+        {
+            Vector2 vector = { setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ };
+            if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)
             {
-                return getRobotSetpoint((1, 32), setPoint.rotation);
+                return player->getSetpoint();
             }
-            case PERSECUTION:
+            else
             {
-                Vector2 vector = { setPoint.positionX - player->getSetpoint().positionX, setPoint.positionZ - player->getSetpoint().positionZ };
-                if ((vector.x * vector.x) + (vector.y * vector.y) < 6400)
-                {
-                    return player->getSetpoint();
-                }
-                else
-                {
-                    getRobotSetpoint(scatteringPoint, setPoint.rotation);
-                }
+                getRobotSetpoint(scatteringPoint, setPoint.rotation);
             }
+        }
         }
     }
     else if (levelMode == BLINKING_MODE)
@@ -72,6 +72,12 @@ RobotSetpoint Orange::getTargetSetpoint(int levelMode)
         MazePosition targetTile = { GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT) };
         return getRobotSetpoint(targetTile, setPoint.rotation);
     }
+    else if (levelMode == RETURN_CAGE)
+    {
+        return getRobotSetpoint(scatteringPoint, 0.0f);
+    }
     else
+    {
         return setPoint;
+    }
 }

@@ -94,6 +94,12 @@ RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
         MazePosition targetTile = { GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT) };
         return getRobotSetpoint(targetTile, setPoint.rotation);
     }
+    else if (levelMode == RETURN_CAGE)
+    {
+        return getRobotSetpoint(scatteringPoint, 0.0f);
+    }
     else
+    {
         return setPoint;
+    }
 }

@@ -15,6 +15,7 @@
 
 #define NORMAL_MODE 1
 #define BLINKING_MODE 2
+#define RETURN_CAGE 3
 
 class Robot;
 
@@ -82,10 +83,12 @@ private:
     int score;  // agregado
     int lives;
     std::list<int> eatenFruits;
+    bool eatenEnemies[4];
+    int enemyScore;
 
-    void checkRobotCollision();
+    int checkRobotCollision();
     void loseLife();
-    void eatEnemy();
+    void eatEnemy(int crashedRobot);
 };
 
 #endif

@@ -17,7 +17,6 @@ public:
     
 protected:
     Player *player;
-    bool free;
     float time;
     int levelState;
 

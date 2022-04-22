@@ -13,6 +13,9 @@ void Enemy::resetTime()
 
 void Enemy::setRobotMode(int levelMode)
 {
+    if (!free)
+        levelMode = RETURN_CAGE;
+
     switch (levelMode)
     {
         case NORMAL_MODE:
@@ -29,6 +32,14 @@ void Enemy::setRobotMode(int levelMode)
             //setDisplayColor(BLUE);
             setEyes(BLUE, BLUE);
             step = 0.1f / 16;
+            break;
+        }
+        case RETURN_CAGE:
+        {
+            setDisplay(30);
+            //setDisplayColor(eyesColor);
+            setEyes(eyesColor, eyesColor);
+            step = 0.1f / 8;
             break;
         }
     }
@@ -84,7 +95,13 @@ void Enemy::move()
 {
     if (!lock)
     {
-        findPath(getTargetSetpoint(gameModel->getLevelMode()));
+        if (free)
+            findPath(getTargetSetpoint(gameModel->getLevelMode()));
+        else if ((mazePosition.x == getMazePosition(getTargetSetpoint(RETURN_CAGE)).x) &&
+                 (mazePosition.y == getMazePosition(getTargetSetpoint(RETURN_CAGE)).y))
+            direction = 0;
+        else
+            findPath(getTargetSetpoint(RETURN_CAGE));
     }
 
     moveEnemy();
@@ -106,7 +123,10 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
 
     // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
 
-    if (count == 1)
+    if (count == 0)
+        direction = 0;
+
+    else if (count == 1)
     {
         for (int i = 0; i < 4; i++)
         {

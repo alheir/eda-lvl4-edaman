@@ -44,6 +44,7 @@ public:
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();
     int getDirection();
+    void setFree(bool free);
     bool crash;
 
 protected:
@@ -60,6 +61,7 @@ protected:
     RobotSetpoint setPoint;
     float step;
     int direction;
+    bool free;
 
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);

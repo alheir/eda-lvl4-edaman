@@ -47,37 +47,37 @@ RobotSetpoint Pink::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-            case DISPERSION:
+        case DISPERSION:
+        {
+            return getRobotSetpoint(scatteringPoint, setPoint.rotation);
+        }
+        case PERSECUTION:
+        {
+            RobotSetpoint newPosition = player->getSetpoint();
+            switch (player->getDirection())
             {
-                return getRobotSetpoint(scatteringPoint, setPoint.rotation);
-            }
-            case PERSECUTION:
+            case UP:
             {
-                RobotSetpoint newPosition = player->getSetpoint();
-                switch (player->getDirection())
-                {
-                    case UP:
-                    {
-                        newPosition.positionZ + 0.4f;
-                    }
-                    case DOWN:
-                    {
-                        newPosition.positionZ - 0.4f;
-                        break;
-                    }
-                    case LEFT:
-                    {
-                        newPosition.positionX - 0.4f;
-                        break;
-                    }
-                    case RIGHT:
-                    {
-                        newPosition.positionX + 0.4f;
-                        break;
-                    }
-                }
-                return newPosition;
+                newPosition.positionZ + 0.4f;
             }
+            case DOWN:
+            {
+                newPosition.positionZ - 0.4f;
+                break;
+            }
+            case LEFT:
+            {
+                newPosition.positionX - 0.4f;
+                break;
+            }
+            case RIGHT:
+            {
+                newPosition.positionX + 0.4f;
+                break;
+            }
+            }
+            return newPosition;
+        }
         }
     }
     else if (levelMode == BLINKING_MODE)
@@ -85,6 +85,12 @@ RobotSetpoint Pink::getTargetSetpoint(int levelMode)
         MazePosition targetTile = { GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT) };
         return getRobotSetpoint(targetTile, setPoint.rotation);
     }
+    else if (levelMode == RETURN_CAGE)
+    {
+        return getRobotSetpoint(scatteringPoint, 0.0f);
+    }
     else
+    {
         return setPoint;
+    }
 }
