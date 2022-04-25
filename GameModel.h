@@ -16,9 +16,12 @@
 #define MAZE_HEIGHT 36
 #define MAZE_SIZE (MAZE_WIDTH * MAZE_HEIGHT)
 
-#define NORMAL_MODE 1
-#define BLINKING_MODE 2
-#define RETURN_CAGE 3
+enum LevelMode {
+    SETUP_MODE = 1,
+    NORMAL_MODE,
+    BLINKING_MODE,
+    RETURN_CAGE
+};
 
 class Robot;
 

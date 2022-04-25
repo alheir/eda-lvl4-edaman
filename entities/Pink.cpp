@@ -11,7 +11,7 @@
 
 #include "Pink.h"
 
-const MazePosition scatteringPoint = {3, 0};
+const MazePosition scatteringPoint = { 3, 0 };
 
 Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 {
@@ -20,8 +20,8 @@ Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     this->robotId = "robot3";
     this->player = player;
 
-    // mazePosition = {13, 17};
-    mazePosition = {1, 4}; // para debug
+    initialPosition = { 1, 4 };
+    mazePosition = initialPosition;
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
     // setPoint.positionX = +0.0025f;
 
@@ -30,21 +30,16 @@ Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 
     setRobotMode(NORMAL_MODE);
 
-    // liftTo(setPoint.positionX, setPoint.positionZ);
-    // WaitTime(7000);
+    liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(7500);
 }
 
 void Pink::start()
 {
-    free = true;
+    free = false;
     direction = 0;
     lock = 0;
     crash = false;
-
-    // mazePosition = {13, 17};
-    mazePosition = {1, 4}; // para debug
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
 
     imageIndex = 18;
     eyesColor = PINK;
@@ -102,11 +97,6 @@ RobotSetpoint Pink::getTargetSetpoint(int levelMode)
     {
         MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
         returnSetpoint = getRobotSetpoint(targetTile, setPoint.rotation);
-    }
-
-    else if (levelMode == RETURN_CAGE)
-    {
-        returnSetpoint = getRobotSetpoint(scatteringPoint, 0.0f);
     }
 
     else

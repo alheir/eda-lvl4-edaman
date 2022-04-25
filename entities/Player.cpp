@@ -29,9 +29,6 @@ Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
     // setPoint.positionX = +0.0025f;
 
     setRobotMode(false);
-
-    // liftTo(setPoint.positionX, setPoint.positionZ);
-    // WaitTime(7000);
 }
 
 void Player::start()
@@ -47,13 +44,16 @@ void Player::start()
     // setDisplay(imageIndex);
     //// setDisplayColor(eyesColor);
     // setEyes(eyesColor, eyesColor);
+
+    liftTo(setPoint.positionX, setPoint.positionZ);
+    //WaitTime(7500);
 }
 
 void Player::update(float deltaTime)
 {
     gameModel->pickItem(&mazePosition);
 
-    if (crash)
+    /*if (crash)
     {
         if (gameModel->getLevelMode() == NORMAL_MODE)
         {
@@ -63,7 +63,7 @@ void Player::update(float deltaTime)
         {
             cout << "TE COMI FANTASMA QLIA" << endl;
         }
-    }
+    }*/
 }
 
 void Player::move()
@@ -75,50 +75,50 @@ void Player::move()
 
         switch (direction)
         {
-        case UP:
-        {
-            setPoint.rotation = 0.0f;
+            case UP:
+            {
+                setPoint.rotation = 0.0f;
 
-            if (setPoint.positionZ < tempSetPoint.positionZ)
-                setPoint.positionZ += step;
+                if (setPoint.positionZ < tempSetPoint.positionZ)
+                    setPoint.positionZ += step;
 
-            shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
+                shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
 
-            break;
-        }
-        case DOWN:
-        {
-            setPoint.rotation = 180.0f;
+                break;
+            }
+            case DOWN:
+            {
+                setPoint.rotation = 180.0f;
 
-            if (setPoint.positionZ > tempSetPoint.positionZ)
-                setPoint.positionZ -= step;
+                if (setPoint.positionZ > tempSetPoint.positionZ)
+                    setPoint.positionZ -= step;
 
-            shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
+                shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
 
-            break;
-        }
-        case LEFT:
-        {
-            setPoint.rotation = 270.0f;
+                break;
+            }
+            case LEFT:
+            {
+                setPoint.rotation = 270.0f;
 
-            if (setPoint.positionX > tempSetPoint.positionX)
-                setPoint.positionX -= step;
+                if (setPoint.positionX > tempSetPoint.positionX)
+                    setPoint.positionX -= step;
 
-            shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
+                shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
 
-            break;
-        }
-        case RIGHT:
-        {
-            setPoint.rotation = 90.0f;
+                break;
+            }
+            case RIGHT:
+            {
+                setPoint.rotation = 90.0f;
 
-            if (setPoint.positionX < tempSetPoint.positionX)
-                setPoint.positionX += step;
+                if (setPoint.positionX < tempSetPoint.positionX)
+                    setPoint.positionX += step;
 
-            shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
+                shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
 
-            break;
-        }
+                break;
+            }
         }
 
         if (shouldUpdateTile)
@@ -156,7 +156,7 @@ void Player::setRobotMode(bool isMoving)
     }
 
     if (gameModel->getLevelMode() == NORMAL_MODE)
-        step = 0.1f / 10;
+        step = 0.1f / 11;
     else
         step = 0.1f / 9;
 }

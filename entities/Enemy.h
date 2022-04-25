@@ -29,7 +29,8 @@ public:
 protected:
     Player *player;
     float time;
-    int levelState;
+    MazePosition initialPosition;
+    int dotsForFree;
 
     void resetTime();
     int getTimeState();
@@ -42,6 +43,7 @@ protected:
     void update(float deltaTime);
     void move();
     void setRobotMode(int levelMode);
+    void enableFree(float time);
 
 private:
     void moveEnemy();

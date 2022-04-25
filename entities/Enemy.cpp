@@ -21,7 +21,6 @@ Enemy::Enemy()
 {
     player = NULL;
     time = 0;
-    levelState = 0;
     lock = 0;
     freeTiles.fill(false);
 }
@@ -33,35 +32,37 @@ void Enemy::resetTime()
 
 void Enemy::setRobotMode(int levelMode)
 {
-    if (!free)
+    if (!free && (levelMode != SETUP_MODE))
         levelMode = RETURN_CAGE;
 
     switch (levelMode)
     {
-    case NORMAL_MODE:
-    {
-        setDisplay(imageIndex);
-        // setDisplayColor(eyesColor);
-        setEyes(eyesColor, eyesColor);
-        step = 0.1f / 12;
-        break;
-    }
-    case BLINKING_MODE:
-    {
-        setDisplay(24);
-        // setDisplayColor(BLUE);
-        setEyes(BLUE, BLUE);
-        step = 0.1f / 16;
-        break;
-    }
-    case RETURN_CAGE:
-    {
-        setDisplay(30);
-        // setDisplayColor(eyesColor);
-        setEyes(eyesColor, eyesColor);
-        step = 0.1f / 8;
-        break;
-    }
+        case NORMAL_MODE:
+        case SETUP_MODE:
+        {
+            setDisplay(imageIndex);
+            // setDisplayColor(eyesColor);
+            setEyes(eyesColor, eyesColor);
+            step = 0.1f / 13;
+            break;
+        }
+        case BLINKING_MODE:
+        {
+            setDisplay(24);
+            // setDisplayColor(BLUE);
+            setEyes(BLUE, BLUE);
+            step = 0.1f / 16;
+            break;
+        }
+        case RETURN_CAGE:
+        {
+            setDisplay(30);
+            // setDisplayColor(eyesColor);
+            setEyes(eyesColor, eyesColor);
+            step = 0.1f / 8;
+            cout << "SOY OJITOS" << endl;
+            break;
+        }
     }
 }
 
@@ -104,11 +105,14 @@ int Enemy::getTimeState()
 void Enemy::update(float deltaTime)
 {
     time += deltaTime;
+    enableFree(time);
 
     if (!lock)
     {
         mazePosition = getMazePosition(setPoint);
     }
+
+    setRobotMode(gameModel->getLevelMode());
 }
 
 void Enemy::move()
@@ -117,13 +121,18 @@ void Enemy::move()
     {
         if (free)
             findPath(getTargetSetpoint(gameModel->getLevelMode()));
-        else if ((mazePosition.x == getMazePosition(getTargetSetpoint(RETURN_CAGE)).x) &&
-                 (mazePosition.y == getMazePosition(getTargetSetpoint(RETURN_CAGE)).y))
+        else if ((mazePosition.x == initialPosition.x) && (mazePosition.y == initialPosition.y))
+        {
             direction = 0;
+            if (gameModel->getLevelMode() != SETUP_MODE)
+            {
+                time = 0.0f;    // TO-DO: se puede poner un tiempo negativo, pero por algun motivo se rompe
+                                // revisar si vale la pena o lo dejamos asi
+            }
+        }
         else
-            findPath(getTargetSetpoint(RETURN_CAGE));
+            findPath(getRobotSetpoint(initialPosition, 0.0f));
     }
-
     moveEnemy();
 }
 
@@ -136,7 +145,7 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
 
     int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
 
-    // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
+    // Constants DOWN=1, RIGHT=2, UP=3, LEFT=4 are used implicitly in values from variable "i"
 
     if (count == 0)
         direction = 0;
@@ -245,7 +254,20 @@ void Enemy::moveEnemy()
     }
 
     setSetpoint(setPoint);
-    lock--;
+    if(lock)
+        lock--;
+}
+
+void Enemy::enableFree(float time)
+{
+    if (gameModel->getLevelMode() != SETUP_MODE)
+    {
+        if(direction == 0)
+            if (time > 0)       // TO-DO: remainingDots condition missing (0 red, pink; 30 cyan; 60 orange)
+            {
+                free = true;
+            }
+    }
 }
 
 // RobotSetpoint getTargetSetpoint(int levelMode)

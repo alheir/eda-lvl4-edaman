@@ -103,8 +103,12 @@ int GameModel::checkRobotCollision()
                     // detect collision between pacman and enemy
                     if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)))
                     {
-                        robots[0]->crash = true;
-                        crashedRobot = max(i, j);
+                        // if enemy is alive
+                        if (robots[max(i, j)]->free == true)
+                        {
+                            robots[0]->crash = true;
+                            crashedRobot = max(i, j);
+                        }
                     }
                 }
                 else
@@ -146,32 +150,53 @@ void GameModel::start(string maze)
     gameView->start(maze);
     gameView->setScore(score);
 
-    gameState = GameStarting;
-    levelMode = NORMAL_MODE;
+    gameState = GameStart;
 
-    gameView->setMessage(GameViewMessageReady);
+    /*gameView->setMessage(GameViewMessageReady);
     gameView->setLives(lives);
-    gameView->setEatenFruits(eatenFruits);
+    gameView->setEatenFruits(eatenFruits);*/
 
-    for (auto robot : robots)
-        robot->start();
+    /*for (auto robot : robots)
+        robot->start();*/
 }
 
 void GameModel::update(float deltaTime)
 {
-    if (gameState == GameStarting)
+    if (gameState == GameStart)
     {
-        // Just for testing
-        //gameView->playAudio("mainStart");
-        gameView->playAudio("eatingFruit");
-        gameView->setMessage(GameViewMessageReady);
-
-        WaitTime(4000);
-        gameState = GamePlaying;
-        gameView->setMessage(GameViewMessageNone);
-
         for (auto robot : robots)
-            robot->resetTime();
+        {
+            robot->start();
+        }
+        gameState = GameStarting;
+        levelMode = SETUP_MODE;
+    }
+    else if (gameState == GameStarting)
+    {
+        int readyToStart = 0;
+        for (int i = 1; i < robots.size(); i++)
+        {
+            robots[i]->update(deltaTime);
+            robots[i]->move();
+            readyToStart += robots[i]->getDirection();
+        }
+        if (readyToStart == 0)
+        {
+            // Just for testing
+            gameView->playAudio("mainStart");
+            //gameView->playAudio("eatingFruit");
+            gameView->setMessage(GameViewMessageReady);
+            gameView->setLives(lives);
+            gameView->setEatenFruits(eatenFruits);
+
+            WaitTime(4000);
+            gameState = GamePlaying;
+            gameView->setMessage(GameViewMessageNone);
+            levelMode = NORMAL_MODE;
+
+            for (auto robot : robots)
+                robot->resetTime();
+        }
     }
     else if (gameState == GamePlaying)
     {
@@ -191,9 +216,8 @@ void GameModel::update(float deltaTime)
 
         for (auto robot : robots)
         {
-            robot->move();
-            robot->setRobotMode(levelMode);
             robot->update(deltaTime);
+            robot->move();
         }
 
         int crashedRobot = checkRobotCollision();
@@ -255,12 +279,11 @@ void GameModel::loseLife()
             robots[i]->move();
         }
 
-        gameState = GameStarting;
-        levelMode = NORMAL_MODE;
+        gameState = GameStart;
 
-        gameView->setMessage(GameViewMessageReady);
+        /*gameView->setMessage(GameViewMessageReady);
         gameView->setLives(lives);
-        gameView->setEatenFruits(eatenFruits);
+        gameView->setEatenFruits(eatenFruits);*/
     }
     else
     {
@@ -271,23 +294,23 @@ void GameModel::loseLife()
 
 void GameModel::eatEnemy(int crashedRobot)
 {
-    if (!eatenEnemies[crashedRobot - 1])
+    if (!eatenEnemies[crashedRobot])
     {
-        eatenEnemies[crashedRobot - 1] = true;
+        eatenEnemies[crashedRobot] = true;
 
-        int eatenEnemiesCount = (int)eatenEnemies[0] + (int)eatenEnemies[1] +
-                                (int)eatenEnemies[2] + (int)eatenEnemies[3];
+        //int eatenEnemiesCount = (int)eatenEnemies[0] + (int)eatenEnemies[1] +
+        //                        (int)eatenEnemies[2] + (int)eatenEnemies[3];
 
         enemyScore *= 2;
         score += enemyScore;
         gameView->setScore(score);
     }
-    robots[crashedRobot]->setFree(false);
+    robots[crashedRobot]->free = false;
 }
 
 void GameModel::nextScreen(std::string maze)
 {
-    gameState = GameStarting;
+    gameState = GameStart;
 
     this->maze = maze;
     // this->maze.resize(MAZE_SIZE);
@@ -304,18 +327,11 @@ void GameModel::nextScreen(std::string maze)
     }
 
     gameView->start(maze);
-    gameView->setScore(score);
-
-    for (auto robot : robots)
-        robot->start();
-
-    // Just for testing
-    gameView->playAudio("mainStart");
 }
 
 bool GameModel::shouldEndLevel()
 {
-    return (remainingDots + remainingEnergizers) == 0;
+    return (remainingDots + remainingEnergizers) == 210;//0;
 }
 
 int GameModel::getLevelMode()

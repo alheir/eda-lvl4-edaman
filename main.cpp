@@ -89,6 +89,10 @@ int main(int, char **)
     GameModel gameModel(&mqttClient);
     GameView gameView(&mqttClient);
 
+    // Configure
+    gameModel.setGameView(&gameView);
+    gameModel.start(maze);
+
     // Robots
     Player player(&mqttClient, &gameModel);
     Red red(&mqttClient, &gameModel, &player);
@@ -102,15 +106,11 @@ int main(int, char **)
     gameModel.addRobot(&cyan);
     gameModel.addRobot(&orange);
 
-    // Configure
-    gameModel.setGameView(&gameView);
-    gameModel.start(maze);
-
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
-        // Ignores delays (from changing level)
+        // Ignore delays
         float deltaTime = (float)GetFrameTime();
-        if (deltaTime > 3.5)
+        if (deltaTime > 3)
             deltaTime = 0;
 
         // raylib
