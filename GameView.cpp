@@ -324,3 +324,9 @@ void GameView::stopAudio(string audioId)
 
     mqttClient->publish("jukebox/" + audioId + "/stop", payload);
 }
+
+void GameView::audioHandler(std::string audioId)
+{
+    stopAudio("+");
+    playAudio(audioId);
+}

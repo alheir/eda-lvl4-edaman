@@ -49,6 +49,8 @@ public:
     void playAudio(std::string audioId);
     void stopAudio(std::string audioId);
 
+    void audioHandler(std::string audioId);
+
 private:
     struct Energizer
     {

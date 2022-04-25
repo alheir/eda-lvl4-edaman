@@ -47,14 +47,16 @@ public:
 
     virtual void start() = 0;
     virtual void update(float deltaTime);
-    virtual void move() = 0;
     virtual void resetTime();
     virtual void setRobotMode(int levelMode);
+
+    void forceMove();
 
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();
     int getDirection();
-    void setFree(bool free);
+    void setFree();
+    bool getFree();
     bool crash;
 
 protected:

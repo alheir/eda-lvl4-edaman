@@ -21,37 +21,26 @@ Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *
     this->player = player;
     this->red = red;
 
-    // mazePosition = {11, 17};
-    mazePosition = {26, 32}; // para debug
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
-
     imageIndex = 20;
-    eyesColor = SKYBLUE;
-
-    setRobotMode(NORMAL_MODE);
-
-    // liftTo(setPoint.positionX, setPoint.positionZ);
-    // WaitTime(7000);
 }
 
 void Cyan::start()
 {
-    free = false;
-    free = true; // para debug
-    direction = 0;
-    lock = 0;
-    crash = false;
-
-    // mazePosition = {11, 17};
-    mazePosition = {26, 32}; // para debug
+    mazePosition = {11, 17};
+    // mazePosition = {26, 32}; // para debug
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
+    direction = 0;
 
     imageIndex = 20;
     eyesColor = SKYBLUE;
 
     setRobotMode(NORMAL_MODE);
+
+    free = false;
+    lock = 0;
+    crash = false;
+
+    forceMove();
 }
 
 RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
@@ -104,11 +93,6 @@ RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
     {
         MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
         returnSetpoint = getRobotSetpoint(targetTile, setPoint.rotation);
-    }
-
-    else if (levelMode == RETURN_CAGE)
-    {
-        returnSetpoint = getRobotSetpoint(scatteringPoint, 0.0f);
     }
 
     else

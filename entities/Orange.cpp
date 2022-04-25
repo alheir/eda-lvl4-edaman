@@ -20,37 +20,26 @@ Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     this->robotId = "robot5";
     this->player = player;
 
-    // mazePosition = {15, 17};
-    mazePosition = {1, 32}; // para debug
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
-
     imageIndex = 22;
-    eyesColor = ORANGE;
-
-    setRobotMode(NORMAL_MODE);
-
-    // liftTo(setPoint.positionX, setPoint.positionZ);
-    // WaitTime(7000);
 }
 
 void Orange::start()
 {
-    free = false;
-    free = true; // para debug
-    direction = 0;
-    lock = 0;
-    crash = false;
-
-    // mazePosition = {15, 17};
-    mazePosition = {1, 32}; // para debug
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
+    mazePosition = {16, 17};
+    // mazePosition = {1, 32}; // para debug
+    setPoint = getRobotSetpoint(mazePosition, 270.0f);
+    direction = LEFT;
 
     imageIndex = 22;
     eyesColor = ORANGE;
 
     setRobotMode(NORMAL_MODE);
+
+    free = false;
+    lock = 0;
+    crash = false;
+
+    forceMove();
 }
 
 RobotSetpoint Orange::getTargetSetpoint(int levelMode)
@@ -91,11 +80,6 @@ RobotSetpoint Orange::getTargetSetpoint(int levelMode)
     {
         MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
         returnSetpoint = getRobotSetpoint(targetTile, setPoint.rotation);
-    }
-
-    else if (levelMode == RETURN_CAGE)
-    {
-        returnSetpoint = getRobotSetpoint(scatteringPoint, 0.0f);
     }
 
     else

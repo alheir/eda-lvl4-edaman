@@ -23,18 +23,8 @@ Red::Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     this->robotId = "robot2";
     this->player = player;
 
-    // mazePosition = {13, 14};
-    mazePosition = {26, 4}; // para debug
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
-
     imageIndex = 16;
     eyesColor = RED;
-
-    setRobotMode(NORMAL_MODE);
-
-    // liftTo(setPoint.positionX, setPoint.positionZ);
-    // WaitTime(7000);
 }
 
 void Red::start()
@@ -44,15 +34,18 @@ void Red::start()
     lock = 0;
     crash = false;
 
-    // mazePosition = {13, 14};
-    mazePosition = {26, 4}; // para debug
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    mazePosition = {13, 14};
+    // mazePosition = {26, 4}; // para debug
+    setPoint = getRobotSetpoint(mazePosition, 270.0f);
+    direction = LEFT;
     // setPoint.positionX = +0.0025f;
 
     imageIndex = 16;
     eyesColor = RED;
 
     setRobotMode(NORMAL_MODE);
+
+    forceMove();
 }
 
 RobotSetpoint Red::getTargetSetpoint(int levelMode)
@@ -80,11 +73,6 @@ RobotSetpoint Red::getTargetSetpoint(int levelMode)
     {
         MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
         returnSetpoint = getRobotSetpoint(targetTile, setPoint.rotation);
-    }
-
-    else if (levelMode == RETURN_CAGE)
-    {
-        returnSetpoint = getRobotSetpoint(scatteringPoint, 0.0f);
     }
 
     else

@@ -17,11 +17,14 @@
 
 using namespace std;
 
+static const int blueModeFrameIndex = 24;
+static const int eyesModeFrameIndex = 30;
+
 Enemy::Enemy()
 {
     player = NULL;
     time = 0;
-    levelState = 0;
+    robotState = 0;
     lock = 0;
     freeTiles.fill(false);
 }
@@ -33,35 +36,37 @@ void Enemy::resetTime()
 
 void Enemy::setRobotMode(int levelMode)
 {
-    if (!free)
-        levelMode = RETURN_CAGE;
+    robotState = levelMode;
 
     switch (levelMode)
     {
     case NORMAL_MODE:
-    {
         setDisplay(imageIndex);
-        // setDisplayColor(eyesColor);
         setEyes(eyesColor, eyesColor);
-        step = 0.1f / 12;
+        step = 0.6f / 60.0f;
         break;
-    }
+
     case BLINKING_MODE:
-    {
-        setDisplay(24);
-        // setDisplayColor(BLUE);
+        setDisplay(blueModeFrameIndex);
         setEyes(BLUE, BLUE);
-        step = 0.1f / 16;
+        step = 0.4f / 60.0f;
         break;
-    }
+
     case RETURN_CAGE:
-    {
-        setDisplay(30);
-        // setDisplayColor(eyesColor);
+        free = false;
+        setDisplay(eyesModeFrameIndex);
         setEyes(eyesColor, eyesColor);
-        step = 0.1f / 8;
+        //step = 0.1f / 8;
+        setPoint = {0.0f, 0.0f, 0.0f};
+        mazePosition = getMazePosition(setPoint);
+        liftTo(0.0f, 0.0f);
+        forceMove();
+        lock = 0;
+        free = true;
         break;
-    }
+
+    default:
+        break;
     }
 }
 
@@ -105,26 +110,43 @@ void Enemy::update(float deltaTime)
 {
     time += deltaTime;
 
+    // Búsqueda de la siguiente dirección
     if (!lock)
     {
         mazePosition = getMazePosition(setPoint);
-    }
-}
 
-void Enemy::move()
-{
-    if (!lock)
-    {
         if (free)
             findPath(getTargetSetpoint(gameModel->getLevelMode()));
-        else if ((mazePosition.x == getMazePosition(getTargetSetpoint(RETURN_CAGE)).x) &&
-                 (mazePosition.y == getMazePosition(getTargetSetpoint(RETURN_CAGE)).y))
-            direction = 0;
-        else
-            findPath(getTargetSetpoint(RETURN_CAGE));
     }
 
-    moveEnemy();
+    if (free)
+    {
+        switch (direction)
+        {
+        case UP:
+            setPoint.positionZ += step;
+            break;
+
+        case DOWN:
+            setPoint.positionZ -= step;
+            break;
+
+        case LEFT:
+            setPoint.positionX -= step;
+            break;
+
+        case RIGHT:
+            setPoint.positionX += step;
+            break;
+
+        default:
+            break;
+        }
+
+        setSetpoint(setPoint);
+
+        lock--;
+    }
 }
 
 void Enemy::findPath(RobotSetpoint targetSetpoint)
@@ -139,48 +161,66 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     cout << "Player en (" << targetSetpoint.positionX << ", " << targetSetpoint.positionZ << ")" << endl;
     cout << "(" << mazePosition2.x << ", " << mazePosition2.y << ")" << endl;*/
 
-    checkFreeTiles();
-
-    int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
-
-    // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
-
-    if (count == 0)
-        direction = 0;
-
-    else if (count == 1)
+    if (mazePosition.y >= 15 && mazePosition.y <= 18)
     {
-        for (int i = 0; i < 4; i++)
+        if (mazePosition.x >= 11 && mazePosition.x < 13)
         {
-            if (freeTiles[i])
-                direction = i + 1;
+            direction = RIGHT;
+        }
+        else if (mazePosition.x <= 16 && mazePosition.x > 14)
+        {
+            direction = LEFT;
+        }
+        else if (mazePosition.x >= 13 && mazePosition.x <= 14)
+        {
+            direction = UP;
         }
     }
     else
     {
-        float distances[] = {0.0f, 0.0f, 0.0f, 0.0f};
-        Vector2 nextStep[] = {{0.0f, -0.1f}, {0.1f, 0.0f}, {0.0f, 0.1f}, {-0.1f, 0.0f}};
+        checkFreeTiles();
 
-        for (int i = 0; i < 4; i++)
+        int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
+
+        // Constants DOWN = 1, RIGHT = 2, UP = 3, LEFT = 4 are used implicitly in values from variable "i"
+
+        if (count == 0)
+            direction = 0;
+
+        else if (count == 1)
         {
-            if (freeTiles[i])
+            for (int i = 0; i < 4; i++)
             {
-                Vector2 distance = {setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
-                                    setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ};
-
-                distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
+                if (freeTiles[i])
+                    direction = i + 1;
             }
         }
-
-        float minDistance = 0.0f;
-        for (int i = 0; i < 4; i++)
+        else
         {
-            if (distances[i] != 0.0f)
+            float distances[] = {0.0f, 0.0f, 0.0f, 0.0f};
+            Vector2 nextStep[] = {{0.0f, -0.1f}, {0.1f, 0.0f}, {0.0f, 0.1f}, {-0.1f, 0.0f}};
+
+            for (int i = 0; i < 4; i++)
             {
-                if ((minDistance == 0.0f) || (distances[i] < minDistance))
+                if (freeTiles[i])
                 {
-                    minDistance = distances[i];
-                    direction = i + 1;
+                    Vector2 distance = {setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
+                                        setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ};
+
+                    distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
+                }
+            }
+
+            float minDistance = 0.0f;
+            for (int i = 0; i < 4; i++)
+            {
+                if (distances[i] != 0.0f)
+                {
+                    if ((minDistance == 0.0f) || (distances[i] < minDistance))
+                    {
+                        minDistance = distances[i];
+                        direction = i + 1;
+                    }
                 }
             }
         }
@@ -193,6 +233,24 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
         case UP: { cout << "UP" << endl; break; }
         case LEFT: { cout << "LEFT" << endl; break; }
     }*/
+
+    switch (direction)
+    {
+    case DOWN:
+        setPoint.rotation = 180.0f;
+        break;
+    case RIGHT:
+        setPoint.rotation = 90.0f;
+        break;
+    case UP:
+        setPoint.rotation = 0.0f;
+        break;
+    case LEFT:
+        setPoint.rotation = 270.0f;
+        break;
+    default:
+        break;
+    }
 }
 
 void Enemy::checkFreeTiles()
@@ -236,37 +294,3 @@ void Enemy::checkFreeTiles()
 
     crash = false;
 }
-
-void Enemy::moveEnemy()
-{
-    switch (direction)
-    {
-    case UP:
-    {
-        setPoint.positionZ += step;
-        break;
-    }
-    case DOWN:
-    {
-        setPoint.positionZ -= step;
-        break;
-    }
-    case LEFT:
-    {
-        setPoint.positionX -= step;
-        break;
-    }
-    case RIGHT:
-    {
-        setPoint.positionX += step;
-        break;
-    }
-    }
-
-    setSetpoint(setPoint);
-    lock--;
-}
-
-// RobotSetpoint getTargetSetpoint(int levelMode)
-//{
-// }

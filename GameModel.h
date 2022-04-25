@@ -12,6 +12,8 @@
 #ifndef _GAMEMODEL_H
 #define _GAMEMODEL_H
 
+#include <array>
+
 #define MAZE_WIDTH 28
 #define MAZE_HEIGHT 36
 #define MAZE_SIZE (MAZE_WIDTH * MAZE_HEIGHT)
@@ -83,15 +85,22 @@ private:
     int remainingDots;
     int remainingEnergizers;
 
+    int eatenDots;
+
     int score; // agregado
     int lives;
     std::list<int> eatenFruits;
-    bool eatenEnemies[4];
+    std::array<bool, 4> eatenEnemies;
     int enemyScore;
+    bool firstBloodFlag;
 
     int checkRobotCollision();
     void loseLife();
     void eatEnemy(int crashedRobot);
+
+    int timeLord;
+    bool waitingForTimeLord = false;
+    void deployTimeLord(int seconds);
 };
 
 #endif

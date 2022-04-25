@@ -39,6 +39,11 @@ void Robot::setRobotMode(int levelMode)
 {
 }
 
+void Robot::forceMove()
+{
+    setSetpoint(setPoint);
+}
+
 RobotSetpoint Robot::getSetpoint()
 {
     return setPoint;
@@ -54,9 +59,14 @@ int Robot::getDirection()
     return direction;
 }
 
-void Robot::setFree(bool free)
+void Robot::setFree()
 {
-    this->free = free;
+    free = true;
+}
+
+bool Robot::getFree()
+{
+    return free;
 }
 
 MazePosition Robot::getMazePosition(RobotSetpoint setpoint)

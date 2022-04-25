@@ -20,22 +20,22 @@ using namespace std;
 const int SCORE_PER_DOT = 10;
 const int SCORE_PER_ENERGIZER = 50;
 
-GameModel::GameModel(MQTTClient* mqttClient)
+GameModel::GameModel(MQTTClient *mqttClient)
 {
     this->mqttClient = mqttClient;
 }
 
-void GameModel::setGameView(GameView* gameView)
+void GameModel::setGameView(GameView *gameView)
 {
     this->gameView = gameView;
 }
 
-void GameModel::addRobot(Robot* robot)
+void GameModel::addRobot(Robot *robot)
 {
     robots.push_back(robot);
 }
 
-bool GameModel::isTileFree(const MazePosition& position)
+bool GameModel::isTileFree(const MazePosition &position)
 {
     if ((position.x < 0) || (position.x >= MAZE_WIDTH))
         return false;
@@ -61,37 +61,37 @@ int GameModel::checkRobotCollision()
         int direction = robots[i]->getDirection();
         switch (direction)
         {
-            case UP:
-            {
-                mazePosition1.y -= 1;
-                mazePosition2.y -= 2;
-                break;
-            }
-            case LEFT:
-            {
-                mazePosition1.x -= 1;
-                mazePosition2.x -= 2;
-                break;
-            }
-            case DOWN:
-            {
-                mazePosition1.y += 1;
-                mazePosition2.y += 2;
-                break;
-            }
-            case RIGHT:
-            {
-                mazePosition1.x += 1;
-                mazePosition2.x += 2;
-                break;
-            }
-            default:
-            {
-                cout << "Error in robot " << i << " direction" << endl;
-                break;
-            }
+        case UP:
+        {
+            mazePosition1.y -= 1;
+            mazePosition2.y -= 2;
+            break;
         }
-        
+        case LEFT:
+        {
+            mazePosition1.x -= 1;
+            mazePosition2.x -= 2;
+            break;
+        }
+        case DOWN:
+        {
+            mazePosition1.y += 1;
+            mazePosition2.y += 2;
+            break;
+        }
+        case RIGHT:
+        {
+            mazePosition1.x += 1;
+            mazePosition2.x += 2;
+            break;
+        }
+        default:
+        {
+            cout << "Error in robot " << i << " direction" << endl;
+            break;
+        }
+        }
+
         for (int j = 0; j < robots.size(); j++)
         {
             if (i != j)
@@ -131,7 +131,9 @@ void GameModel::start(string maze)
     remainingDots = 0;
     remainingEnergizers = 0;
 
-    for (auto c : maze)
+    eatenDots = 0;
+
+    for (auto &c : maze)
     {
         if (c == '+')
             remainingDots++;
@@ -143,6 +145,8 @@ void GameModel::start(string maze)
     lives = 4;
     eatenFruits.clear();
 
+    firstBloodFlag = false;
+
     gameView->start(maze);
     gameView->setScore(score);
 
@@ -152,8 +156,9 @@ void GameModel::start(string maze)
     gameView->setMessage(GameViewMessageReady);
     gameView->setLives(lives);
     gameView->setEatenFruits(eatenFruits);
+    gameView->stopAudio("+");
 
-    for (auto robot : robots)
+    for (auto &robot : robots)
         robot->start();
 }
 
@@ -161,56 +166,95 @@ void GameModel::update(float deltaTime)
 {
     gameStateTime += deltaTime;
 
-    if (levelMode == BLINKING_MODE)
+    if (waitingForTimeLord && gameStateTime > 1.0f && !((int)gameStateTime % timeLord))
     {
-        if (gameStateTime > 7)
-        {
-            levelMode = NORMAL_MODE;
-            gameStateTime = 0.0f;
+        for (auto &robot : robots)
+            robot->forceMove();
 
-            for (auto robot : robots)
-                robot->resetTime();
-        }
+        waitingForTimeLord = false;
     }
 
-    for (auto robot : robots)
-    {   
-        robot->move();
-        robot->setRobotMode(levelMode);
-        robot->update(deltaTime);
-    }
-
-    int crashedRobot = checkRobotCollision();
-
-    if (robots[0]->crash)
+    if (!waitingForTimeLord)
     {
-        if (levelMode == NORMAL_MODE)
+        if (levelMode == BLINKING_MODE)
         {
-            loseLife();
+            if (gameStateTime > 1.0f && !((int)gameStateTime % 7))
+            {
+                levelMode = NORMAL_MODE;
+                gameView->stopAudio("backgroundEnergizer");
+
+                for (auto &robot : robots)
+                    robot->resetTime();
+            }
+
         }
+
+        int crashedRobot = checkRobotCollision();
+
+        if (robots[0]->crash)
+        {
+            if (levelMode == NORMAL_MODE)
+            {
+                loseLife();
+            }
+            else
+            {
+                robots[0]->crash = false;
+                eatEnemy(crashedRobot);
+            }
+        }
+
+        for (auto &robot : robots)
+        {
+            robot->setRobotMode(levelMode);
+            robot->update(deltaTime);
+        }
+
+        if (gameStateTime > 1.0f && !((int)gameStateTime % 3) && !robots[2]->getFree())
+            robots[2]->setFree();
+
+        // Para sacar a cyan y orange en función de dots...
+        if (!firstBloodFlag)
+        {
+            if (eatenDots >= 30 && !robots[3]->getFree())
+                robots[3]->setFree();
+
+            if (eatenDots >= 60 && !robots[4]->getFree())
+                robots[4]->setFree();
+        }
+
+        // Para sacar a cyan y orange luego de haber muerto...
         else
         {
-            robots[0]->crash = false;
-            eatEnemy(crashedRobot);
+            if (gameStateTime > 1.0f && !((int)gameStateTime % 5) && !robots[3]->getFree())
+                robots[3]->setFree();
+
+            if (gameStateTime > 1.0f && !((int)gameStateTime % 7) && !robots[4]->getFree())
+                robots[4]->setFree();
         }
-    }
 
-    if (gameState == GameStarting)
-    {
-        // Just for testing
-        //gameView->playAudio("mainStart");
-        gameView->playAudio("eatingFruit");
+        if (gameState == GameStarting)
+        {
+            gameView->stopAudio("backgroundEnergizer");
+            gameView->stopAudio("backgroundGhostsCaptured");
+            gameView->playAudio("mainStart");
 
-        WaitTime(4000);
-        gameState = GamePlaying;
+            deployTimeLord(5);
+            gameState = GamePlaying;
 
-        for (auto robot : robots)
-            robot->resetTime();
+            for (auto &robot : robots)
+                robot->resetTime();
+        }
+
+        if(shouldEndLevel())
+            newLevel(maze);
     }
 }
 
 void GameModel::pickItem(MazePosition *position)
 {
+    
+
     char tile = this->maze[position->x + MAZE_WIDTH * position->y];
     if (tile == '+' || tile == '#')
     {
@@ -219,23 +263,28 @@ void GameModel::pickItem(MazePosition *position)
 
         switch (tile)
         {
-            case '+':
-            {
-                remainingDots--;
-                score += SCORE_PER_DOT;
-                break;
-            }
-            case '#':
-            {
-                remainingEnergizers--;
-                score += SCORE_PER_ENERGIZER;
-                gameStateTime = 0.0f;
-                levelMode = BLINKING_MODE;
-                for (int i = 0; i < 4; i++)
-                    eatenEnemies[i] = false;
-                enemyScore = 200;
-                break;
-            }
+        case '+':
+        {
+            remainingDots--;
+            eatenDots++;
+            score += SCORE_PER_DOT;
+            break;
+        }
+        case '#':
+        {
+            remainingEnergizers--;
+            score += SCORE_PER_ENERGIZER;
+            gameStateTime = 0.0f;
+            levelMode = BLINKING_MODE;
+            gameView->stopAudio("backgroundEnergizer");
+            gameView->playAudio("backgroundEnergizer");
+            for (int i = 0; i < 4; i++)
+                eatenEnemies[i] = false;
+            enemyScore = 200;
+            break;
+        }
+        default:
+            break;
         }
 
         gameView->setScore(score);
@@ -249,7 +298,6 @@ void GameModel::loseLife()
         for (int i = 0; i < robots.size(); i++)
         {
             robots[i]->start();
-            robots[i]->move();
         }
 
         gameState = GameStarting;
@@ -264,6 +312,9 @@ void GameModel::loseLife()
         cout << "GAME OVER" << endl;
         cout << "Te dejo seguir jugando pq no se como cerrar el programa nomas" << endl;
     }
+
+    gameView->playAudio("mainLost");
+    deployTimeLord(6);
 }
 
 void GameModel::eatEnemy(int crashedRobot)
@@ -279,7 +330,11 @@ void GameModel::eatEnemy(int crashedRobot)
         score += enemyScore;
         gameView->setScore(score);
     }
-    robots[crashedRobot]->setFree(false);
+    robots[crashedRobot]->setRobotMode(RETURN_CAGE);
+    gameView->playAudio("eatingGhost");
+    gameView->stopAudio("backgroundEnergizer");
+    gameView->playAudio("backgroundGhostsCaptured");
+    deployTimeLord(6);
 }
 
 void GameModel::newLevel(std::string maze)
@@ -292,7 +347,7 @@ void GameModel::newLevel(std::string maze)
     remainingDots = 0;
     remainingEnergizers = 0;
 
-    for (auto c : maze)
+    for (auto &c : maze)
     {
         if (c == '+')
             remainingDots++;
@@ -303,19 +358,25 @@ void GameModel::newLevel(std::string maze)
     gameView->start(maze);
     gameView->setScore(score);
 
-    for (auto robot : robots)
+    for (auto &robot : robots)
         robot->start();
 
-    // Just for testing
-    gameView->playAudio("mainStart");
+    gameView->playAudio("mainWon");
 }
 
 bool GameModel::shouldEndLevel()
 {
-    return (remainingDots + remainingEnergizers) == 0; //200;
+    return (remainingDots + remainingEnergizers) == 0; // 200;
 }
 
 int GameModel::getLevelMode()
 {
     return levelMode;
+}
+
+void GameModel::deployTimeLord(int seconds)
+{
+    timeLord = seconds;
+    waitingForTimeLord = true;
+    gameStateTime = 0.0f;
 }

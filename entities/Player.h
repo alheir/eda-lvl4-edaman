@@ -21,7 +21,6 @@ public:
 
     void start();
     void update(float deltaTime);
-    void move();
 
     void setDirection(int xDir, int yDir);
 

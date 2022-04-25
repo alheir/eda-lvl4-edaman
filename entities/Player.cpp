@@ -23,30 +23,21 @@ Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
     this->robotId = "robot1";
 
     eyesColor = YELLOW;
-
-    mazePosition = {13, 26};
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
-
-    setRobotMode(false);
-
-    // liftTo(setPoint.positionX, setPoint.positionZ);
-    // WaitTime(7000);
 }
 
 void Player::start()
 {
-    direction = UP;
     crash = false;
 
     mazePosition = {13, 26};
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
+    //setPoint.positionX = +0.0025f;
+    direction = UP;
+    liftTo(setPoint.positionX, setPoint.positionZ);
 
     setRobotMode(false);
-    // setDisplay(imageIndex);
-    //// setDisplayColor(eyesColor);
-    // setEyes(eyesColor, eyesColor);
+
+    forceMove();
 }
 
 void Player::update(float deltaTime)
@@ -64,10 +55,7 @@ void Player::update(float deltaTime)
             cout << "TE COMI FANTASMA QLIA" << endl;
         }
     }
-}
 
-void Player::move()
-{
     if (shouldMove())
     {
         RobotSetpoint tempSetPoint = getRobotSetpoint(nextTile, setPoint.rotation);
@@ -144,21 +132,19 @@ void Player::setRobotMode(bool isMoving)
             imageIndex = 1;
 
         setDisplay(imageIndex);
-        // setDisplayColor(eyesColor);
         setEyes(eyesColor, eyesColor);
     }
     else
     {
         imageIndex = 0;
         setDisplay(imageIndex);
-        // setDisplayColor(eyesColor);
         setEyes(eyesColor, eyesColor);
     }
 
     if (gameModel->getLevelMode() == NORMAL_MODE)
-        step = 0.1f / 10;
+        step = 0.64f / 60.0f;
     else
-        step = 0.1f / 9;
+        step = 0.72f / 60.0f;
 }
 
 void Player::setDirection(int xDir, int yDir)
@@ -210,6 +196,6 @@ bool Player::shouldMove()
     default:
         break;
     }
-    
+
     return (gameModel->isTileFree(nextTile));
 }

@@ -109,7 +109,7 @@ int main(int, char **)
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
         float deltaTime = (float)GetFrameTime();
-        if (deltaTime > 3.5)
+        if (deltaTime > 4.5)
             deltaTime = 0;
 
         // raylib

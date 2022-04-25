@@ -29,7 +29,7 @@ public:
 protected:
     Player *player;
     float time;
-    int levelState;
+    int robotState;
 
     void resetTime();
     int getTimeState();
@@ -40,11 +40,9 @@ protected:
 
     int lock;
     void update(float deltaTime);
-    void move();
     void setRobotMode(int levelMode);
 
 private:
-    void moveEnemy();
     void findPath(RobotSetpoint targetSetpoint);
 };
 
