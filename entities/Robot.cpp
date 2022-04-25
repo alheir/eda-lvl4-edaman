@@ -1,7 +1,12 @@
 /**
- * Robot base class.
+ * @file Robot.cpp
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Clase base de robots
+ * @version 0.1
+ * @date 2022-04-25
  *
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
+ *
  */
 
 #include <iostream>
@@ -127,7 +132,7 @@ void Robot::setDisplayColor(Color color)
 {
     vector<char> payload(768);
 
-    for(int i = 0; i < 256; i += 3)
+    for (int i = 0; i < 256; i += 3)
     {
         payload[i] = color.r;
         payload[i + 1] = color.g;

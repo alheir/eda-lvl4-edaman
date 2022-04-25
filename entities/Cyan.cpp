@@ -1,3 +1,14 @@
+/**
+ * @file Cyan.cpp
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Clase de robot cyan
+ * @version 0.1
+ * @date 2022-04-25
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include "Cyan.h"
 
 const MazePosition scatteringPoint = {24, 35};
@@ -103,7 +114,7 @@ RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
     else
     {
         returnSetpoint = setPoint;
-    }    
+    }
 
     return returnSetpoint;
 }

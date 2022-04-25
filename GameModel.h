@@ -1,9 +1,12 @@
 /**
- * EDA-Man game model
+ * @file GameModel.h
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Control del game model
+ * @version 0.1
+ * @date 2022-04-25
  *
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
  *
- * Controls the game model.
  */
 
 #ifndef _GAMEMODEL_H

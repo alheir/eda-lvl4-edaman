@@ -1,3 +1,14 @@
+/**
+ * @file Red.cpp
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Clase de robot red
+ * @version 0.1
+ * @date 2022-04-25
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include "Red.h"
 #include <iostream>
 

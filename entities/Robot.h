@@ -1,7 +1,12 @@
 /**
- * Robot base class.
+ * @file Robot.h
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Clase base de robots
+ * @version 0.1
+ * @date 2022-04-25
  *
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
+ *
  */
 
 #ifndef _ROBOT_H
@@ -9,7 +14,13 @@
 
 class GameModel;
 
-enum DIRECTIONS {DOWN = 1, RIGHT, UP, LEFT};
+enum DIRECTIONS
+{
+    DOWN = 1,
+    RIGHT,
+    UP,
+    LEFT
+};
 
 struct RobotSetpoint
 {

@@ -1,9 +1,12 @@
-/*
- * EDA-Man
+/**
+ * @file main.cpp
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Main file de un EDA-Man
+ * @version 0.1
+ * @date 2022-04-25
  *
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
  *
- * Controls an EDA-Man game.
  */
 
 #include <iostream>
@@ -40,7 +43,7 @@ int main(int, char **)
 
     // raylib
     InitWindow(100, 100, "EDA-Man Controller");
-    SetWindowPosition(1200, 200);    
+    SetWindowPosition(1200, 200);
     SetTargetFPS(60);
 
     // 28 columns (0-27)
@@ -106,7 +109,7 @@ int main(int, char **)
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
         float deltaTime = (float)GetFrameTime();
-        if(deltaTime > 3.5)
+        if (deltaTime > 3.5)
             deltaTime = 0;
 
         // raylib
@@ -129,7 +132,7 @@ int main(int, char **)
     }
 
     // No necesario en la versión cpp (causa memoryleaks)
-    //CloseWindow(); 
+    // CloseWindow();
 
     cout << "Disconnected." << endl;
 }

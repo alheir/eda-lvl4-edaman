@@ -1,3 +1,14 @@
+/**
+ * @file Pink.cpp
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Clase de robot pink
+ * @version 0.1
+ * @date 2022-04-25
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include "Pink.h"
 
 const MazePosition scatteringPoint = {3, 0};

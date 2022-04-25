@@ -1,4 +1,13 @@
-// Clase genérica de enemigos (red, pink, cyan, orange)
+/**
+ * @file Enemy.h
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Clase base de robots enemigos
+ * @version 0.1
+ * @date 2022-04-25
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 
 #ifndef ENEMY_H
 #define ENEMY_H
@@ -12,11 +21,11 @@
 #define ESCAPE 3
 
 class Enemy : public Robot
-{   
+{
 public:
     Enemy();
     virtual RobotSetpoint getTargetSetpoint(int levelMode) = 0;
-    
+
 protected:
     Player *player;
     float time;

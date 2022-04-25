@@ -1,5 +1,15 @@
+/**
+ * @file Player.cpp
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Clase de robot player
+ * @version 0.1
+ * @date 2022-04-25
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include "Player.h"
-#include <cmath>
 #include <iostream>
 
 using namespace std;
@@ -67,6 +77,8 @@ void Player::move()
         {
         case UP:
         {
+            setPoint.rotation = 0.0f;
+
             if (setPoint.positionZ < tempSetPoint.positionZ)
                 setPoint.positionZ += step;
 
@@ -76,6 +88,8 @@ void Player::move()
         }
         case DOWN:
         {
+            setPoint.rotation = 180.0f;
+
             if (setPoint.positionZ > tempSetPoint.positionZ)
                 setPoint.positionZ -= step;
 
@@ -85,6 +99,8 @@ void Player::move()
         }
         case LEFT:
         {
+            setPoint.rotation = 270.0f;
+
             if (setPoint.positionX > tempSetPoint.positionX)
                 setPoint.positionX -= step;
 
@@ -94,6 +110,8 @@ void Player::move()
         }
         case RIGHT:
         {
+            setPoint.rotation = 90.0f;
+
             if (setPoint.positionX < tempSetPoint.positionX)
                 setPoint.positionX += step;
 
@@ -158,10 +176,7 @@ void Player::setDirection(int xDir, int yDir)
         else if (yDir < 0)
             direction = DOWN;
 
-        if (shouldMove())
-            setPoint.rotation = 180.0f * (float)atan2(-yDir, xDir) / (float)PI + 90.0f;
-
-        else
+        if (!shouldMove())
             direction = lastDirection;
     }
 }
