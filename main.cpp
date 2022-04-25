@@ -6,10 +6,6 @@
  * Controls an EDA-Man game.
  */
 
-
-//TODO: hacer clientes mqtt para cada robot
-//TODO: revisar bien lo hecho hoy (12-04-2022)
-
 #include <iostream>
 #include <cstring>
 
@@ -45,7 +41,8 @@ int main(int, char **)
     cout << "Connected." << endl;
 
     // raylib
-    InitWindow(640, 480, "EDA-Man Controller");
+    InitWindow(100, 100, "EDA-Man Controller");
+    SetWindowPosition(1200, 200);    
     SetTargetFPS(60);
 
     // 28 columns (0-27)
