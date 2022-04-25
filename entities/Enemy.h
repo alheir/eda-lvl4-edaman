@@ -5,14 +5,16 @@
 
 #include "Robot.h"
 #include "Player.h"
+#include <array>
 
 #define DISPERSION 1
 #define PERSECUTION 2
 #define ESCAPE 3
 
 class Enemy : public Robot
-{
+{   
 public:
+    Enemy();
     virtual RobotSetpoint getTargetSetpoint(int levelMode) = 0;
     
 protected:
@@ -23,10 +25,11 @@ protected:
     void resetTime();
     int getTimeState();
 
-    bool freeTiles[4] = {false, false, false, false};    // down, right, up, left
+    std::array<bool, 4> freeTiles; // down, right, up, left
+
     void checkFreeTiles();
 
-    int lock = 0;
+    int lock;
     void update(float deltaTime);
     void move();
     void setRobotMode(int levelMode);

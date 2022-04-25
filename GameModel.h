@@ -47,7 +47,7 @@ enum GameState
 #include "MQTTClient.h"
 
 #include "GameView.h"
-#include "Robot.h"
+#include "entities/Robot.h"
 
 class GameModel
 {

@@ -9,13 +9,12 @@
 #include <cstring>
 
 #include "Robot.h"
-#include "GameModel.h"
 
 using namespace std;
 
 Robot::Robot()
 {
-    displayImages = LoadImage("../RobotImages.png");
+    displayImages = LoadImage("RobotImages.png");
 }
 
 Robot::~Robot()

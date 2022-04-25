@@ -6,6 +6,15 @@
 
 using namespace std;
 
+Enemy::Enemy()
+{
+    player = NULL;
+    time = 0;
+    levelState = 0;
+    lock = 0;
+    freeTiles.fill(false);
+}
+
 void Enemy::resetTime()
 {
     time = 0;
@@ -46,9 +55,7 @@ void Enemy::setRobotMode(int levelMode)
 }
 
 int Enemy::getTimeState()
-{
-    return PERSECUTION;       
-    /*
+{     
     if (time < 7)
     {
         return DISPERSION;
@@ -81,7 +88,6 @@ int Enemy::getTimeState()
     {
         return PERSECUTION;
     }
-    */
 }
 
 void Enemy::update(float deltaTime)
@@ -181,10 +187,7 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
 
 void Enemy::checkFreeTiles()
 {
-    freeTiles[0] = false;
-    freeTiles[1] = false;
-    freeTiles[2] = false;
-    freeTiles[3] = false;
+    freeTiles.fill(false);
 
     // if crashes, don't want to analyze the original direction
     // if doesn't crash, don't want to analyze the opposite direction

@@ -26,8 +26,7 @@ struct RobotSetpoint
 };
 
 #include <string>
-#include "MQTTClient.h"
-#include "GameModel.h"
+#include "../GameModel.h"
 
 class Robot
 {

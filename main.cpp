@@ -16,14 +16,12 @@
 #include "GameModel.h"
 #include "GameView.h"
 
-#include "Player.h"
-#include "Enemy.h"
-#include "Red.h"
-#include "Pink.h"
-#include "Cyan.h"
-#include "Orange.h"
-
-#include "Robot.h"
+#include "entities/Player.h"
+#include "entities/Enemy.h"
+#include "entities/Red.h"
+#include "entities/Pink.h"
+#include "entities/Cyan.h"
+#include "entities/Orange.h"
 
 using namespace std;
 
@@ -130,7 +128,8 @@ int main(int, char **)
         }
     }
 
-    CloseWindow();
+    // No necesario en la versión cpp (causa memoryleaks)
+    //CloseWindow(); 
 
     cout << "Disconnected." << endl;
 }
