@@ -61,29 +61,26 @@ RobotSetpoint Orange::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-        case DISPERSION:
-            returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
-            break;
-
-        case PERSECUTION:
-        {
-            Vector2 vector = {setPoint.positionX - player->getSetpoint().positionX,
-                              setPoint.positionZ - player->getSetpoint().positionZ};
-
-            if ((vector.x * vector.x) + (vector.y * vector.y) > 0.64f)
-            {
-                returnSetpoint = player->getSetpoint();
-            }
-            else
+            case DISPERSION:
             {
                 returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
+                break;
             }
+            case PERSECUTION:
+            {
+                Vector2 vector = {setPoint.positionX - player->getSetpoint().positionX,
+                                  setPoint.positionZ - player->getSetpoint().positionZ};
 
-            break;
-        }
-
-        default:
-            break;
+                if ((vector.x * vector.x) + (vector.y * vector.y) > 0.64f)
+                {
+                    returnSetpoint = player->getSetpoint();
+                }
+                else
+                {
+                    returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
+                }
+                break;
+            }
         }
     }
 

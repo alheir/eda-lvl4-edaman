@@ -38,7 +38,8 @@ enum GameState
 {
     GameStart,
     GameStarting,
-    GamePlaying
+    GamePlaying,
+    GameFinish
 };
 
 #include <string>
@@ -65,7 +66,7 @@ public:
 
     // nuestros metodos
     bool shouldEndLevel();
-    void newLevel(std::string maze);
+    void nextScreen(std::string maze);
     void pickItem(MazePosition *position);
     int getLevelMode();
 

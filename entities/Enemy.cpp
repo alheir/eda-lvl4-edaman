@@ -129,15 +129,8 @@ void Enemy::move()
 
 void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
-    // gameModel->gameView->setTiles(getMazePosition(targetSetpoint).x, getMazePosition(targetSetpoint).y, 1, "x");
-
     MazePosition targetPosition = getMazePosition(targetSetpoint);
     lock = (int)(0.1f / step);
-
-    /*cout << "Pink en (" << setPoint.positionX << ", " << setPoint.positionZ << ", " << setPoint.rotation << ")" << endl;
-    cout << "(" << mazePosition.x << ", " << mazePosition.y << ")" << endl;
-    cout << "Player en (" << targetSetpoint.positionX << ", " << targetSetpoint.positionZ << ")" << endl;
-    cout << "(" << mazePosition2.x << ", " << mazePosition2.y << ")" << endl;*/
 
     checkFreeTiles();
 
@@ -185,14 +178,6 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
             }
         }
     }
-
-    /*switch (direction)
-    {
-        case DOWN: { cout << "DOWN" << endl; break; }
-        case RIGHT: { cout << "RIGHT" << endl; break; }
-        case UP: { cout << "UP" << endl; break; }
-        case LEFT: { cout << "LEFT" << endl; break; }
-    }*/
 }
 
 void Enemy::checkFreeTiles()
@@ -207,7 +192,6 @@ void Enemy::checkFreeTiles()
         {
             freeTiles[0] = true; // read down
         }
-        cout << "read down: " << freeTiles[0] << endl;
     }
     if (((direction != LEFT) && !crash) || ((direction != RIGHT) && crash))
     {
@@ -215,7 +199,6 @@ void Enemy::checkFreeTiles()
         {
             freeTiles[1] = true; // read right
         }
-        cout << "read right: " << freeTiles[1] << endl;
     }
     if (((direction != DOWN) && !crash) || ((direction != UP) && crash))
     {
@@ -223,7 +206,6 @@ void Enemy::checkFreeTiles()
         {
             freeTiles[2] = true; // read up
         }
-        cout << "read up: " << freeTiles[2] << endl;
     }
     if (((direction != RIGHT) && !crash) || ((direction != LEFT) && crash))
     {
@@ -231,7 +213,6 @@ void Enemy::checkFreeTiles()
         {
             freeTiles[3] = true; // read left
         }
-        cout << "read left: " << freeTiles[3] << endl;
     }
 
     crash = false;
@@ -241,26 +222,26 @@ void Enemy::moveEnemy()
 {
     switch (direction)
     {
-    case UP:
-    {
-        setPoint.positionZ += step;
-        break;
-    }
-    case DOWN:
-    {
-        setPoint.positionZ -= step;
-        break;
-    }
-    case LEFT:
-    {
-        setPoint.positionX -= step;
-        break;
-    }
-    case RIGHT:
-    {
-        setPoint.positionX += step;
-        break;
-    }
+        case UP:
+        {
+            setPoint.positionZ += step;
+            break;
+        }
+        case DOWN:
+        {
+            setPoint.positionZ -= step;
+            break;
+        }
+        case LEFT:
+        {
+            setPoint.positionX -= step;
+            break;
+        }
+        case RIGHT:
+        {
+            setPoint.positionX += step;
+            break;
+        }
     }
 
     setSetpoint(setPoint);

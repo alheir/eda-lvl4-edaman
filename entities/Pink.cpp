@@ -60,37 +60,41 @@ RobotSetpoint Pink::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-        case DISPERSION:
-            returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
-            break;
-
-        case PERSECUTION:
-            RobotSetpoint newPosition = player->getSetpoint();
-
-            switch (player->getDirection())
+            case DISPERSION:
             {
-            case UP:
-                newPosition.positionZ += 0.4f;
-                break;
-
-            case DOWN:
-                newPosition.positionZ -= 0.4f;
-                break;
-
-            case LEFT:
-                newPosition.positionX -= 0.4f;
-                break;
-
-            case RIGHT:
-                newPosition.positionX += 0.4f;
-                break;
-
-            default:
+                returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
                 break;
             }
+            case PERSECUTION:
+            {
+                RobotSetpoint newPosition = player->getSetpoint();
 
-            returnSetpoint = newPosition;
-            break;
+                switch (player->getDirection())
+                {
+                    case UP:
+                    {
+                        newPosition.positionZ += 0.4f;
+                        break;
+                    }
+                    case DOWN:
+                    {
+                        newPosition.positionZ -= 0.4f;
+                        break;
+                    }
+                    case LEFT:
+                    {
+                        newPosition.positionX -= 0.4f;
+                        break;
+                    }
+                    case RIGHT:
+                    {
+                        newPosition.positionX += 0.4f;
+                        break;
+                    }
+                }
+                returnSetpoint = newPosition;
+                break;
+            }
         }
     }
 

@@ -108,6 +108,7 @@ int main(int, char **)
 
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
+        // Ignores delays (from changing level)
         float deltaTime = (float)GetFrameTime();
         if (deltaTime > 3.5)
             deltaTime = 0;
@@ -127,11 +128,11 @@ int main(int, char **)
 
         if (gameModel.shouldEndLevel())
         {
-            gameModel.newLevel(maze);
+            gameModel.nextScreen(maze);
         }
     }
 
-    // No necesario en la versión cpp (causa memoryleaks)
+    // Not necessary (causes memoryleaks)
     // CloseWindow();
 
     cout << "Disconnected." << endl;

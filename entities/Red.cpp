@@ -63,16 +63,16 @@ RobotSetpoint Red::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-        case DISPERSION:
-            returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
-            break;
-
-        case PERSECUTION:
-            returnSetpoint = player->getSetpoint();
-            break;
-
-        default:
-            break;
+            case DISPERSION:
+            {
+                returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
+                break;
+            }
+            case PERSECUTION:
+            {
+                returnSetpoint = player->getSetpoint();
+                break;
+            }
         }
     }
 

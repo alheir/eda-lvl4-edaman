@@ -62,41 +62,45 @@ RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-        case DISPERSION:
-            returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
-            break;
-
-        case PERSECUTION:
-            RobotSetpoint newPosition = player->getSetpoint();
-            RobotSetpoint redPosition = red->getSetpoint();
-
-            switch (player->getDirection())
+            case DISPERSION:
             {
-            case UP:
-                newPosition.positionZ += 0.2f;
-                break;
-
-            case DOWN:
-                newPosition.positionZ -= 0.2f;
-                break;
-
-            case LEFT:
-                newPosition.positionX -= 0.2f;
-                break;
-
-            case RIGHT:
-                newPosition.positionX += 0.2f;
-                break;
-
-            default:
+                returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
                 break;
             }
+            case PERSECUTION:
+            {
+                RobotSetpoint newPosition = player->getSetpoint();
+                RobotSetpoint redPosition = red->getSetpoint();
 
-            newPosition.positionX += (newPosition.positionX - redPosition.positionX);
-            newPosition.positionZ += (newPosition.positionZ - redPosition.positionZ);
+                switch (player->getDirection())
+                {
+                    case UP:
+                    {
+                        newPosition.positionZ += 0.2f;
+                        break;
+                    }
+                    case DOWN:
+                    {
+                        newPosition.positionZ -= 0.2f;
+                        break;
+                    }
+                    case LEFT:
+                    {
+                        newPosition.positionX -= 0.2f;
+                        break;
+                    }
+                    case RIGHT:
+                    {
+                        newPosition.positionX += 0.2f;
+                        break;
+                    }
+                }
+            
+                newPosition.positionX += (newPosition.positionX - redPosition.positionX);
+                newPosition.positionZ += (newPosition.positionZ - redPosition.positionZ);
 
-            returnSetpoint = newPosition;
-            break;
+                returnSetpoint = newPosition;
+            }
         }
     }
 

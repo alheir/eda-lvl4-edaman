@@ -159,56 +159,59 @@ void GameModel::start(string maze)
 
 void GameModel::update(float deltaTime)
 {
-    gameStateTime += deltaTime;
-
-    if (levelMode == BLINKING_MODE)
-    {
-        if (gameStateTime > 7)
-        {
-            levelMode = NORMAL_MODE;
-            gameStateTime = 0.0f;
-
-            for (auto robot : robots)
-                robot->resetTime();
-        }
-    }
-
-    for (auto robot : robots)
-    {   
-        robot->move();
-        robot->setRobotMode(levelMode);
-        robot->update(deltaTime);
-    }
-
-    int crashedRobot = checkRobotCollision();
-
-    if (robots[0]->crash)
-    {
-        if (levelMode == NORMAL_MODE)
-        {
-            loseLife();
-        }
-        else
-        {
-            robots[0]->crash = false;
-            eatEnemy(crashedRobot);
-        }
-    }
-
     if (gameState == GameStarting)
     {
         // Just for testing
         //gameView->playAudio("mainStart");
         gameView->playAudio("eatingFruit");
+        gameView->setMessage(GameViewMessageReady);
 
         WaitTime(4000);
         gameState = GamePlaying;
+        gameView->setMessage(GameViewMessageNone);
 
         for (auto robot : robots)
             robot->resetTime();
     }
-}
+    else if (gameState == GamePlaying)
+    {
+        gameStateTime += deltaTime;
 
+        if (levelMode == BLINKING_MODE)
+        {
+            if (gameStateTime > 7)
+            {
+                levelMode = NORMAL_MODE;
+                gameStateTime = 0.0f;
+
+                for (auto robot : robots)
+                    robot->resetTime();
+            }
+        }
+
+        for (auto robot : robots)
+        {
+            robot->move();
+            robot->setRobotMode(levelMode);
+            robot->update(deltaTime);
+        }
+
+        int crashedRobot = checkRobotCollision();
+
+        if (robots[0]->crash)
+        {
+            if (levelMode == NORMAL_MODE)
+            {
+                loseLife();
+            }
+            else
+            {
+                robots[0]->crash = false;
+                eatEnemy(crashedRobot);
+            }
+        }
+    }
+}
 void GameModel::pickItem(MazePosition *position)
 {
     char tile = this->maze[position->x + MAZE_WIDTH * position->y];
@@ -261,8 +264,8 @@ void GameModel::loseLife()
     }
     else
     {
-        cout << "GAME OVER" << endl;
-        cout << "Te dejo seguir jugando pq no se como cerrar el programa nomas" << endl;
+        gameState = GameFinish;
+        gameView->setMessage(GameViewMessageGameOver);
     }
 }
 
@@ -282,7 +285,7 @@ void GameModel::eatEnemy(int crashedRobot)
     robots[crashedRobot]->setFree(false);
 }
 
-void GameModel::newLevel(std::string maze)
+void GameModel::nextScreen(std::string maze)
 {
     gameState = GameStarting;
 
@@ -312,7 +315,7 @@ void GameModel::newLevel(std::string maze)
 
 bool GameModel::shouldEndLevel()
 {
-    return (remainingDots + remainingEnergizers) == 0; //200;
+    return (remainingDots + remainingEnergizers) == 0;
 }
 
 int GameModel::getLevelMode()
