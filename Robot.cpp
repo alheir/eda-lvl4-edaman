@@ -15,7 +15,7 @@ using namespace std;
 
 Robot::Robot()
 {
-    displayImages = LoadImage("../../../RobotImages.png");
+    displayImages = LoadImage("../RobotImages.png");
 }
 
 Robot::~Robot()

@@ -171,8 +171,9 @@ void GameModel::update(float deltaTime)
     }
 
     for (auto robot : robots)
-    {
-        int direction = robot->getDirection();        
+    {   
+        robot->move();
+        robot->setRobotMode(levelMode);
         robot->update(deltaTime);
     }
 
@@ -190,16 +191,12 @@ void GameModel::update(float deltaTime)
             eatEnemy(crashedRobot);
         }
     }
-    for (auto robot : robots)
-    {
-        robot->move();
-        robot->setRobotMode(levelMode);
-    }
 
     if (gameState == GameStarting)
     {
         // Just for testing
-        gameView->playAudio("mainStart");
+        //gameView->playAudio("mainStart");
+        gameView->playAudio("eatingFruit");
 
         WaitTime(4000);
         gameState = GamePlaying;

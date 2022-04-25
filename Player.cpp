@@ -4,9 +4,9 @@
 
 using namespace std;
 
-const MazePosition initialPoint = { 13, 26 };
+const MazePosition initialPoint = {13, 26};
 
-Player::Player(MQTTClient* mqttClient, GameModel* gameModel)
+Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
 {
     this->mqttClient = mqttClient;
     this->gameModel = gameModel;
@@ -14,29 +14,29 @@ Player::Player(MQTTClient* mqttClient, GameModel* gameModel)
 
     eyesColor = YELLOW;
 
-    mazePosition = { 13, 26 };
+    mazePosition = {13, 26};
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    //setPoint.positionX = +0.0025f;
+    // setPoint.positionX = +0.0025f;
 
     setRobotMode(false);
 
-    //liftTo(setPoint.positionX, setPoint.positionZ);
-    //WaitTime(7000);
+    // liftTo(setPoint.positionX, setPoint.positionZ);
+    // WaitTime(7000);
 }
 
 void Player::start()
 {
-    direction = 0;
+    direction = UP;
     crash = false;
 
-    mazePosition = { 13, 26 };
+    mazePosition = {13, 26};
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    //setPoint.positionX = +0.0025f;
+    // setPoint.positionX = +0.0025f;
 
     setRobotMode(false);
-    //setDisplay(imageIndex);
+    // setDisplay(imageIndex);
     //// setDisplayColor(eyesColor);
-    //setEyes(eyesColor, eyesColor); 
+    // setEyes(eyesColor, eyesColor);
 }
 
 void Player::update(float deltaTime)
@@ -65,42 +65,42 @@ void Player::move()
 
         switch (direction)
         {
-            case UP:
-            {
-                if (setPoint.positionZ < tempSetPoint.positionZ)
-                    setPoint.positionZ += step;
+        case UP:
+        {
+            if (setPoint.positionZ < tempSetPoint.positionZ)
+                setPoint.positionZ += step;
 
-                shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
+            shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
 
-                break;
-            }
-            case DOWN:
-            {
-                if (setPoint.positionZ > tempSetPoint.positionZ)
-                    setPoint.positionZ -= step;
+            break;
+        }
+        case DOWN:
+        {
+            if (setPoint.positionZ > tempSetPoint.positionZ)
+                setPoint.positionZ -= step;
 
-                shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
+            shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
 
-                break;
-            }
-            case LEFT:
-            {
-                if (setPoint.positionX > tempSetPoint.positionX)
-                    setPoint.positionX -= step;
+            break;
+        }
+        case LEFT:
+        {
+            if (setPoint.positionX > tempSetPoint.positionX)
+                setPoint.positionX -= step;
 
-                shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
+            shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
 
-                break;
-            }
-            case RIGHT:
-            {
-                if (setPoint.positionX < tempSetPoint.positionX)
-                    setPoint.positionX += step;
+            break;
+        }
+        case RIGHT:
+        {
+            if (setPoint.positionX < tempSetPoint.positionX)
+                setPoint.positionX += step;
 
-                shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
+            shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
 
-                break;
-            }
+            break;
+        }
         }
 
         if (shouldUpdateTile)
@@ -126,14 +126,14 @@ void Player::setRobotMode(bool isMoving)
             imageIndex = 1;
 
         setDisplay(imageIndex);
-        //setDisplayColor(eyesColor);
+        // setDisplayColor(eyesColor);
         setEyes(eyesColor, eyesColor);
     }
     else
     {
         imageIndex = 0;
         setDisplay(imageIndex);
-        //setDisplayColor(eyesColor);
+        // setDisplayColor(eyesColor);
         setEyes(eyesColor, eyesColor);
     }
 
@@ -172,26 +172,29 @@ bool Player::shouldMove()
 
     switch (direction)
     {
-        case UP:
-        {
-            nextTile.y--;
-            break;
-        }
-        case DOWN:
-        {
-            nextTile.y++;
-            break;
-        }
-        case LEFT:
-        {
-            nextTile.x--;
-            break;
-        }
-        case RIGHT:
-        {
-            nextTile.x++;
-            break;
-        }
+    case UP:
+
+        nextTile.y--;
+        break;
+
+    case DOWN:
+
+        nextTile.y++;
+        break;
+
+    case LEFT:
+
+        nextTile.x--;
+        break;
+
+    case RIGHT:
+
+        nextTile.x++;
+        break;
+
+    default:
+        break;
     }
+    
     return (gameModel->isTileFree(nextTile));
 }

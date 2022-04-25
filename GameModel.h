@@ -52,18 +52,18 @@ enum GameState
 class GameModel
 {
 public:
-    GameModel(MQTTClient* mqttClient);
+    GameModel(MQTTClient *mqttClient);
 
-    void setGameView(GameView* gameView);
+    void setGameView(GameView *gameView);
     void start(std::string maze);
     void update(float deltaTime);
-    void addRobot(Robot* robot);
+    void addRobot(Robot *robot);
     bool isTileFree(const MazePosition &position);
 
     // nuestros metodos
     bool shouldEndLevel();
     void newLevel(std::string maze);
-    void pickItem(MazePosition* position);
+    void pickItem(MazePosition *position);
     int getLevelMode();
 
 private:
@@ -80,7 +80,7 @@ private:
     int remainingDots;
     int remainingEnergizers;
 
-    int score;  // agregado
+    int score; // agregado
     int lives;
     std::list<int> eatenFruits;
     bool eatenEnemies[4];

@@ -18,7 +18,6 @@ public:
 
 private:
     //bool moving;
-    int direction;
     MazePosition nextTile;
 
     bool shouldMove();

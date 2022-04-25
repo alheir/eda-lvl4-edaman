@@ -47,6 +47,8 @@ void Enemy::setRobotMode(int levelMode)
 
 int Enemy::getTimeState()
 {
+    return PERSECUTION;       
+    /*
     if (time < 7)
     {
         return DISPERSION;
@@ -79,6 +81,7 @@ int Enemy::getTimeState()
     {
         return PERSECUTION;
     }
+    */
 }
 
 void Enemy::update(float deltaTime)
@@ -109,6 +112,8 @@ void Enemy::move()
 
 void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
+    //gameModel->gameView->setTiles(getMazePosition(targetSetpoint).x, getMazePosition(targetSetpoint).y, 1, "x");
+
     MazePosition targetPosition = getMazePosition(targetSetpoint);
     lock = (int) (0.1f / step);
 
