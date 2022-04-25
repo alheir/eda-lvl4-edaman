@@ -1,13 +1,26 @@
 /**
- * Robot base class.
+ * @file Robot.h
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Clase base de robots
+ * @version 0.1
+ * @date 2022-04-25
  *
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
+ *
  */
 
 #ifndef _ROBOT_H
 #define _ROBOT_H
 
 class GameModel;
+
+enum DIRECTIONS
+{
+    DOWN = 1,
+    RIGHT,
+    UP,
+    LEFT
+};
 
 struct RobotSetpoint
 {
@@ -24,11 +37,7 @@ struct RobotSetpoint
 };
 
 #include <string>
-
-#include <raylib.h>
-
-#include "MQTTClient.h"
-#include "GameModel.h"
+#include "../GameModel.h"
 
 class Robot
 {
@@ -38,6 +47,15 @@ public:
 
     virtual void start() = 0;
     virtual void update(float deltaTime);
+    virtual void move() = 0;
+    virtual void resetTime();
+    virtual void setRobotMode(int levelMode);
+
+    RobotSetpoint getSetpoint();
+    MazePosition getMazePosition();
+    int getDirection();
+    void setFree(bool free);
+    bool crash;
 
 protected:
     // NOTE: These variables should be set by your child class:
@@ -46,6 +64,14 @@ protected:
     std::string robotId;
 
     Image displayImages;
+    int imageIndex;
+    Color eyesColor;
+
+    MazePosition mazePosition;
+    RobotSetpoint setPoint;
+    float step;
+    int direction;
+    bool free;
 
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);
@@ -53,18 +79,7 @@ protected:
     void liftTo(float positionX, float positionZ);
     void setDisplay(int imageIndex);
     void setEyes(Color leftEye, Color rightEye);
-};
-
-class Robot1 : public Robot
-{
-public:
-    Robot1(MQTTClient* mqttClient, GameModel* gameModel);
-
-    MazePosition position;
-    RobotSetpoint setpoint;
-
-    void start();
-    bool move(int direction);
+    void setDisplayColor(Color color);
 };
 
 #endif

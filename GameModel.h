@@ -1,13 +1,24 @@
 /**
- * EDA-Man game model
+ * @file GameModel.h
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Control del game model
+ * @version 0.1
+ * @date 2022-04-25
  *
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
  *
- * Controls the game model.
  */
 
 #ifndef _GAMEMODEL_H
 #define _GAMEMODEL_H
+
+#define MAZE_WIDTH 28
+#define MAZE_HEIGHT 36
+#define MAZE_SIZE (MAZE_WIDTH * MAZE_HEIGHT)
+
+#define NORMAL_MODE 1
+#define BLINKING_MODE 2
+#define RETURN_CAGE 3
 
 class Robot;
 
@@ -39,25 +50,24 @@ enum GameState
 #include "MQTTClient.h"
 
 #include "GameView.h"
-#include "Robot.h"
+#include "entities/Robot.h"
 
 class GameModel
 {
 public:
-    GameModel(MQTTClient* mqttClient);
+    GameModel(MQTTClient *mqttClient);
 
-    void setGameView(GameView* gameView);
-
+    void setGameView(GameView *gameView);
     void start(std::string maze);
-    void newLevel(std::string maze);
     void update(float deltaTime);
-
-    void addRobot(Robot* robot);
-
-    bool isTileFree(MazePosition position);
+    void addRobot(Robot *robot);
+    bool isTileFree(const MazePosition &position);
 
     // nuestros metodos
-    int refresh(MazePosition position);
+    bool shouldEndLevel();
+    void newLevel(std::string maze);
+    void pickItem(MazePosition *position);
+    int getLevelMode();
 
 private:
     MQTTClient *mqttClient;
@@ -68,13 +78,20 @@ private:
 
     int gameState;
     float gameStateTime;
+    int levelMode;
 
     int remainingDots;
     int remainingEnergizers;
 
-    int score;  // agregado
+    int score; // agregado
     int lives;
     std::list<int> eatenFruits;
+    bool eatenEnemies[4];
+    int enemyScore;
+
+    int checkRobotCollision();
+    void loseLife();
+    void eatEnemy(int crashedRobot);
 };
 
 #endif

@@ -1,9 +1,12 @@
-/*
- * EDA-Man
+/**
+ * @file main.cpp
+ * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Main file de un EDA-Man
+ * @version 0.1
+ * @date 2022-04-25
  *
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
  *
- * Controls an EDA-Man game.
  */
 
 #include <iostream>
@@ -16,27 +19,16 @@
 #include "GameModel.h"
 #include "GameView.h"
 
-// no deberia ir aca supongo pero por ahora si
-#include "Robot.h"
-
-enum KEY_POSITION { STOP = 0, UP_MOVE, DOWN_MOVE, RIGHT_MOVE, LEFT_MOVE };
+#include "entities/Player.h"
+#include "entities/Enemy.h"
+#include "entities/Red.h"
+#include "entities/Pink.h"
+#include "entities/Cyan.h"
+#include "entities/Orange.h"
 
 using namespace std;
 
-vector<char> makeMotorPID(float x, float z, float rotation)
-{
-    float pidPackage[] = {x, z, rotation};
-
-    std::vector<char> payload;
-    payload.resize(sizeof(pidPackage));
-    memcpy(payload.data(), &pidPackage, sizeof(pidPackage));
-
-    return(payload);
-}
-
-int scanKeyboard();
-
-int main(int, char**)
+int main(int, char **)
 {
     MQTTClient mqttClient("controller");
 
@@ -50,42 +42,43 @@ int main(int, char**)
     cout << "Connected." << endl;
 
     // raylib
-    InitWindow(640, 480, "EDA-Man Controller");
+    InitWindow(100, 100, "EDA-Man Controller");
+    SetWindowPosition(1200, 200);
     SetTargetFPS(60);
 
     // 28 columns (0-27)
     string maze =
-        "                            "  // 0
+        "                            " // 0
         "                            "
         "                            "
         "jbbbbbbbbbbbbonbbbbbbbbbbbbk"
         "s++++++++++++pq++++++++++++r"
-        "s+faag+faaag+pq+faaag+faag+r"  // 5
+        "s+faag+faaag+pq+faaag+faag+r" // 5
         "s#p  q+p   q+pq+p   q+p  q#r"
         "s+v``w+v```w+vw+v```w+v``w+r"
         "s++++++++++++++++++++++++++r"
         "s+faag+fg+faaaaaag+fg+faag+r"
-        "s+v``w+pq+v``ih``w+pq+v``w+r"  // 10
+        "s+v``w+pq+v``ih``w+pq+v``w+r" // 10
         "s++++++pq++++pq++++pq++++++r"
         "zccccg+pxaag pq faayq+fcccc{"
         "     s+ph``w vw v``iq+r     "
         "     s+pq          pq+r     "
-        "     s+pq dcc__cce pq+r     "  // 15
-        "jbbbbw+vw r      s vw+vbbbbk"
-        "s     +   r      s   +     r"
-        "zccccg+fg r      s fg+fcccc{"
+        "     s+pq dcc__cce pq+r     " // 15
+        "     s+vw r      s vw+r     "
+        "     s+   r      s   +r     "
+        "     s+fg r      s fg+r     "
         "     s+pq tbbbbbbu pq+r     "
-        "     s+pq          pq+r     "  // 20
+        "     s+pq          pq+r     " // 20
         "     s+pq faaaaaag pq+r     "
         "jbbbbw+vw v``ih``w vw+vbbbbk"
         "s++++++++++++pq++++++++++++r"
         "s+faag+faaag+pq+faaag+faag+r"
-        "s+v`iq+v```w+vw+v```w+ph`w+r"  // 25
+        "s+v`iq+v```w+vw+v```w+ph`w+r" // 25
         "s#++pq+++++++  +++++++pq++#r"
         "|ag+pq+fg+faaaaaag+fg+pq+fa}"
         "l`w+vw+pq+v``ih``w+pq+vw+v`m"
         "s++++++pq++++pq++++pq++++++r"
-        "s+faaaayxaag+pq+faayxaaaag+r"  // 30
+        "s+faaaayxaag+pq+faayxaaaag+r" // 30
         "s+v````````w+vw+v````````w+r"
         "s++++++++++++++++++++++++++r"
         "zcccccccccccccccccccccccccc{"
@@ -96,12 +89,18 @@ int main(int, char**)
     GameModel gameModel(&mqttClient);
     GameView gameView(&mqttClient);
 
-    int direction = 0;
-    bool lock = false;
+    // Robots
+    Player player(&mqttClient, &gameModel);
+    Red red(&mqttClient, &gameModel, &player);
+    Pink pink(&mqttClient, &gameModel, &player);
+    Cyan cyan(&mqttClient, &gameModel, &player, &red);
+    Orange orange(&mqttClient, &gameModel, &player);
 
-    // Robot
-    Robot1 robot1(&mqttClient, &gameModel);
-    gameModel.addRobot(&robot1);
+    gameModel.addRobot(&player);
+    gameModel.addRobot(&red);
+    gameModel.addRobot(&pink);
+    gameModel.addRobot(&cyan);
+    gameModel.addRobot(&orange);
 
     // Configure
     gameModel.setGameView(&gameView);
@@ -110,6 +109,8 @@ int main(int, char**)
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
         float deltaTime = (float)GetFrameTime();
+        if (deltaTime > 3.5)
+            deltaTime = 0;
 
         // raylib
         BeginDrawing();
@@ -117,56 +118,21 @@ int main(int, char**)
         DrawText("EDAPark Controller", 225, 220, 20, LIGHTGRAY);
         EndDrawing();
 
-        // to lock controls until robot is in the middle of a tile
-        if (!lock)
-        {
-            direction = scanKeyboard();
-        }
-        lock = robot1.move(direction);
-        vector<char> payload = makeMotorPID(robot1.setpoint.positionX, robot1.setpoint.positionZ, robot1.setpoint.rotation);
-        mqttClient.publish("robot1/pid/setpoint/set", payload);
-        
-        if (!gameModel.refresh(robot1.position))    // se podria usar update pero no se si marc queria que la editemos o no
-        {
-            // new level
-            robot1.start();
-            gameModel.newLevel(maze);
-            vector<char> payload = makeMotorPID(robot1.setpoint.positionX, robot1.setpoint.positionZ, robot1.setpoint.rotation);
-            mqttClient.publish("robot1/pid/setpoint/set", payload);
-            WaitTime(2000);
-        }
+        player.setDirection(IsKeyDown(KEY_RIGHT) - IsKeyDown(KEY_LEFT),
+                            IsKeyDown(KEY_UP) - IsKeyDown(KEY_DOWN));
 
         // Updates
-        //gameModel.update(deltaTime);  // todavia no hace nada
-        //gameView.update(deltaTime);   // todavia no hace nada
+        gameModel.update(deltaTime);
+        gameView.update(deltaTime);
 
+        if (gameModel.shouldEndLevel())
+        {
+            gameModel.newLevel(maze);
+        }
     }
 
-    CloseWindow();
+    // No necesario en la versión cpp (causa memoryleaks)
+    // CloseWindow();
 
     cout << "Disconnected." << endl;
-}
-
-int scanKeyboard()
-{
-    int direction = 0;
-
-    if (IsKeyDown(KEY_UP))
-    {
-        direction = KEY_UP;
-    }
-    else if (IsKeyDown(KEY_DOWN))
-    {
-        direction = KEY_DOWN;
-    }
-    else if (IsKeyDown(KEY_RIGHT))
-    {
-        direction = KEY_RIGHT;
-    }
-    else if (IsKeyDown(KEY_LEFT))
-    {
-        direction = KEY_LEFT;
-    }
-
-    return direction;
 }
