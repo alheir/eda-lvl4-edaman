@@ -25,7 +25,7 @@ Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
     eyesColor = YELLOW;
 
     mazePosition = {13, 26};
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    setPoint = getSetpoint(mazePosition, 0.0f);
 
     setRobotMode(false);
 }
@@ -36,7 +36,7 @@ void Player::start()
     crash = false;
 
     mazePosition = {13, 26};
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    setPoint = getSetpoint(mazePosition, 0.0f);
 
     setRobotMode(false);
 }
@@ -50,7 +50,7 @@ void Player::move()
 {
     if (shouldMove())
     {
-        RobotSetpoint tempSetPoint = getRobotSetpoint(nextTile, setPoint.rotation);
+        RobotSetpoint tempSetPoint = getSetpoint(nextTile, setPoint.rotation);
         static bool shouldUpdateTile = false;
 
         switch (direction)
@@ -114,7 +114,7 @@ void Player::move()
     setSetpoint(setPoint);
 }
 
-void Player::setRobotMode(bool isMoving)
+void Player::setRobotMode(int isMoving)
 {
     if (isMoving)
     {

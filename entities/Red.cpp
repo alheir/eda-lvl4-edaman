@@ -43,7 +43,7 @@ void Red::start()
 
     initialPosition = { 13, 14 };
     mazePosition = initialPosition;
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    setPoint = getSetpoint(mazePosition, 0.0f);
 
     setRobotMode(NORMAL_MODE);
 }
@@ -58,7 +58,7 @@ RobotSetpoint Red::getTargetSetpoint(int levelMode)
         {
             case DISPERSION:
             {
-                returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
+                returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
                 break;
             }
             case PERSECUTION:
@@ -72,7 +72,7 @@ RobotSetpoint Red::getTargetSetpoint(int levelMode)
     else if (levelMode == BLINKING_MODE)
     {
         MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
-        returnSetpoint = getRobotSetpoint(targetTile, setPoint.rotation);
+        returnSetpoint = getSetpoint(targetTile, setPoint.rotation);
     }
 
     else

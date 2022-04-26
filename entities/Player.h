@@ -26,11 +26,10 @@ public:
     void setDirection(int xDir, int yDir);
 
 private:
-    // bool moving;
     MazePosition nextTile;
 
     bool shouldMove();
-    void setRobotMode(bool isMoving);
+    void setRobotMode(int isMoving);
 };
 
 #endif

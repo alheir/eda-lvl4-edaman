@@ -46,26 +46,23 @@ public:
     virtual ~Robot();
 
     virtual void start() = 0;
-    virtual void update(float deltaTime);
+    virtual void update(float deltaTime) = 0;
     virtual void move() = 0;
-    virtual void resetTime();
-    virtual void setRobotMode(int levelMode);
+    virtual void setRobotMode(int levelMode) = 0;
+    
+    void resetTime();
     void forceMove();
-
+    int getDirection();
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();
-    int getDirection();
     void setDisplay(int imageIndex);
+
     bool crash;
     bool free;
-
-    int direction;
-    float time;
     int dotsForFree;
     float timeForFree;
 
 protected:
-    // NOTE: These variables should be set by your child class:
     MQTTClient *mqttClient;
     GameModel *gameModel;
     std::string robotId;
@@ -77,9 +74,11 @@ protected:
     MazePosition mazePosition;
     RobotSetpoint setPoint;
     float step;
+    int direction;
+    float time;
     
     MazePosition getMazePosition(RobotSetpoint setpoint);
-    RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);
+    RobotSetpoint getSetpoint(MazePosition mazePosition, float rotation);
     void setSetpoint(RobotSetpoint setpoint);
     void setEyes(Color leftEye, Color rightEye);
     void setDisplayColor(Color color);

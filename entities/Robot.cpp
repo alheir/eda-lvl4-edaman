@@ -9,10 +9,6 @@
  *
  */
 
-#include <iostream>
-#include <vector>
-#include <cstring>
-
 #include "Robot.h"
 
 using namespace std;
@@ -25,18 +21,6 @@ Robot::Robot()
 Robot::~Robot()
 {
     UnloadImage(displayImages);
-}
-
-void Robot::update(float deltaTime)
-{
-}
-
-void Robot::resetTime()
-{
-}
-
-void Robot::setRobotMode(int levelMode)
-{
 }
 
 void Robot::forceMove()
@@ -59,6 +43,11 @@ int Robot::getDirection()
     return direction;
 }
 
+void Robot::resetTime()
+{
+    time = 0;
+}
+
 MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
 {
     MazePosition mazePosition;
@@ -69,7 +58,7 @@ MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
     return mazePosition;
 }
 
-RobotSetpoint Robot::getRobotSetpoint(MazePosition mazePosition, float rotation)
+RobotSetpoint Robot::getSetpoint(MazePosition mazePosition, float rotation)
 {
     RobotSetpoint setpoint;
     setpoint.positionX = 0.1F * mazePosition.x - 1.35F;

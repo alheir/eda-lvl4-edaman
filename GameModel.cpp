@@ -329,7 +329,7 @@ void GameModel::enableFree()
 {   
     for (auto robot : robots)
     {
-        if (robot->direction == 0)
+        if (robot->getDirection() == 0)
         {
             if (eatenDots >= robot->dotsForFree)
             {

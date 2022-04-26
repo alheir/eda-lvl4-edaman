@@ -40,7 +40,7 @@ void Orange::start()
 
     initialPosition = { 16, 17 };
     mazePosition = initialPosition;
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    setPoint = getSetpoint(mazePosition, 0.0f);
 
     setRobotMode(NORMAL_MODE);
 }
@@ -55,7 +55,7 @@ RobotSetpoint Orange::getTargetSetpoint(int levelMode)
         {
             case DISPERSION:
             {
-                returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
+                returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
                 break;
             }
             case PERSECUTION:
@@ -69,7 +69,7 @@ RobotSetpoint Orange::getTargetSetpoint(int levelMode)
                 }
                 else
                 {
-                    returnSetpoint = getRobotSetpoint(scatteringPoint, setPoint.rotation);
+                    returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
                 }
                 break;
             }
@@ -79,7 +79,7 @@ RobotSetpoint Orange::getTargetSetpoint(int levelMode)
     else if (levelMode == BLINKING_MODE)
     {
         MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
-        returnSetpoint = getRobotSetpoint(targetTile, setPoint.rotation);
+        returnSetpoint = getSetpoint(targetTile, setPoint.rotation);
     }
 
     else

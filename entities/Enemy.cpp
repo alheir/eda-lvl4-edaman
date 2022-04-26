@@ -19,15 +19,7 @@ using namespace std;
 
 Enemy::Enemy()
 {
-    player = NULL;
-    time = 0;
-    lock = 0;
     freeTiles.fill(false);
-}
-
-void Enemy::resetTime()
-{
-    time = 0;
 }
 
 void Enemy::setRobotMode(int levelMode)
@@ -121,7 +113,7 @@ void Enemy::move()
             resetTime();
         }
         else
-            findPath(getRobotSetpoint(initialPosition, 0.0f));
+            findPath(getSetpoint(initialPosition, 0.0f));
     }
     moveEnemy();
 }
@@ -202,9 +194,6 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     }
 }
 
-/* 
- * 
- */
 void Enemy::checkFreeTiles()
 {
     freeTiles.fill(false);

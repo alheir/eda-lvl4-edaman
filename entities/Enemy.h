@@ -16,33 +16,32 @@
 #include "Player.h"
 #include <array>
 
-#define DISPERSION 1
-#define PERSECUTION 2
-#define ESCAPE 3
+enum RobotMode {
+    DISPERSION = 1,
+    PERSECUTION,
+    ESCAPE
+};
 
 class Enemy : public Robot
 {
 public:
     Enemy();
-    virtual RobotSetpoint getTargetSetpoint(int levelMode) = 0;
-
+    
 protected:
     Player *player;
     MazePosition initialPosition;
+    int lock;
 
-    void resetTime();
+    virtual RobotSetpoint getTargetSetpoint(int levelMode) = 0;
+    void setRobotMode(int levelMode);
     int getTimeState();
 
+private:
     std::array<bool, 4> freeTiles; // down, right, up, left
 
-    void checkFreeTiles();
-
-    int lock;
     void update(float deltaTime);
+    void checkFreeTiles();
     void move();
-    void setRobotMode(int levelMode);
-
-private:
     void moveEnemy();
     void findPath(RobotSetpoint targetSetpoint);
 };
