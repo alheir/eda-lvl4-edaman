@@ -192,24 +192,6 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
             }
         }
     }
-
-    switch (direction)
-    {
-    case DOWN:
-        setPoint.rotation = 180.0f;
-        break;
-    case RIGHT:
-        setPoint.rotation = 90.0f;
-        break;
-    case UP:
-        setPoint.rotation = 0.0f;
-        break;
-    case LEFT:
-        setPoint.rotation = 270.0f;
-        break;
-    default:
-        break;
-    }
 }
 
 void Enemy::checkFreeTiles()
