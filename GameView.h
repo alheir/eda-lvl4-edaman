@@ -38,6 +38,7 @@ public:
 
     void setScore(int value);
     void setHighScore(int value);
+    void setRun(int value);
     void setLives(int numberOfLives);
     void setEatenFruits(std::list<int> &eatenFruits);
 

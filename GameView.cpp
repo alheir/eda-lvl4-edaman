@@ -85,7 +85,7 @@ void GameView::start(string maze)
             setTiles(x, y, LAYOUT_DOOR_COLOR, "_");
     }
 
-    setTiles(0, 0, SCORE_COLOR, "         HIGH SCORE         ");
+    setTiles(0, 0, SCORE_COLOR, "         HIGH SCORE      RUN");
     setTiles(0, 1, SCORE_COLOR, "                            ");
     setTiles(0, 2, SCORE_COLOR, "                            ");
 
@@ -205,7 +205,19 @@ void GameView::setHighScore(int value)
 {
     ostringstream ss;
     ss << right << setw(7) << value;
-    setTiles(11, 1, SCORE_COLOR, ss.str());
+    setTiles(9, 1, SCORE_COLOR, ss.str());
+}
+
+/**
+ * @brief Sets current run number
+ *
+ * @param value The run number
+ */
+void GameView::setRun(int value)
+{
+    ostringstream ss;
+    ss << right << setw(7) << value;
+    setTiles(21, 1, SCORE_COLOR, ss.str());
 }
 
 /**

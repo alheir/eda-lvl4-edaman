@@ -15,7 +15,7 @@ using namespace std;
 
 const int SCORE_PER_DOT = 10;
 const int SCORE_PER_ENERGIZER = 50;
-const int SCORE_PER_FRUIT = 100;
+const int SCORE_PER_FRUIT = 200;
 
 const int MAX_FRUITS = 8;
 const int SECS_TO_LAUNCH_A_FRUIT = 5;
@@ -23,6 +23,8 @@ const int SECS_TO_LAUNCH_A_FRUIT = 5;
 GameModel::GameModel(MQTTClient *mqttClient)
 {
     this->mqttClient = mqttClient;
+    highscore = 0;
+    run = 1;
 }
 
 void GameModel::setGameView(GameView *gameView)
@@ -128,7 +130,8 @@ void GameModel::start(string maze)
     this->mazeBack = maze;
 
     remainingDots = 0;
-    playingEatingDotSound = 0;
+    playingEatingDotSound = false;
+    playingEndGameSound = false;
     remainingEnergizers = 0;
     eatenDots = 0;
 
@@ -148,6 +151,11 @@ void GameModel::start(string maze)
 
     gameView->start(maze);
     gameView->setScore(score);
+    gameView->setHighScore(highscore);
+    gameView->setRun(run);
+    gameView->setEatenFruits(eatenFruits);
+    gameView->stopAudio("mainIntermission");
+    gameView->playAudio("mainInsertCoin");
 
     gameState = GameStart;
 }
@@ -167,11 +175,10 @@ void GameModel::update(float deltaTime)
         gameView->setMessage(GameViewMessageReady);
         gameView->stopAudio("backgroundEnergizer");
         gameView->playAudio("mainStart");
-        WaitTime(4000);
-
         gameView->setMessage(GameViewMessageNone);
         gameView->setLives(lives);
-        gameView->setEatenFruits(eatenFruits);
+
+        WaitTime(4000);
 
         gameState = GamePlaying;
         levelMode = NORMAL_MODE;
@@ -180,7 +187,8 @@ void GameModel::update(float deltaTime)
             robot->resetTime();
 
         gameStateTime = 0.0f;
-        playingEatingDotSound = 0;
+        playingEatingDotSound = false;
+        playingEndGameSound = false;
     }
 
     else if (gameState == GamePlaying)
@@ -242,9 +250,21 @@ void GameModel::update(float deltaTime)
 
     else if (gameState == GameFinish)
     {
-        gameView->stopAudio("backgroundEnergizer");
-        gameView->playAudio("mainIntermission");
-        gameView->setHighScore(score);
+        if (!playingEndGameSound)
+        {
+            gameView->stopAudio("backgroundEnergizer");
+            gameView->playAudio("mainIntermission");
+
+            if (score > highscore)
+            {
+                gameView->setHighScore(score);
+                highscore = score;
+            }
+
+            run++;
+
+            playingEndGameSound = true;
+        }
     }
 
     if (!robots[0]->moving)
@@ -295,9 +315,9 @@ void GameModel::pickItem(MazePosition *position)
         gameView->setScore(score);
     }
 
-    else if (fruitActive &&
-             position->x == currentActiveFruitPosition.x &&
-             position->y == currentActiveFruitPosition.y)
+    if (fruitActive &&
+        position->x == currentActiveFruitPosition.x &&
+        position->y == currentActiveFruitPosition.y)
     {
         score += SCORE_PER_FRUIT;
 
@@ -377,6 +397,11 @@ void GameModel::nextScreen(std::string maze)
 bool GameModel::shouldEndLevel()
 {
     return (remainingDots + remainingEnergizers) == 0;
+}
+
+bool GameModel::shouldEndGame()
+{
+    return gameState == GameFinish;
 }
 
 int GameModel::getLevelMode()

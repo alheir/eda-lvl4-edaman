@@ -18,7 +18,8 @@
 #define MAZE_HEIGHT 36
 #define MAZE_SIZE (MAZE_WIDTH * MAZE_HEIGHT)
 
-enum LevelMode {
+enum LevelMode
+{
     NORMAL_MODE = 1,
     BLINKING_MODE,
     RETURN_CAGE
@@ -65,10 +66,11 @@ public:
     bool isTileFree(const MazePosition &position);
 
     bool shouldEndLevel();
+    bool shouldEndGame();
     void nextScreen(std::string maze);
     void pickItem(MazePosition *position);
     int getLevelMode();
-    
+
 private:
     MQTTClient *mqttClient;
     GameView *gameView;
@@ -77,7 +79,7 @@ private:
     std::string mazeBack;
     std::vector<Robot *> robots;
 
-    int gameState;    
+    int gameState;
     int levelMode;
 
     int remainingDots;
@@ -85,6 +87,8 @@ private:
     float gameStateTime;
     int lives;
     int score;
+    int highscore;
+    int run;
     int enemyScore;
     int enemyScoreIndex;
 
@@ -93,11 +97,12 @@ private:
     MazePosition currentActiveFruitPosition;
     float fruitTimer;
     bool fruitActive;
-    
+
     std::array<bool, 4> eatenEnemies;
     int eatenDots;
 
     bool playingEatingDotSound;
+    bool playingEndGameSound;
 
     int checkRobotCollision();
     void loseLife();

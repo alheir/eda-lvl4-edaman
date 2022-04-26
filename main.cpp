@@ -129,6 +129,15 @@ int main(int, char **)
         {
             gameModel.nextScreen(maze);
         }
+
+        // Al perder todas las vidas, apretando enter se reinicia el juego
+        if (gameModel.shouldEndGame())
+        {
+            if (IsKeyDown(KEY_ENTER))
+            {
+                gameModel.start(maze);
+            }
+        }
     }
 
     cout << "Disconnected." << endl;
