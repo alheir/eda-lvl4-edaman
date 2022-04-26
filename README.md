@@ -22,4 +22,7 @@ se está volviendo a jugar.
 * Por último, si al perder la partida se presiona la tecla enter comienza una nueva
 partida y se incrementa el valor de run.
 * La imagen con los dibujos de los robots debe estar en la carpeta del ejecutable.
+
+* Link al video de youtube: https://youtu.be/ahr4Swj1Ei4
+
 22.08 - Algoritmos y Estructuras de Datos - Ingeniería Electrónica - ITBA
