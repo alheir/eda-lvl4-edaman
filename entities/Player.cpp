@@ -46,7 +46,7 @@ void Player::start()
     // setEyes(eyesColor, eyesColor);
 
     liftTo(setPoint.positionX, setPoint.positionZ);
-    //WaitTime(7500);
+    WaitTime(7500);
 }
 
 void Player::update(float deltaTime)

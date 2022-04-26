@@ -28,9 +28,7 @@ public:
 
 protected:
     Player *player;
-    float time;
     MazePosition initialPosition;
-    int dotsForFree;
 
     void resetTime();
     int getTimeState();

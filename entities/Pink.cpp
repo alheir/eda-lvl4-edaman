@@ -20,18 +20,17 @@ Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     this->robotId = "robot3";
     this->player = player;
 
-    initialPosition = { 1, 4 };
-    mazePosition = initialPosition;
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
+    
     // setPoint.positionX = +0.0025f;
 
     imageIndex = 18;
     eyesColor = PINK;
+    
 
     setRobotMode(NORMAL_MODE);
 
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);
+    /*liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(7500);*/
 }
 
 void Pink::start()
@@ -43,8 +42,20 @@ void Pink::start()
 
     imageIndex = 18;
     eyesColor = PINK;
+    dotsForFree = 0;
+    timeForFree = 2;
+    mustLeave = true;
+
+    initialPosition = { 13, 17 };
+    mazePosition = initialPosition;
+    setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
     setRobotMode(NORMAL_MODE);
+
+    setPoint.positionX += 0.05;
+
+    liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(7500);
 }
 
 RobotSetpoint Pink::getTargetSetpoint(int levelMode)

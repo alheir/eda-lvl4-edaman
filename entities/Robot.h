@@ -50,12 +50,19 @@ public:
     virtual void move() = 0;
     virtual void resetTime();
     virtual void setRobotMode(int levelMode);
+    void forceMove();
 
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();
     int getDirection();
     bool crash;
     bool free;
+
+    int direction;
+    float time;
+    unsigned int dotsForFree;
+    unsigned int timeForFree;
+    bool mustLeave;
 
 protected:
     // NOTE: These variables should be set by your child class:
@@ -67,10 +74,12 @@ protected:
     int imageIndex;
     Color eyesColor;
 
+    
+
     MazePosition mazePosition;
     RobotSetpoint setPoint;
     float step;
-    int direction;
+    
 
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);
@@ -79,6 +88,7 @@ protected:
     void setDisplay(int imageIndex);
     void setEyes(Color leftEye, Color rightEye);
     void setDisplayColor(Color color);
+    
 };
 
 #endif

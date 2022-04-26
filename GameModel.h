@@ -92,10 +92,12 @@ private:
     std::list<int> eatenFruits;
     bool eatenEnemies[4];
     int enemyScore;
+    int eatenDots;
 
     int checkRobotCollision();
     void loseLife();
     void eatEnemy(int crashedRobot);
+    void enableFree();
 };
 
 #endif

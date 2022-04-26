@@ -39,6 +39,11 @@ void Robot::setRobotMode(int levelMode)
 {
 }
 
+void Robot::forceMove()
+{
+    setSetpoint(setPoint);
+}
+
 RobotSetpoint Robot::getSetpoint()
 {
     return setPoint;

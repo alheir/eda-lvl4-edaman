@@ -45,7 +45,7 @@ bool GameModel::isTileFree(const MazePosition& position)
 
     char tile = maze[position.y * MAZE_WIDTH + position.x];
 
-    return (tile == ' ') || (tile == '+') || (tile == '#');
+    return (tile == ' ') || (tile == '+') || (tile == '#') || (tile == '_');
 }
 
 int GameModel::checkRobotCollision()
@@ -85,12 +85,7 @@ int GameModel::checkRobotCollision()
                 mazePosition2.x += 2;
                 break;
             }
-            default:
-            {
-                cout << "Error in robot " << i << " direction" << endl;
-                break;
-            }
-        }
+         }
         
         for (int j = 0; j < robots.size(); j++)
         {
@@ -117,7 +112,11 @@ int GameModel::checkRobotCollision()
                     if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)) ||
                         ((targetPosition.x == mazePosition2.x) && (targetPosition.y == mazePosition2.y)))
                     {
-                        robots[i]->crash = true;
+                        //if ((robots[i]->free == true) && (robots[j]->free == true))
+                        //{
+                            robots[i]->crash = true;
+                        //}
+                        
                     }
                 }
             }
@@ -134,6 +133,7 @@ void GameModel::start(string maze)
 
     remainingDots = 0;
     remainingEnergizers = 0;
+    eatenDots = 0;
 
     for (auto c : maze)
     {
@@ -168,12 +168,14 @@ void GameModel::update(float deltaTime)
         {
             robot->start();
         }
+        //eatenDots = 0;
         gameState = GameStarting;
         levelMode = SETUP_MODE;
+        gameStateTime = 0;
     }
     else if (gameState == GameStarting)
     {
-        int readyToStart = 0;
+        int readyToStart = 0;       
         for (int i = 1; i < robots.size(); i++)
         {
             robots[i]->update(deltaTime);
@@ -189,7 +191,7 @@ void GameModel::update(float deltaTime)
             gameView->setLives(lives);
             gameView->setEatenFruits(eatenFruits);
 
-            WaitTime(4000);
+            WaitTime(6000);
             gameState = GamePlaying;
             gameView->setMessage(GameViewMessageNone);
             levelMode = NORMAL_MODE;
@@ -197,6 +199,7 @@ void GameModel::update(float deltaTime)
             for (auto robot : robots)
                 robot->resetTime();
         }
+
     }
     else if (gameState == GamePlaying)
     {
@@ -214,14 +217,16 @@ void GameModel::update(float deltaTime)
             }
         }
 
+        enableFree();
+
         for (auto robot : robots)
         {
             robot->update(deltaTime);
             robot->move();
         }
 
-        int crashedRobot = checkRobotCollision();
-
+           int crashedRobot = checkRobotCollision();
+     
         if (robots[0]->crash)
         {
             if (levelMode == NORMAL_MODE)
@@ -249,6 +254,7 @@ void GameModel::pickItem(MazePosition *position)
             case '+':
             {
                 remainingDots--;
+                eatenDots++;
                 score += SCORE_PER_DOT;
                 break;
             }
@@ -327,14 +333,39 @@ void GameModel::nextScreen(std::string maze)
     }
 
     gameView->start(maze);
+
+    gameView->playAudio("mainWon");
 }
 
 bool GameModel::shouldEndLevel()
 {
-    return (remainingDots + remainingEnergizers) == 210;//0;
+    return (remainingDots + remainingEnergizers) == 0;
 }
 
 int GameModel::getLevelMode()
 {
     return levelMode;
+}
+
+void GameModel::enableFree()
+{   
+    if (levelMode != SETUP_MODE)
+    {
+        for (auto robot : robots)
+        {
+            if (robot->direction == 0)
+            {
+                if (eatenDots >= robot->dotsForFree)
+                {
+                    if (gameStateTime >= robot->timeForFree)
+                    {
+                        robot->free = true;
+                        robot->mustLeave = true;
+                    }
+                                   
+                }
+            }        
+        }
+        
+    }
 }

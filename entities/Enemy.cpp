@@ -17,6 +17,8 @@
 
 using namespace std;
 
+const MazePosition exitPoint = { 13,14 };
+
 Enemy::Enemy()
 {
     player = NULL;
@@ -57,10 +59,12 @@ void Enemy::setRobotMode(int levelMode)
         case RETURN_CAGE:
         {
             setDisplay(30);
+            /*setPoint = getRobotSetpoint(initialPosition,0);
+            forceMove();
+            free = 0;*/
             // setDisplayColor(eyesColor);
             setEyes(eyesColor, eyesColor);
             step = 0.1f / 8;
-            cout << "SOY OJITOS" << endl;
             break;
         }
     }
@@ -105,7 +109,7 @@ int Enemy::getTimeState()
 void Enemy::update(float deltaTime)
 {
     time += deltaTime;
-    enableFree(time);
+    //enableFree(time);
 
     if (!lock)
     {
@@ -121,13 +125,15 @@ void Enemy::move()
     {
         if (free)
             findPath(getTargetSetpoint(gameModel->getLevelMode()));
+        else if (mustLeave && gameModel->getLevelMode()!=SETUP_MODE)
+            findPath(getRobotSetpoint(exitPoint, 0.0f));
         else if ((mazePosition.x == initialPosition.x) && (mazePosition.y == initialPosition.y))
         {
             direction = 0;
             if (gameModel->getLevelMode() != SETUP_MODE)
             {
                 time = 0.0f;    // TO-DO: se puede poner un tiempo negativo, pero por algun motivo se rompe
-                                // revisar si vale la pena o lo dejamos asi
+                                // revisar si vale la pena o lo dejamos asi       
             }
         }
         else
@@ -140,49 +146,87 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
     MazePosition targetPosition = getMazePosition(targetSetpoint);
     lock = (int)(0.1f / step);
-
-    checkFreeTiles();
-
-    int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
-
-    // Constants DOWN=1, RIGHT=2, UP=3, LEFT=4 are used implicitly in values from variable "i"
-
-    if (count == 0)
-        direction = 0;
-
-    else if (count == 1)
+    
+      
+    /*if(mustLeave)
     {
-        for (int i = 0; i < 4; i++)
+        if (mazePosition.y == 14)
         {
-            if (freeTiles[i])
-                direction = i + 1;
+            mustLeave = false;
+        }
+        else if (mazePosition.y >= 15 && mazePosition.y <= 18)
+        {
+            if (mazePosition.x >= 11 && mazePosition.x < 13)
+            {
+                direction = RIGHT;
+            }
+            else if (mazePosition.x <= 16 && mazePosition.x > 14)
+            {
+                direction = LEFT;
+            }
+            else if (mazePosition.x >= 13 && mazePosition.x <= 14)
+            {
+                direction = UP;               
+            }        
         }
     }
-    else
+    else if (!free && !mustLeave)
     {
-        float distances[] = {0.0f, 0.0f, 0.0f, 0.0f};
-        Vector2 nextStep[] = {{0.0f, -0.1f}, {0.1f, 0.0f}, {0.0f, 0.1f}, {-0.1f, 0.0f}};
-
-        for (int i = 0; i < 4; i++)
+        if (mazePosition.y == 14)
         {
-            if (freeTiles[i])
-            {
-                Vector2 distance = {setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
-                                    setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ};
+            if (mazePosition.x == 13 || mazePosition.x == 14)
+                direction = DOWN;
+        }
+    }*/
+    if (targetPosition.x == exitPoint.x && targetPosition.y == exitPoint.y)
+    {
+        mustLeave = false;
+    }
 
-                distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
+    {
+        checkFreeTiles();
+
+        int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
+
+        // Constants DOWN=1, RIGHT=2, UP=3, LEFT=4 are used implicitly in values from variable "i"
+
+        if (count == 0)
+            direction = 0;
+
+        else if (count == 1)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (freeTiles[i])
+                    direction = i + 1;
             }
         }
-
-        float minDistance = 0.0f;
-        for (int i = 0; i < 4; i++)
+        else
         {
-            if (distances[i] != 0.0f)
+            float distances[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            Vector2 nextStep[] = { {0.0f, -0.1f}, {0.1f, 0.0f}, {0.0f, 0.1f}, {-0.1f, 0.0f} };
+
+            for (int i = 0; i < 4; i++)
             {
-                if ((minDistance == 0.0f) || (distances[i] < minDistance))
+                if (freeTiles[i])
                 {
-                    minDistance = distances[i];
-                    direction = i + 1;
+                    Vector2 distance = { setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
+                                        setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ };
+
+                    distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
+                }
+            }
+
+            float minDistance = 0.0f;
+            for (int i = 0; i < 4; i++)
+            {
+                if (distances[i] != 0.0f)
+                {
+                    if ((minDistance == 0.0f) || (distances[i] < minDistance))
+                    {
+                        minDistance = distances[i];
+                        direction = i + 1;
+                    }
                 }
             }
         }
@@ -258,18 +302,4 @@ void Enemy::moveEnemy()
         lock--;
 }
 
-void Enemy::enableFree(float time)
-{
-    if (gameModel->getLevelMode() != SETUP_MODE)
-    {
-        if(direction == 0)
-            if (time > 0)       // TO-DO: remainingDots condition missing (0 red, pink; 30 cyan; 60 orange)
-            {
-                free = true;
-            }
-    }
-}
 
-// RobotSetpoint getTargetSetpoint(int levelMode)
-//{
-// }

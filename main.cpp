@@ -102,8 +102,8 @@ int main(int, char **)
 
     gameModel.addRobot(&player);
     gameModel.addRobot(&red);
-    gameModel.addRobot(&pink);
     gameModel.addRobot(&cyan);
+    gameModel.addRobot(&pink);  
     gameModel.addRobot(&orange);
 
     while (!WindowShouldClose() && mqttClient.isConnected())
