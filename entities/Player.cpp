@@ -26,44 +26,24 @@ Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
 
     mazePosition = {13, 26};
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
 
     setRobotMode(false);
 }
 
 void Player::start()
 {
-    direction = UP;
+    direction = 0;
     crash = false;
 
     mazePosition = {13, 26};
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
-    // setPoint.positionX = +0.0025f;
 
     setRobotMode(false);
-    // setDisplay(imageIndex);
-    //// setDisplayColor(eyesColor);
-    // setEyes(eyesColor, eyesColor);
-
-    /*liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);*/
 }
 
 void Player::update(float deltaTime)
 {
     gameModel->pickItem(&mazePosition);
-
-    /*if (crash)
-    {
-        if (gameModel->getLevelMode() == NORMAL_MODE)
-        {
-            cout << "AAAAAAAAAAAAAAAA ME MUEEEEEEEERO :C" << endl;
-        }
-        else if (gameModel->getLevelMode() == BLINKING_MODE)
-        {
-            cout << "TE COMI FANTASMA QLIA" << endl;
-        }
-    }*/
 }
 
 void Player::move()
@@ -144,14 +124,12 @@ void Player::setRobotMode(bool isMoving)
             imageIndex = 1;
 
         setDisplay(imageIndex);
-        // setDisplayColor(eyesColor);
         setEyes(eyesColor, eyesColor);
     }
     else
     {
         imageIndex = 0;
         setDisplay(imageIndex);
-        // setDisplayColor(eyesColor);
         setEyes(eyesColor, eyesColor);
     }
 

@@ -38,9 +38,8 @@ void Pink::start()
     dotsForFree = 0;
     timeForFree = 4;
 
-    initialPosition = { 13, 17 };
+    initialPosition = { 13, 18 };
     mazePosition = initialPosition;
-    setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
     setRobotMode(SETUP_MODE);
 }

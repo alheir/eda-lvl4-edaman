@@ -104,14 +104,14 @@ void GameView::update(float deltaTime)
 {
     time += deltaTime;
 
-   /* float blink1UpPhase = (float)fmod(time / (32.0 / 60.0), 1.0);
+    float blink1UpPhase = (float)fmod(time / (32.0 / 60.0), 1.0);
     bool nextBlink1Up = (blink1UpPhase > 0.5);
     if (blink1Up != nextBlink1Up)
     {
         blink1Up = nextBlink1Up;
 
         setTiles(3, 0, blink1Up ? SCORE_COLOR : 0, "1UP");
-    }*/
+    }
 
     if (gameViewMessage == GameViewMessageNone)
     {

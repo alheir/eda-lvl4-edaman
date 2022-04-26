@@ -17,8 +17,6 @@
 
 using namespace std;
 
-const MazePosition exitPoint = { 13,14 };
-
 Enemy::Enemy()
 {
     player = NULL;

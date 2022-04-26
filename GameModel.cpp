@@ -163,23 +163,20 @@ void GameModel::update(float deltaTime)
         freeTimer = 0;
     }
     else if (gameState == GameStarting)
-    {
-        int readyToStart = 0;       
-        for (int i = 1; i < robots.size(); i++)
+    {     
+        for (int i = 0; i < robots.size(); i++)
         {
             robots[i]->update(deltaTime);
             robots[i]->move();
-            readyToStart += robots[i]->getDirection();
         }
-        if (readyToStart == 0)
         {
             // Just for testing
             gameView->playAudio("mainStart");
+            WaitTime(4000);
             gameView->setMessage(GameViewMessageReady);
             gameView->setLives(lives);
-            gameView->setEatenFruits(eatenFruits);
+            //gameView->setEatenFruits(eatenFruits);
 
-            WaitTime(6000);
             gameState = GamePlaying;
             gameView->setMessage(GameViewMessageNone);
             levelMode = NORMAL_MODE;
@@ -216,7 +213,7 @@ void GameModel::update(float deltaTime)
             robot->move();
         }
 
-           int crashedRobot = checkRobotCollision();
+        int crashedRobot = checkRobotCollision();
      
         if (robots[0]->crash)
         {
@@ -238,7 +235,8 @@ void GameModel::pickItem(MazePosition *position)
     if (tile == '+' || tile == '#')
     {
         this->maze[position->x + MAZE_WIDTH * position->y] = ' ';
-        gameView->setTiles(position->x, position->y, 0, " ");
+        //gameView->setTiles(position->x, position->y, 0, " ");
+        gameView->clearDot(position->x, position->y);
 
         switch (tile)
         {
@@ -270,6 +268,13 @@ void GameModel::pickItem(MazePosition *position)
 
 void GameModel::loseLife()
 {
+    gameView->playAudio("mainLost");
+    for (int i = 4; i <= 14; i++)
+    {
+        robots[0]->setDisplay(i);
+        WaitTime(200);
+    }
+
     if (--lives)
     {
         for (int i = 0; i < robots.size(); i++)
@@ -277,22 +282,20 @@ void GameModel::loseLife()
             robots[i]->start();
             robots[i]->move();
         }
-        gameView->playAudio("mainWon");
         gameState = GameStart;
     }
     else
     {
         gameState = GameFinish;
         gameView->setMessage(GameViewMessageGameOver);
-        gameView->playAudio("mainLost");
     }
 }
 
 void GameModel::eatEnemy(int crashedRobot)
 {
-    if (!eatenEnemies[crashedRobot])
+    if (!eatenEnemies[crashedRobot - 1])
     {
-        eatenEnemies[crashedRobot] = true;
+        eatenEnemies[crashedRobot - 1] = true;
         score += enemyScore;
         enemyScore *= 2;
         gameView->setScore(score);
@@ -300,7 +303,7 @@ void GameModel::eatEnemy(int crashedRobot)
         gameView->stopAudio("backgroundEnergizer");
         gameView->playAudio("eatingGhost");
         robots[crashedRobot]->setDisplay(enemyScoreIndex++);
-        WaitTime(500);
+        WaitTime(1000);
         gameView->playAudio("backgroundGhostsCaptured");
         gameView->playAudio("backgroundEnergizer");
     }

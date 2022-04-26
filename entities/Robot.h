@@ -61,8 +61,8 @@ public:
 
     int direction;
     float time;
-    unsigned int dotsForFree;
-    unsigned int timeForFree;
+    int dotsForFree;
+    float timeForFree;
 
 protected:
     // NOTE: These variables should be set by your child class:
@@ -84,9 +84,8 @@ protected:
     void setEyes(Color leftEye, Color rightEye);
     void setDisplayColor(Color color);
 
-    // we decided not to use it because of bugs and necessary delays
+    // we decided not to use it because of bugs and mandatory delays
     void liftTo(float positionX, float positionZ);
-    
 };
 
 #endif

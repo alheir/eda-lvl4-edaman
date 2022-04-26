@@ -41,7 +41,6 @@ protected:
     void update(float deltaTime);
     void move();
     void setRobotMode(int levelMode);
-    void enableFree(float time);
 
 private:
     void moveEnemy();
