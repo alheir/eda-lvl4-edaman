@@ -12,6 +12,8 @@
 #ifndef _GAMEMODEL_H
 #define _GAMEMODEL_H
 
+#include <array>
+
 #define MAZE_WIDTH 28
 #define MAZE_HEIGHT 36
 #define MAZE_SIZE (MAZE_WIDTH * MAZE_HEIGHT)
@@ -72,6 +74,7 @@ private:
     GameView *gameView;
 
     std::string maze;
+    std::string mazeBack;
     std::vector<Robot *> robots;
 
     int gameState;    
@@ -80,20 +83,28 @@ private:
     int remainingDots;
     int remainingEnergizers;
     float gameStateTime;
-
     int lives;
     int score;
     int enemyScore;
     int enemyScoreIndex;
 
     std::list<int> eatenFruits;
-    bool eatenEnemies[4];
+    int currentActiveFruitIndex;
+    MazePosition currentActiveFruitPosition;
+    float fruitTimer;
+    bool fruitActive;
+    
+    std::array<bool, 4> eatenEnemies;
     int eatenDots;
+
+    bool playingEatingDotSound;
 
     int checkRobotCollision();
     void loseLife();
     void eatEnemy(int crashedRobot);
     void enableFree();
+
+    MazePosition getRandomFreePosition();
 };
 
 #endif

@@ -29,27 +29,27 @@ void Enemy::setRobotMode(int levelMode)
 
     switch (levelMode)
     {
-        case NORMAL_MODE:
-        {
-            setDisplay(imageIndex);
-            setEyes(eyesColor, eyesColor);
-            step = 0.1f / 13;
-            break;
-        }
-        case BLINKING_MODE:
-        {
-            setDisplay(24);
-            setEyes(BLUE, BLUE);
-            step = 0.1f / 16;
-            break;
-        }
-        case RETURN_CAGE:
-        {
-            setDisplay(30);
-            setEyes(eyesColor, eyesColor);
-            step = 0.1f / 8;
-            break;
-        }
+    case NORMAL_MODE:
+    {
+        setDisplay(imageIndex);
+        setEyes(eyesColor, eyesColor);
+        step = 0.6f / 60.0f;
+        break;
+    }
+    case BLINKING_MODE:
+    {
+        setDisplay(24);
+        setEyes(BLUE, BLUE);
+        step = 0.4f / 60.0f;
+        break;
+    }
+    case RETURN_CAGE:
+    {
+        setDisplay(30);
+        setEyes(eyesColor, eyesColor);
+        step *= 2;
+        break;
+    }
     }
 }
 
@@ -122,7 +122,7 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
     MazePosition targetPosition = getMazePosition(targetSetpoint);
     lock = (int)(0.1f / step);
-    
+
     if (targetPosition.x == initialPosition.x && targetPosition.y == initialPosition.y)
     {
         start();
@@ -140,8 +140,8 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
         }
         else if (mazePosition.x >= 13 && mazePosition.x <= 14)
         {
-            direction = UP;               
-        }        
+            direction = UP;
+        }
     }
     else
     {
@@ -164,15 +164,15 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
         }
         else
         {
-            float distances[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-            Vector2 nextStep[] = { {0.0f, -0.1f}, {0.1f, 0.0f}, {0.0f, 0.1f}, {-0.1f, 0.0f} };
+            float distances[] = {0.0f, 0.0f, 0.0f, 0.0f};
+            Vector2 nextStep[] = {{0.0f, -0.1f}, {0.1f, 0.0f}, {0.0f, 0.1f}, {-0.1f, 0.0f}};
 
             for (int i = 0; i < 4; i++)
             {
                 if (freeTiles[i])
                 {
-                    Vector2 distance = { setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
-                                        setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ };
+                    Vector2 distance = {setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
+                                        setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ};
 
                     distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
                 }
@@ -191,6 +191,24 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
                 }
             }
         }
+    }
+
+    switch (direction)
+    {
+    case DOWN:
+        setPoint.rotation = 180.0f;
+        break;
+    case RIGHT:
+        setPoint.rotation = 90.0f;
+        break;
+    case UP:
+        setPoint.rotation = 0.0f;
+        break;
+    case LEFT:
+        setPoint.rotation = 270.0f;
+        break;
+    default:
+        break;
     }
 }
 
@@ -237,29 +255,29 @@ void Enemy::moveEnemy()
 {
     switch (direction)
     {
-        case UP:
-        {
-            setPoint.positionZ += step;
-            break;
-        }
-        case DOWN:
-        {
-            setPoint.positionZ -= step;
-            break;
-        }
-        case LEFT:
-        {
-            setPoint.positionX -= step;
-            break;
-        }
-        case RIGHT:
-        {
-            setPoint.positionX += step;
-            break;
-        }
+    case UP:
+    {
+        setPoint.positionZ += step;
+        break;
+    }
+    case DOWN:
+    {
+        setPoint.positionZ -= step;
+        break;
+    }
+    case LEFT:
+    {
+        setPoint.positionX -= step;
+        break;
+    }
+    case RIGHT:
+    {
+        setPoint.positionX += step;
+        break;
+    }
     }
 
     setSetpoint(setPoint);
-    if(lock)
+    if (lock)
         lock--;
 }

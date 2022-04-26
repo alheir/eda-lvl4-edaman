@@ -55,50 +55,50 @@ void Player::move()
 
         switch (direction)
         {
-            case UP:
-            {
-                setPoint.rotation = 0.0f;
+        case UP:
+        {
+            setPoint.rotation = 0.0f;
 
-                if (setPoint.positionZ < tempSetPoint.positionZ)
-                    setPoint.positionZ += step;
+            if (setPoint.positionZ < tempSetPoint.positionZ)
+                setPoint.positionZ += step;
 
-                shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
+            shouldUpdateTile = (tempSetPoint.positionZ - setPoint.positionZ) < 0.0025f;
 
-                break;
-            }
-            case DOWN:
-            {
-                setPoint.rotation = 180.0f;
+            break;
+        }
+        case DOWN:
+        {
+            setPoint.rotation = 180.0f;
 
-                if (setPoint.positionZ > tempSetPoint.positionZ)
-                    setPoint.positionZ -= step;
+            if (setPoint.positionZ > tempSetPoint.positionZ)
+                setPoint.positionZ -= step;
 
-                shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
+            shouldUpdateTile = (setPoint.positionZ - tempSetPoint.positionZ) < 0.0025f;
 
-                break;
-            }
-            case LEFT:
-            {
-                setPoint.rotation = 270.0f;
+            break;
+        }
+        case LEFT:
+        {
+            setPoint.rotation = 270.0f;
 
-                if (setPoint.positionX > tempSetPoint.positionX)
-                    setPoint.positionX -= step;
+            if (setPoint.positionX > tempSetPoint.positionX)
+                setPoint.positionX -= step;
 
-                shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
+            shouldUpdateTile = (setPoint.positionX - tempSetPoint.positionX) < 0.00025f;
 
-                break;
-            }
-            case RIGHT:
-            {
-                setPoint.rotation = 90.0f;
+            break;
+        }
+        case RIGHT:
+        {
+            setPoint.rotation = 90.0f;
 
-                if (setPoint.positionX < tempSetPoint.positionX)
-                    setPoint.positionX += step;
+            if (setPoint.positionX < tempSetPoint.positionX)
+                setPoint.positionX += step;
 
-                shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
+            shouldUpdateTile = (tempSetPoint.positionX - setPoint.positionX) < 0.00025f;
 
-                break;
-            }
+            break;
+        }
         }
 
         if (shouldUpdateTile)
@@ -107,6 +107,7 @@ void Player::move()
             shouldUpdateTile = false;
             setRobotMode(true);
         }
+
     }
     else
         setRobotMode(false);
@@ -125,18 +126,22 @@ void Player::setRobotMode(int isMoving)
 
         setDisplay(imageIndex);
         setEyes(eyesColor, eyesColor);
+
+        moving = true;
     }
     else
     {
         imageIndex = 0;
         setDisplay(imageIndex);
         setEyes(eyesColor, eyesColor);
+
+        moving = false;
     }
 
     if (gameModel->getLevelMode() == NORMAL_MODE)
-        step = 0.1f / 11;
+        step = 0.64f / 60.0f;
     else
-        step = 0.1f / 9;
+        step = 0.72f / 60.0f;
 }
 
 void Player::setDirection(int xDir, int yDir)
@@ -188,6 +193,6 @@ bool Player::shouldMove()
     default:
         break;
     }
-    
+
     return (gameModel->isTileFree(nextTile));
 }

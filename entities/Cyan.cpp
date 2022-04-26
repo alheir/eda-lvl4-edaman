@@ -11,7 +11,7 @@
 
 #include "Cyan.h"
 
-const MazePosition scatteringPoint = { 24, 35 };
+const MazePosition scatteringPoint = {24, 35};
 
 Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *red)
 {
@@ -37,9 +37,9 @@ void Cyan::start()
     imageIndex = 20;
     eyesColor = SKYBLUE;
     dotsForFree = 30;
-    timeForFree = 6;
+    timeForFree = 5;
 
-    initialPosition = { 12, 17 };
+    initialPosition = {11, 18};
     mazePosition = initialPosition;
     setPoint = getSetpoint(mazePosition, 0.0f);
 
@@ -54,45 +54,45 @@ RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-            case DISPERSION:
+        case DISPERSION:
+        {
+            returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
+            break;
+        }
+        case PERSECUTION:
+        {
+            RobotSetpoint newPosition = player->getSetpoint();
+            RobotSetpoint redPosition = red->getSetpoint();
+
+            switch (player->getDirection())
             {
-                returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
+            case UP:
+            {
+                newPosition.positionZ += 0.2f;
                 break;
             }
-            case PERSECUTION:
+            case DOWN:
             {
-                RobotSetpoint newPosition = player->getSetpoint();
-                RobotSetpoint redPosition = red->getSetpoint();
-
-                switch (player->getDirection())
-                {
-                    case UP:
-                    {
-                        newPosition.positionZ += 0.2f;
-                        break;
-                    }
-                    case DOWN:
-                    {
-                        newPosition.positionZ -= 0.2f;
-                        break;
-                    }
-                    case LEFT:
-                    {
-                        newPosition.positionX -= 0.2f;
-                        break;
-                    }
-                    case RIGHT:
-                    {
-                        newPosition.positionX += 0.2f;
-                        break;
-                    }
-                }
-            
-                newPosition.positionX += (newPosition.positionX - redPosition.positionX);
-                newPosition.positionZ += (newPosition.positionZ - redPosition.positionZ);
-
-                returnSetpoint = newPosition;
+                newPosition.positionZ -= 0.2f;
+                break;
             }
+            case LEFT:
+            {
+                newPosition.positionX -= 0.2f;
+                break;
+            }
+            case RIGHT:
+            {
+                newPosition.positionX += 0.2f;
+                break;
+            }
+            }
+
+            newPosition.positionX += (newPosition.positionX - redPosition.positionX);
+            newPosition.positionZ += (newPosition.positionZ - redPosition.positionZ);
+
+            returnSetpoint = newPosition;
+        }
         }
     }
 

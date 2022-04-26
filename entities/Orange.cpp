@@ -11,7 +11,7 @@
 
 #include "Orange.h"
 
-const MazePosition scatteringPoint = { 3, 35 };
+const MazePosition scatteringPoint = {3, 35};
 
 Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 {
@@ -36,9 +36,9 @@ void Orange::start()
     imageIndex = 22;
     eyesColor = ORANGE;
     dotsForFree = 60;
-    timeForFree = 8;
+    timeForFree = 7;
 
-    initialPosition = { 16, 17 };
+    initialPosition = {16, 18};
     mazePosition = initialPosition;
     setPoint = getSetpoint(mazePosition, 0.0f);
 
@@ -53,26 +53,26 @@ RobotSetpoint Orange::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-            case DISPERSION:
+        case DISPERSION:
+        {
+            returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
+            break;
+        }
+        case PERSECUTION:
+        {
+            Vector2 vector = {setPoint.positionX - player->getSetpoint().positionX,
+                              setPoint.positionZ - player->getSetpoint().positionZ};
+
+            if ((vector.x * vector.x) + (vector.y * vector.y) > 0.64f)
+            {
+                returnSetpoint = player->getSetpoint();
+            }
+            else
             {
                 returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
-                break;
             }
-            case PERSECUTION:
-            {
-                Vector2 vector = {setPoint.positionX - player->getSetpoint().positionX,
-                                  setPoint.positionZ - player->getSetpoint().positionZ};
-
-                if ((vector.x * vector.x) + (vector.y * vector.y) > 0.64f)
-                {
-                    returnSetpoint = player->getSetpoint();
-                }
-                else
-                {
-                    returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
-                }
-                break;
-            }
+            break;
+        }
         }
     }
 

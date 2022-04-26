@@ -102,15 +102,15 @@ int main(int, char **)
     gameModel.addRobot(&player);
     gameModel.addRobot(&red);
     gameModel.addRobot(&cyan);
-    gameModel.addRobot(&pink);  
+    gameModel.addRobot(&pink);
     gameModel.addRobot(&orange);
 
     while (!WindowShouldClose() && mqttClient.isConnected())
     {
         // Ignore delays
         float deltaTime = (float)GetFrameTime();
-        if (deltaTime > 3)
-            deltaTime = 0;
+        if (deltaTime > 1.0f)
+            deltaTime = 0.0f;
 
         // raylib
         BeginDrawing();

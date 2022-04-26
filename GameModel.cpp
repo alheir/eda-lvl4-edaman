@@ -15,23 +15,27 @@ using namespace std;
 
 const int SCORE_PER_DOT = 10;
 const int SCORE_PER_ENERGIZER = 50;
+const int SCORE_PER_FRUIT = 100;
 
-GameModel::GameModel(MQTTClient* mqttClient)
+const int MAX_FRUITS = 8;
+const int SECS_TO_LAUNCH_A_FRUIT = 5;
+
+GameModel::GameModel(MQTTClient *mqttClient)
 {
     this->mqttClient = mqttClient;
 }
 
-void GameModel::setGameView(GameView* gameView)
+void GameModel::setGameView(GameView *gameView)
 {
     this->gameView = gameView;
 }
 
-void GameModel::addRobot(Robot* robot)
+void GameModel::addRobot(Robot *robot)
 {
     robots.push_back(robot);
 }
 
-bool GameModel::isTileFree(const MazePosition& position)
+bool GameModel::isTileFree(const MazePosition &position)
 {
     if ((position.x < 0) || (position.x >= MAZE_WIDTH))
         return false;
@@ -57,32 +61,32 @@ int GameModel::checkRobotCollision()
         int direction = robots[i]->getDirection();
         switch (direction)
         {
-            case UP:
-            {
-                mazePosition1.y -= 1;
-                mazePosition2.y -= 2;
-                break;
-            }
-            case LEFT:
-            {
-                mazePosition1.x -= 1;
-                mazePosition2.x -= 2;
-                break;
-            }
-            case DOWN:
-            {
-                mazePosition1.y += 1;
-                mazePosition2.y += 2;
-                break;
-            }
-            case RIGHT:
-            {
-                mazePosition1.x += 1;
-                mazePosition2.x += 2;
-                break;
-            }
-         }
-        
+        case UP:
+        {
+            mazePosition1.y -= 1;
+            mazePosition2.y -= 2;
+            break;
+        }
+        case LEFT:
+        {
+            mazePosition1.x -= 1;
+            mazePosition2.x -= 2;
+            break;
+        }
+        case DOWN:
+        {
+            mazePosition1.y += 1;
+            mazePosition2.y += 2;
+            break;
+        }
+        case RIGHT:
+        {
+            mazePosition1.x += 1;
+            mazePosition2.x += 2;
+            break;
+        }
+        }
+
         for (int j = 0; j < robots.size(); j++)
         {
             if (i != j)
@@ -121,8 +125,10 @@ int GameModel::checkRobotCollision()
 void GameModel::start(string maze)
 {
     this->maze = maze;
+    this->mazeBack = maze;
 
     remainingDots = 0;
+    playingEatingDotSound = 0;
     remainingEnergizers = 0;
     eatenDots = 0;
 
@@ -137,6 +143,8 @@ void GameModel::start(string maze)
     score = 0;
     lives = 4;
     eatenFruits.clear();
+    fruitTimer = 0;
+    fruitActive = false;
 
     gameView->start(maze);
     gameView->setScore(score);
@@ -153,6 +161,7 @@ void GameModel::update(float deltaTime)
             robot->start();
             robot->update(deltaTime);
             robot->move();
+            WaitTime(255);
         }
 
         gameView->setMessage(GameViewMessageReady);
@@ -170,7 +179,8 @@ void GameModel::update(float deltaTime)
         for (auto robot : robots)
             robot->resetTime();
 
-        gameStateTime = 0;
+        gameStateTime = 0.0f;
+        playingEatingDotSound = 0;
     }
 
     else if (gameState == GamePlaying)
@@ -179,7 +189,7 @@ void GameModel::update(float deltaTime)
 
         if (levelMode == BLINKING_MODE)
         {
-            if (gameStateTime > 7)
+            if (gameStateTime > 7.0f)
             {
                 levelMode = NORMAL_MODE;
                 gameStateTime = 0.0f;
@@ -199,7 +209,7 @@ void GameModel::update(float deltaTime)
         }
 
         int crashedRobot = checkRobotCollision();
-     
+
         if (robots[0]->crash)
         {
             if (levelMode == NORMAL_MODE)
@@ -212,12 +222,35 @@ void GameModel::update(float deltaTime)
                 eatEnemy(crashedRobot);
             }
         }
+
+        fruitTimer += deltaTime;
+
+        if (fruitTimer >= SECS_TO_LAUNCH_A_FRUIT &&
+            !fruitActive &&
+            (int)eatenFruits.size() < MAX_FRUITS)
+        {
+            currentActiveFruitPosition = getRandomFreePosition();
+            currentActiveFruitIndex = GetRandomValue(0, 7);
+
+            gameView->setFruit(currentActiveFruitPosition.x,
+                               currentActiveFruitPosition.y,
+                               currentActiveFruitIndex);
+
+            fruitActive = true;
+        }
     }
+
     else if (gameState == GameFinish)
     {
         gameView->stopAudio("backgroundEnergizer");
         gameView->playAudio("mainIntermission");
         gameView->setHighScore(score);
+    }
+
+    if (!robots[0]->moving)
+    {
+        gameView->stopAudio("eatingDots");
+        playingEatingDotSound = false;
     }
 }
 
@@ -231,29 +264,52 @@ void GameModel::pickItem(MazePosition *position)
 
         switch (tile)
         {
-            case '+':
+        case '+':
+        {
+            remainingDots--;
+            eatenDots++;
+            score += SCORE_PER_DOT;
+
+            if (!playingEatingDotSound)
             {
-                remainingDots--;
-                eatenDots++;
-                score += SCORE_PER_DOT;
-                break;
+                gameView->playAudio("eatingDots");
+                playingEatingDotSound = true;
             }
-            case '#':
-            {
-                remainingEnergizers--;
-                score += SCORE_PER_ENERGIZER;
-                gameStateTime = 0.0f;
-                levelMode = BLINKING_MODE;
-                gameView->playAudio("backgroundEnergizer");
-                for (int i = 0; i < 4; i++)
-                    eatenEnemies[i] = false;
-                enemyScore = 200;
-                enemyScoreIndex = 26;
-                break;
-            }
+
+            break;
+        }
+        case '#':
+        {
+            remainingEnergizers--;
+            score += SCORE_PER_ENERGIZER;
+            gameStateTime = 0.0f;
+            levelMode = BLINKING_MODE;
+            gameView->playAudio("backgroundEnergizer");
+            eatenEnemies.fill(false);
+            enemyScore = 200;
+            enemyScoreIndex = 26;
+            break;
+        }
         }
 
         gameView->setScore(score);
+    }
+
+    else if (fruitActive &&
+             position->x == currentActiveFruitPosition.x &&
+             position->y == currentActiveFruitPosition.y)
+    {
+        score += SCORE_PER_FRUIT;
+
+        eatenFruits.push_back(currentActiveFruitIndex);
+        fruitActive = false;
+        fruitTimer = 0.0f;
+
+        gameView->setEatenFruits(eatenFruits);
+        gameView->setTiles(position->x, position->y, 0, " ");
+        gameView->playAudio("eatingFruit");
+        gameView->setScore(score);
+        WaitTime(1000);
     }
 }
 
@@ -290,7 +346,7 @@ void GameModel::eatEnemy(int crashedRobot)
         gameView->stopAudio("backgroundEnergizer");
         gameView->playAudio("eatingGhost");
         robots[crashedRobot]->setDisplay(enemyScoreIndex++);
-        WaitTime(1000);
+        WaitTime(2000);
         gameView->playAudio("backgroundGhostsCaptured");
         gameView->playAudio("backgroundEnergizer");
     }
@@ -329,7 +385,7 @@ int GameModel::getLevelMode()
 }
 
 void GameModel::enableFree()
-{   
+{
     for (auto robot : robots)
     {
         if (robot->getDirection() == 0)
@@ -340,8 +396,25 @@ void GameModel::enableFree()
                 {
                     if (levelMode != BLINKING_MODE)
                         robot->free = true;
-                }         
+                }
             }
-        }        
+        }
     }
+}
+
+MazePosition GameModel::getRandomFreePosition()
+{
+    MazePosition position;
+
+    position.x = GetRandomValue(0, MAZE_HEIGHT - 1);
+    position.y = GetRandomValue(0, MAZE_WIDTH - 1);
+
+    // Solo se spawneará una fruta en punto donde hay o hubo dot
+    while (mazeBack[position.y * MAZE_WIDTH + position.x] != '+')
+    {
+        position.x = GetRandomValue(0, MAZE_HEIGHT - 1);
+        position.y = GetRandomValue(0, MAZE_WIDTH - 1);
+    }
+
+    return position;
 }

@@ -11,7 +11,7 @@
 
 #include "Pink.h"
 
-const MazePosition scatteringPoint = { 3, 0 };
+const MazePosition scatteringPoint = {3, 0};
 
 Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 {
@@ -36,9 +36,9 @@ void Pink::start()
     imageIndex = 18;
     eyesColor = PINK;
     dotsForFree = 0;
-    timeForFree = 4;
+    timeForFree = 3;
 
-    initialPosition = { 13, 18 };
+    initialPosition = {13, 17};
     mazePosition = initialPosition;
     setPoint = getSetpoint(mazePosition, 0.0f);
 
@@ -53,41 +53,41 @@ RobotSetpoint Pink::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-            case DISPERSION:
-            {
-                returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
-                break;
-            }
-            case PERSECUTION:
-            {
-                RobotSetpoint newPosition = player->getSetpoint();
+        case DISPERSION:
+        {
+            returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
+            break;
+        }
+        case PERSECUTION:
+        {
+            RobotSetpoint newPosition = player->getSetpoint();
 
-                switch (player->getDirection())
-                {
-                    case UP:
-                    {
-                        newPosition.positionZ += 0.4f;
-                        break;
-                    }
-                    case DOWN:
-                    {
-                        newPosition.positionZ -= 0.4f;
-                        break;
-                    }
-                    case LEFT:
-                    {
-                        newPosition.positionX -= 0.4f;
-                        break;
-                    }
-                    case RIGHT:
-                    {
-                        newPosition.positionX += 0.4f;
-                        break;
-                    }
-                }
-                returnSetpoint = newPosition;
+            switch (player->getDirection())
+            {
+            case UP:
+            {
+                newPosition.positionZ += 0.4f;
                 break;
             }
+            case DOWN:
+            {
+                newPosition.positionZ -= 0.4f;
+                break;
+            }
+            case LEFT:
+            {
+                newPosition.positionX -= 0.4f;
+                break;
+            }
+            case RIGHT:
+            {
+                newPosition.positionX += 0.4f;
+                break;
+            }
+            }
+            returnSetpoint = newPosition;
+            break;
+        }
         }
     }
 

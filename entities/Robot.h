@@ -62,6 +62,8 @@ public:
     int dotsForFree;
     float timeForFree;
 
+    bool moving;
+
 protected:
     MQTTClient *mqttClient;
     GameModel *gameModel;

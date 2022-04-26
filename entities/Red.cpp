@@ -14,7 +14,7 @@
 
 using namespace std;
 
-const MazePosition scatteringPoint = { 24, 0 };
+const MazePosition scatteringPoint = {24, 0};
 
 Red::Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 {
@@ -24,7 +24,7 @@ Red::Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     this->player = player;
 
     imageIndex = 16;
-    eyesColor = RED;    
+    eyesColor = RED;
 
     setRobotMode(NORMAL_MODE);
 }
@@ -39,9 +39,9 @@ void Red::start()
     imageIndex = 16;
     eyesColor = RED;
     dotsForFree = 0;
-    timeForFree = 2;
+    timeForFree = 1;
 
-    initialPosition = { 13, 14 };
+    initialPosition = {13, 14};
     mazePosition = initialPosition;
     setPoint = getSetpoint(mazePosition, 0.0f);
 
@@ -56,16 +56,16 @@ RobotSetpoint Red::getTargetSetpoint(int levelMode)
     {
         switch (getTimeState())
         {
-            case DISPERSION:
-            {
-                returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
-                break;
-            }
-            case PERSECUTION:
-            {
-                returnSetpoint = player->getSetpoint();
-                break;
-            }
+        case DISPERSION:
+        {
+            returnSetpoint = getSetpoint(scatteringPoint, setPoint.rotation);
+            break;
+        }
+        case PERSECUTION:
+        {
+            returnSetpoint = player->getSetpoint();
+            break;
+        }
         }
     }
 
