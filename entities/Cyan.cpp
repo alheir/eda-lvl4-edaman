@@ -21,23 +21,15 @@ Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *
     this->player = player;
     this->red = red;
 
-    
-    // setPoint.positionX = +0.0025f;
-
     imageIndex = 20;
     eyesColor = SKYBLUE;
-    
 
-    setRobotMode(NORMAL_MODE);
-
-    /*liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);*/
+    setRobotMode(SETUP_MODE);
 }
 
 void Cyan::start()
 {
     free = false;
-    //free = true; // para debug
     direction = 0;
     lock = 0;
     crash = false;
@@ -46,18 +38,12 @@ void Cyan::start()
     eyesColor = SKYBLUE;
     dotsForFree = 30;
     timeForFree = 6;
-    //mustLeave = true;
 
     initialPosition = { 12, 17 };
     mazePosition = initialPosition;
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
     setRobotMode(SETUP_MODE);
-
-    //setPoint.positionX -= 0.1;
-
-    /*liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);*/
 }
 
 RobotSetpoint Cyan::getTargetSetpoint(int levelMode)

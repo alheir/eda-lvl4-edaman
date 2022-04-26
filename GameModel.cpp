@@ -175,7 +175,6 @@ void GameModel::update(float deltaTime)
         {
             // Just for testing
             gameView->playAudio("mainStart");
-            //gameView->playAudio("eatingFruit");
             gameView->setMessage(GameViewMessageReady);
             gameView->setLives(lives);
             gameView->setEatenFruits(eatenFruits);

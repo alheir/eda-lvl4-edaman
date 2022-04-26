@@ -63,7 +63,6 @@ public:
     float time;
     unsigned int dotsForFree;
     unsigned int timeForFree;
-    bool mustLeave;
 
 protected:
     // NOTE: These variables should be set by your child class:
@@ -82,9 +81,11 @@ protected:
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);
     void setSetpoint(RobotSetpoint setpoint);
-    void liftTo(float positionX, float positionZ);
     void setEyes(Color leftEye, Color rightEye);
     void setDisplayColor(Color color);
+
+    // we decided not to use it because of bugs and necessary delays
+    void liftTo(float positionX, float positionZ);
     
 };
 
