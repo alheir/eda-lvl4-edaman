@@ -44,19 +44,19 @@ void Orange::start()
     imageIndex = 22;
     eyesColor = ORANGE;
     dotsForFree = 60;
-    timeForFree = 8;
-    mustLeave = true;
+    timeForFree = 9;
+    //mustLeave = true;
 
-    initialPosition = { 16, 18 }; //{ 16, 17 }
+    initialPosition = { 16, 17 };
     mazePosition = initialPosition;
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
-    setRobotMode(NORMAL_MODE);
+    setRobotMode(SETUP_MODE);
 
-    setPoint.positionX += 0.05;
+    //setPoint.positionX += 0.1;
 
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);
+    /*liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(7500);*/
 }
 
 RobotSetpoint Orange::getTargetSetpoint(int levelMode)

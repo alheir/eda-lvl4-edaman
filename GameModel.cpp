@@ -172,6 +172,7 @@ void GameModel::update(float deltaTime)
         gameState = GameStarting;
         levelMode = SETUP_MODE;
         gameStateTime = 0;
+        freeTimer = 0;
     }
     else if (gameState == GameStarting)
     {
@@ -204,9 +205,11 @@ void GameModel::update(float deltaTime)
     else if (gameState == GamePlaying)
     {
         gameStateTime += deltaTime;
+        freeTimer += deltaTime;
 
         if (levelMode == BLINKING_MODE)
         {
+            freeTimer = 0;
             if (gameStateTime > 7)
             {
                 levelMode = NORMAL_MODE;
@@ -357,10 +360,9 @@ void GameModel::enableFree()
             {
                 if (eatenDots >= robot->dotsForFree)
                 {
-                    if (gameStateTime >= robot->timeForFree)
+                    if (freeTimer >= robot->timeForFree)
                     {
                         robot->free = true;
-                        robot->mustLeave = true;
                     }
                                    
                 }

@@ -45,8 +45,8 @@ void Player::start()
     //// setDisplayColor(eyesColor);
     // setEyes(eyesColor, eyesColor);
 
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);
+    /*liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(7500);*/
 }
 
 void Player::update(float deltaTime)

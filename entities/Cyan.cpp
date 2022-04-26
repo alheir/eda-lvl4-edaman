@@ -45,19 +45,19 @@ void Cyan::start()
     imageIndex = 20;
     eyesColor = SKYBLUE;
     dotsForFree = 30;
-    timeForFree = 5;
-    mustLeave = true;
+    timeForFree = 6;
+    //mustLeave = true;
 
     initialPosition = { 12, 17 };
     mazePosition = initialPosition;
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
-    setRobotMode(NORMAL_MODE);
+    setRobotMode(SETUP_MODE);
 
-    setPoint.positionX -= 0.025;
+    //setPoint.positionX -= 0.1;
 
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);
+    /*liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(7500);*/
 }
 
 RobotSetpoint Cyan::getTargetSetpoint(int levelMode)

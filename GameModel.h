@@ -73,6 +73,9 @@ public:
     void pickItem(MazePosition *position);
     int getLevelMode();
 
+    float freeTimer;        //xd
+    
+
 private:
     MQTTClient *mqttClient;
     GameView *gameView;
@@ -81,11 +84,12 @@ private:
     std::vector<Robot *> robots;
 
     int gameState;
-    float gameStateTime;
+    
     int levelMode;
 
     int remainingDots;
     int remainingEnergizers;
+    float gameStateTime;
 
     int score; // agregado
     int lives;

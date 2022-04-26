@@ -125,8 +125,6 @@ void Enemy::move()
     {
         if (free)
             findPath(getTargetSetpoint(gameModel->getLevelMode()));
-        else if (mustLeave && gameModel->getLevelMode()!=SETUP_MODE)
-            findPath(getRobotSetpoint(exitPoint, 0.0f));
         else if ((mazePosition.x == initialPosition.x) && (mazePosition.y == initialPosition.y))
         {
             direction = 0;
@@ -147,42 +145,28 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     MazePosition targetPosition = getMazePosition(targetSetpoint);
     lock = (int)(0.1f / step);
     
-      
-    /*if(mustLeave)
+    if (targetPosition.x == initialPosition.x && targetPosition.y == initialPosition.y)
     {
-        if (mazePosition.y == 14)
-        {
-            mustLeave = false;
-        }
-        else if (mazePosition.y >= 15 && mazePosition.y <= 18)
-        {
-            if (mazePosition.x >= 11 && mazePosition.x < 13)
-            {
-                direction = RIGHT;
-            }
-            else if (mazePosition.x <= 16 && mazePosition.x > 14)
-            {
-                direction = LEFT;
-            }
-            else if (mazePosition.x >= 13 && mazePosition.x <= 14)
-            {
-                direction = UP;               
-            }        
-        }
+        start();
+        free = false;
+        direction = 0;
     }
-    else if (!free && !mustLeave)
+    else if (mazePosition.y >= 15 && mazePosition.y <= 18)
     {
-        if (mazePosition.y == 14)
+        if (mazePosition.x >= 11 && mazePosition.x < 13)
         {
-            if (mazePosition.x == 13 || mazePosition.x == 14)
-                direction = DOWN;
+            direction = RIGHT;
         }
-    }*/
-    if (targetPosition.x == exitPoint.x && targetPosition.y == exitPoint.y)
-    {
-        mustLeave = false;
+        else if (mazePosition.x <= 16 && mazePosition.x > 14)
+        {
+            direction = LEFT;
+        }
+        else if (mazePosition.x >= 13 && mazePosition.x <= 14)
+        {
+            direction = UP;               
+        }        
     }
-
+    else
     {
         checkFreeTiles();
 

@@ -43,19 +43,19 @@ void Pink::start()
     imageIndex = 18;
     eyesColor = PINK;
     dotsForFree = 0;
-    timeForFree = 2;
-    mustLeave = true;
+    timeForFree = 4;
+    //mustLeave = true;
 
     initialPosition = { 13, 17 };
     mazePosition = initialPosition;
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
-    setRobotMode(NORMAL_MODE);
+    setRobotMode(SETUP_MODE);
 
-    setPoint.positionX += 0.05;
+    //setPoint.positionX += 0;
 
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);
+    /*liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(7500);*/
 }
 
 RobotSetpoint Pink::getTargetSetpoint(int levelMode)

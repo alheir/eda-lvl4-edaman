@@ -46,17 +46,19 @@ void Red::start()
     imageIndex = 16;
     eyesColor = RED;
     dotsForFree = 0;
-    timeForFree = 0;
-    mustLeave = true;
+    timeForFree = 2;
+    //mustLeave = true;
 
     initialPosition = { 13, 14 };
     mazePosition = initialPosition;
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
-    setRobotMode(NORMAL_MODE);
+    setRobotMode(SETUP_MODE);
 
-    liftTo(setPoint.positionX, setPoint.positionZ);
-    WaitTime(7500);
+    //setPoint.positionZ += 0.1;
+
+    /*liftTo(setPoint.positionX, setPoint.positionZ);
+    WaitTime(7500);*/
 }
 
 RobotSetpoint Red::getTargetSetpoint(int levelMode)
