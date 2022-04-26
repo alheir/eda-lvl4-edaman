@@ -1,6 +1,6 @@
 /**
  * @file Robot.cpp
- * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @authors RESSL ~ CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
  * @brief Clase base de robots
  * @version 0.1
  * @date 2022-04-25
@@ -14,41 +14,69 @@
 
 using namespace std;
 
+/**
+ * @brief Construct a new Robot object
+ *
+ */
 Robot::Robot()
 {
     displayImages = LoadImage("RobotImages.png");
 }
 
+/**
+ * @brief Destroy the Robot object
+ *
+ */
 Robot::~Robot()
 {
     UnloadImage(displayImages);
 }
 
-void Robot::forceMove()
-{
-    setSetpoint(setPoint);
-}
-
+/**
+ * @brief Returns robot's setpoint
+ *
+ * @return RobotSetpoint
+ */
 RobotSetpoint Robot::getSetpoint()
 {
     return setPoint;
 }
 
+/**
+ * @brief Returns robot's maze position
+ *
+ * @return MazePosition
+ */
 MazePosition Robot::getMazePosition()
 {
     return mazePosition;
 }
 
+/**
+ * @brief Returns robot's current direction
+ *
+ * @return int
+ */
 int Robot::getDirection()
 {
     return direction;
 }
 
+/**
+ * @brief Resets internal timer
+ *
+ */
 void Robot::resetTime()
 {
     time = 0;
 }
 
+/**
+ * @brief Transforms setpoint to maze position
+ *
+ * @param setpoint
+ * @return MazePosition
+ */
 MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
 {
     MazePosition mazePosition;
@@ -59,6 +87,13 @@ MazePosition Robot::getMazePosition(RobotSetpoint setpoint)
     return mazePosition;
 }
 
+/**
+ * @brief Transforms maze position to setpoint
+ *
+ * @param mazePosition
+ * @param rotation
+ * @return RobotSetpoint
+ */
 RobotSetpoint Robot::getSetpoint(MazePosition mazePosition, float rotation)
 {
     RobotSetpoint setpoint;
@@ -68,6 +103,11 @@ RobotSetpoint Robot::getSetpoint(MazePosition mazePosition, float rotation)
     return setpoint;
 }
 
+/**
+ * @brief Sets the robot's setpoint
+ *
+ * @param setpoint
+ */
 void Robot::setSetpoint(RobotSetpoint setpoint)
 {
     vector<char> payload(12);
@@ -79,6 +119,12 @@ void Robot::setSetpoint(RobotSetpoint setpoint)
     mqttClient->publish(robotId + "/pid/setpoint/set", payload);
 }
 
+/**
+ * @brief Lift the robot to a given setpoint
+ *
+ * @param positionX
+ * @param positionZ
+ */
 void Robot::liftTo(float positionX, float positionZ)
 {
     vector<char> payload(12);
@@ -90,6 +136,11 @@ void Robot::liftTo(float positionX, float positionZ)
     mqttClient->publish("hook/" + robotId + "/cmd", payload);
 }
 
+/**
+ * @brief Sets de robot's display
+ *
+ * @param imageIndex Between 0 and 31. See RobotImages.png
+ */
 void Robot::setDisplay(int imageIndex)
 {
     Rectangle selectRectangle = {16.0F * imageIndex, 0, 16, 16};
@@ -104,6 +155,12 @@ void Robot::setDisplay(int imageIndex)
     mqttClient->publish(robotId + "/display/lcd/set", payload);
 }
 
+/**
+ * @brief Sets the robot's eyes color
+ *
+ * @param leftEye
+ * @param rightEye
+ */
 void Robot::setEyes(Color leftEye, Color rightEye)
 {
     vector<char> payload(3);
@@ -116,18 +173,4 @@ void Robot::setEyes(Color leftEye, Color rightEye)
     payload[1] = rightEye.g;
     payload[2] = rightEye.b;
     mqttClient->publish(robotId + "/display/rightEye/set", payload);
-}
-
-void Robot::setDisplayColor(Color color)
-{
-    vector<char> payload(768);
-
-    for (int i = 0; i < 256; i += 3)
-    {
-        payload[i] = color.r;
-        payload[i + 1] = color.g;
-        payload[i + 2] = color.b;
-    }
-
-    mqttClient->publish(robotId + "/display/lcd/set", payload);
 }

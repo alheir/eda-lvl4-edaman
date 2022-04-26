@@ -1,7 +1,7 @@
 /**
  * @file Pink.cpp
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase de robot pink
+ * @brief Pink robot class
  * @version 0.1
  * @date 2022-04-25
  *
@@ -13,6 +13,13 @@
 
 const MazePosition scatteringPoint = {3, 0};
 
+/**
+ * @brief Construct a new Pink object
+ *
+ * @param mqttClient
+ * @param gameModel
+ * @param player Address of player robot
+ */
 Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 {
     this->mqttClient = mqttClient;
@@ -26,6 +33,10 @@ Pink::Pink(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     setRobotMode(NORMAL_MODE);
 }
 
+/**
+ * @brief Initializes the robot
+ *
+ */
 void Pink::start()
 {
     free = false;
@@ -45,6 +56,12 @@ void Pink::start()
     setRobotMode(NORMAL_MODE);
 }
 
+/**
+ * @brief Returns the robot target setpoint based on current level mode
+ *
+ * @param levelMode
+ * @return RobotSetpoint
+ */
 RobotSetpoint Pink::getTargetSetpoint(int levelMode)
 {
     RobotSetpoint returnSetpoint;
@@ -93,7 +110,9 @@ RobotSetpoint Pink::getTargetSetpoint(int levelMode)
 
     else if (levelMode == BLINKING_MODE)
     {
-        MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
+        MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH),
+                                   GetRandomValue(0, MAZE_HEIGHT)};
+
         returnSetpoint = getSetpoint(targetTile, setPoint.rotation);
     }
 

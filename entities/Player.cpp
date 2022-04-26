@@ -1,7 +1,7 @@
 /**
  * @file Player.cpp
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase de robot player
+ * @brief Player robot class
  * @version 0.1
  * @date 2022-04-25
  *
@@ -16,6 +16,12 @@ using namespace std;
 
 const MazePosition initialPoint = {13, 26};
 
+/**
+ * @brief Construct a new Player object
+ *
+ * @param mqttClient
+ * @param gameModel
+ */
 Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
 {
     this->mqttClient = mqttClient;
@@ -30,6 +36,10 @@ Player::Player(MQTTClient *mqttClient, GameModel *gameModel)
     setRobotMode(false);
 }
 
+/**
+ * @brief Initializes the player
+ *
+ */
 void Player::start()
 {
     direction = 0;
@@ -41,11 +51,20 @@ void Player::start()
     setRobotMode(false);
 }
 
+/**
+ * @brief Updates the player
+ *
+ * @param deltaTime
+ */
 void Player::update(float deltaTime)
 {
-    gameModel->pickItem(&mazePosition);
+    gameModel->pickItem(mazePosition);
 }
 
+/**
+ * @brief Moves the player
+ *
+ */
 void Player::move()
 {
     if (shouldMove())
@@ -107,7 +126,6 @@ void Player::move()
             shouldUpdateTile = false;
             setRobotMode(true);
         }
-
     }
     else
         setRobotMode(false);
@@ -115,6 +133,11 @@ void Player::move()
     setSetpoint(setPoint);
 }
 
+/**
+ * @brief Changes player's looking and behavior
+ *
+ * @param isMoving
+ */
 void Player::setRobotMode(int isMoving)
 {
     if (isMoving)
@@ -144,6 +167,12 @@ void Player::setRobotMode(int isMoving)
         step = 0.72f / 60.0f;
 }
 
+/**
+ * @brief Receives external input to set player direction
+ *
+ * @param xDir <0 or 0 or >0
+ * @param yDir <0 or 0 or >0
+ */
 void Player::setDirection(int xDir, int yDir)
 {
     char lastDirection = direction;
@@ -164,6 +193,12 @@ void Player::setDirection(int xDir, int yDir)
     }
 }
 
+/**
+ * @brief Checks if player should move to the next tile
+ *
+ * @return true
+ * @return false
+ */
 bool Player::shouldMove()
 {
     nextTile = mazePosition;

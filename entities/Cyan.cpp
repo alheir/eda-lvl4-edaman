@@ -1,7 +1,7 @@
 /**
  * @file Cyan.cpp
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase de robot cyan
+ * @brief Cyan robot class
  * @version 0.1
  * @date 2022-04-25
  *
@@ -13,6 +13,14 @@
 
 const MazePosition scatteringPoint = {24, 35};
 
+/**
+ * @brief Construct a new Cyan object
+ *
+ * @param mqttClient
+ * @param gameModel
+ * @param player Address of player robot
+ * @param red Address of red enemy robot
+ */
 Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *red)
 {
     this->mqttClient = mqttClient;
@@ -27,6 +35,10 @@ Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *
     setRobotMode(NORMAL_MODE);
 }
 
+/**
+ * @brief Initializes the robot
+ *
+ */
 void Cyan::start()
 {
     free = false;
@@ -46,6 +58,12 @@ void Cyan::start()
     setRobotMode(NORMAL_MODE);
 }
 
+/**
+ * @brief Returns the robot target setpoint based on current level mode
+ *
+ * @param levelMode
+ * @return RobotSetpoint
+ */
 RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
 {
     RobotSetpoint returnSetpoint;
@@ -98,7 +116,8 @@ RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
 
     else if (levelMode == BLINKING_MODE)
     {
-        MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
+        MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH),
+                                   GetRandomValue(0, MAZE_HEIGHT)};
         returnSetpoint = getSetpoint(targetTile, setPoint.rotation);
     }
 

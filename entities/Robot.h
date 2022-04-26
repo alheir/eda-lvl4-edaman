@@ -1,6 +1,6 @@
 /**
  * @file Robot.h
- * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @authors RESSL ~ CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
  * @brief Clase base de robots
  * @version 0.1
  * @date 2022-04-25
@@ -49,9 +49,8 @@ public:
     virtual void update(float deltaTime) = 0;
     virtual void move() = 0;
     virtual void setRobotMode(int levelMode) = 0;
-    
+
     void resetTime();
-    void forceMove();
     int getDirection();
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();
@@ -78,12 +77,11 @@ protected:
     float step;
     int direction;
     float time;
-    
+
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getSetpoint(MazePosition mazePosition, float rotation);
     void setSetpoint(RobotSetpoint setpoint);
     void setEyes(Color leftEye, Color rightEye);
-    void setDisplayColor(Color color);
 
     // we decided not to use it because of bugs and mandatory delays
     void liftTo(float positionX, float positionZ);

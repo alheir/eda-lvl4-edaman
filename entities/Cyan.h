@@ -1,7 +1,7 @@
 /**
  * @file Cyan.h
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase de robot cyan
+ * @brief Cyan robot class
  * @version 0.1
  * @date 2022-04-25
  *

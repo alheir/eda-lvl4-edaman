@@ -1,9 +1,12 @@
 /**
- * EDA-Man game view
+ * @file GameView.h
+ * @authors RESSL ~ CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Controls EDA-Man view over MQTT.
+ * @version 0.1
+ * @date 2022-04-26
  *
- * Copyright (C) 2022 Marc S. Ressl
+ * @copyright Copyright (c) 2022
  *
- * Controls EDD-Man view over MQTT.
  */
 
 #ifndef _GAMEVIEW_H

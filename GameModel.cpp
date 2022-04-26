@@ -1,7 +1,7 @@
 /**
  * @file GameModel.cpp
- * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Control del game model
+ * @authors RESSL ~ CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Controls EDA-Man behavior
  * @version 0.1
  * @date 2022-04-25
  *
@@ -20,6 +20,11 @@ const int SCORE_PER_FRUIT = 200;
 const int MAX_FRUITS = 8;
 const int SECS_TO_LAUNCH_A_FRUIT = 5;
 
+/**
+ * @brief Construct a new Game Model object
+ *
+ * @param mqttClient
+ */
 GameModel::GameModel(MQTTClient *mqttClient)
 {
     this->mqttClient = mqttClient;
@@ -27,16 +32,33 @@ GameModel::GameModel(MQTTClient *mqttClient)
     run = 1;
 }
 
+/**
+ * @brief Loads the game-view handler
+ *
+ * @param gameView
+ */
 void GameModel::setGameView(GameView *gameView)
 {
     this->gameView = gameView;
 }
 
+/**
+ * @brief Adds a robot to the game model
+ *
+ * @param robot Address of a robot
+ */
 void GameModel::addRobot(Robot *robot)
 {
     robots.push_back(robot);
 }
 
+/**
+ * @brief Checks if a given tile is valid to pass through
+ *
+ * @param position Coordinates of the given tile
+ * @return true
+ * @return false
+ */
 bool GameModel::isTileFree(const MazePosition &position)
 {
     if ((position.x < 0) || (position.x >= MAZE_WIDTH))
@@ -50,80 +72,11 @@ bool GameModel::isTileFree(const MazePosition &position)
     return (tile == ' ') || (tile == '+') || (tile == '#');
 }
 
-int GameModel::checkRobotCollision()
-{
-    int crashedRobot = 0;
-
-    for (int i = 0; i < robots.size(); i++)
-    {
-        MazePosition mazePosition = robots[i]->getMazePosition();
-        MazePosition mazePosition1 = mazePosition;
-        MazePosition mazePosition2 = mazePosition;
-
-        int direction = robots[i]->getDirection();
-        switch (direction)
-        {
-        case UP:
-        {
-            mazePosition1.y -= 1;
-            mazePosition2.y -= 2;
-            break;
-        }
-        case LEFT:
-        {
-            mazePosition1.x -= 1;
-            mazePosition2.x -= 2;
-            break;
-        }
-        case DOWN:
-        {
-            mazePosition1.y += 1;
-            mazePosition2.y += 2;
-            break;
-        }
-        case RIGHT:
-        {
-            mazePosition1.x += 1;
-            mazePosition2.x += 2;
-            break;
-        }
-        }
-
-        for (int j = 0; j < robots.size(); j++)
-        {
-            if (i != j)
-            {
-                MazePosition targetPosition = robots[j]->getMazePosition();
-
-                if (i == 0 || j == 0)
-                {
-                    // detect collision between pacman and enemy
-                    if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)))
-                    {
-                        // if enemy is alive
-                        if (robots[max(i, j)]->free == true)
-                        {
-                            robots[0]->crash = true;
-                            crashedRobot = max(i, j);
-                        }
-                    }
-                }
-                else
-                {
-                    // avoid collisions between enemies
-                    if (((targetPosition.x == mazePosition1.x) && (targetPosition.y == mazePosition1.y)) ||
-                        ((targetPosition.x == mazePosition2.x) && (targetPosition.y == mazePosition2.y)))
-                    {
-                        robots[i]->crash = true;
-                    }
-                }
-            }
-        }
-    }
-
-    return crashedRobot;
-}
-
+/**
+ * @brief Initializes the gameModel with a give map
+ *
+ * @param maze
+ */
 void GameModel::start(string maze)
 {
     this->maze = maze;
@@ -139,6 +92,7 @@ void GameModel::start(string maze)
     {
         if (c == '+')
             remainingDots++;
+
         else if (c == '#')
             remainingEnergizers++;
     }
@@ -160,6 +114,11 @@ void GameModel::start(string maze)
     gameState = GameStart;
 }
 
+/**
+ * @brief Updates de game
+ *
+ * @param deltaTime
+ */
 void GameModel::update(float deltaTime)
 {
     if (gameState == GameStart)
@@ -274,13 +233,98 @@ void GameModel::update(float deltaTime)
     }
 }
 
-void GameModel::pickItem(MazePosition *position)
+/**
+ * @brief Checks collisions between player and enemies, while avoids collisions between enemies.
+ *
+ * @return int Enemy robot number which collides with player
+ */
+int GameModel::checkRobotCollision()
 {
-    char tile = this->maze[position->x + MAZE_WIDTH * position->y];
+    int crashedRobot = 0;
+
+    for (int i = 0; i < robots.size(); i++)
+    {
+        MazePosition mazePosition = robots[i]->getMazePosition();
+        MazePosition mazePosition1 = mazePosition;
+        MazePosition mazePosition2 = mazePosition;
+
+        int direction = robots[i]->getDirection();
+        switch (direction)
+        {
+        case UP:
+            mazePosition1.y -= 1;
+            mazePosition2.y -= 2;
+            break;
+
+        case LEFT:
+            mazePosition1.x -= 1;
+            mazePosition2.x -= 2;
+            break;
+
+        case DOWN:
+            mazePosition1.y += 1;
+            mazePosition2.y += 2;
+            break;
+
+        case RIGHT:
+            mazePosition1.x += 1;
+            mazePosition2.x += 2;
+            break;
+
+        default:
+            break;
+        }
+
+        for (int j = 0; j < robots.size(); j++)
+        {
+            if (i != j)
+            {
+                MazePosition targetPosition = robots[j]->getMazePosition();
+
+                if (!i || !j)
+                {
+                    // detect collision between pacman and enemy
+                    if (((targetPosition.x == mazePosition1.x) &&
+                         (targetPosition.y == mazePosition1.y)))
+                    {
+                        // if enemy is alive
+                        if (robots[max(i, j)]->free)
+                        {
+                            robots[0]->crash = true;
+                            crashedRobot = max(i, j);
+                        }
+                    }
+                }
+                else
+                {
+                    // avoid collisions between enemies
+                    if (((targetPosition.x == mazePosition1.x) &&
+                         (targetPosition.y == mazePosition1.y)) ||
+                        ((targetPosition.x == mazePosition2.x) &&
+                         (targetPosition.y == mazePosition2.y)))
+                    {
+                        robots[i]->crash = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return crashedRobot;
+}
+
+/**
+ * @brief Allows player to eat dots, energizers or fruits.
+ *
+ * @param position Player's position
+ */
+void GameModel::pickItem(const MazePosition &position)
+{
+    char tile = this->maze[position.x + MAZE_WIDTH * position.y];
     if (tile == '+' || tile == '#')
     {
-        this->maze[position->x + MAZE_WIDTH * position->y] = ' ';
-        gameView->clearDot(position->x, position->y);
+        this->maze[position.x + MAZE_WIDTH * position.y] = ' ';
+        gameView->clearDot(position.x, position.y);
 
         switch (tile)
         {
@@ -316,8 +360,8 @@ void GameModel::pickItem(MazePosition *position)
     }
 
     if (fruitActive &&
-        position->x == currentActiveFruitPosition.x &&
-        position->y == currentActiveFruitPosition.y)
+        position.x == currentActiveFruitPosition.x &&
+        position.y == currentActiveFruitPosition.y)
     {
         score += SCORE_PER_FRUIT;
 
@@ -326,13 +370,17 @@ void GameModel::pickItem(MazePosition *position)
         fruitTimer = 0.0f;
 
         gameView->setEatenFruits(eatenFruits);
-        gameView->setTiles(position->x, position->y, 0, " ");
+        gameView->setTiles(position.x, position.y, 0, " ");
         gameView->playAudio("eatingFruit");
         gameView->setScore(score);
         WaitTime(1000);
     }
 }
 
+/**
+ * @brief Manages loss of player's life
+ *
+ */
 void GameModel::loseLife()
 {
     gameView->playAudio("mainLost");
@@ -354,6 +402,11 @@ void GameModel::loseLife()
     }
 }
 
+/**
+ * @brief Allows player to eat enemy robots
+ *
+ * @param crashedRobot Robot to eat
+ */
 void GameModel::eatEnemy(int crashedRobot)
 {
     if (!eatenEnemies[crashedRobot - 1])
@@ -373,6 +426,11 @@ void GameModel::eatEnemy(int crashedRobot)
     robots[crashedRobot]->free = false;
 }
 
+/**
+ * @brief Sets a new run scene with a given map
+ *
+ * @param maze
+ */
 void GameModel::nextScreen(std::string maze)
 {
     gameState = GameStart;
@@ -394,21 +452,42 @@ void GameModel::nextScreen(std::string maze)
     }
 }
 
+/**
+ * @brief Checks if the level should end
+ *
+ * @return true
+ * @return false
+ */
 bool GameModel::shouldEndLevel()
 {
     return (remainingDots + remainingEnergizers) == 0;
 }
 
+/**
+ * @brief Checks if the game is over
+ *
+ * @return true
+ * @return false
+ */
 bool GameModel::shouldEndGame()
 {
     return gameState == GameFinish;
 }
 
+/**
+ * @brief Returns the current level mode of the game
+ *
+ * @return int
+ */
 int GameModel::getLevelMode()
 {
     return levelMode;
 }
 
+/**
+ * @brief Sets robots to free, if applicable.
+ *
+ */
 void GameModel::enableFree()
 {
     for (auto robot : robots)
@@ -427,6 +506,11 @@ void GameModel::enableFree()
     }
 }
 
+/**
+ * @brief Returns a random position on the map, which is passable.
+ *
+ * @return MazePosition
+ */
 MazePosition GameModel::getRandomFreePosition()
 {
     MazePosition position;

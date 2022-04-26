@@ -1,7 +1,7 @@
 /**
  * @file Enemy.h
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase base de robots enemigos
+ * @brief Enemy robot base class
  * @version 0.1
  * @date 2022-04-25
  *
@@ -14,9 +14,9 @@
 
 #include "Robot.h"
 #include "Player.h"
-#include <array>
 
-enum RobotMode {
+enum RobotMode
+{
     DISPERSION = 1,
     PERSECUTION,
     ESCAPE
@@ -26,7 +26,7 @@ class Enemy : public Robot
 {
 public:
     Enemy();
-    
+
 protected:
     Player *player;
     MazePosition initialPosition;
@@ -42,7 +42,6 @@ private:
     void update(float deltaTime);
     void checkFreeTiles();
     void move();
-    void moveEnemy();
     void findPath(RobotSetpoint targetSetpoint);
 };
 

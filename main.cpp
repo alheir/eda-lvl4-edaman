@@ -115,7 +115,6 @@ int main(int, char **)
         // raylib
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("EDAPark Controller", 225, 220, 20, LIGHTGRAY);
         EndDrawing();
 
         player.setDirection(IsKeyDown(KEY_RIGHT) - IsKeyDown(KEY_LEFT),
@@ -130,7 +129,6 @@ int main(int, char **)
             gameModel.nextScreen(maze);
         }
 
-        // Al perder todas las vidas, apretando enter se reinicia el juego
         if (gameModel.shouldEndGame())
         {
             if (IsKeyDown(KEY_ENTER))

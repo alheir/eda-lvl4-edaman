@@ -1,7 +1,7 @@
 /**
  * @file Red.cpp
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase de robot red
+ * @brief Red robot class
  * @version 0.1
  * @date 2022-04-25
  *
@@ -16,6 +16,13 @@ using namespace std;
 
 const MazePosition scatteringPoint = {24, 0};
 
+/**
+ * @brief Construct a new Red object
+ *
+ * @param mqttClient
+ * @param gameModel
+ * @param player  Address of player robot
+ */
 Red::Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
 {
     this->mqttClient = mqttClient;
@@ -29,6 +36,10 @@ Red::Red(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     setRobotMode(NORMAL_MODE);
 }
 
+/**
+ * @brief Initializes the robot
+ *
+ */
 void Red::start()
 {
     free = false;
@@ -48,6 +59,12 @@ void Red::start()
     setRobotMode(NORMAL_MODE);
 }
 
+/**
+ * @brief Returns the robot target setpoint based on current level mode
+ *
+ * @param levelMode
+ * @return RobotSetpoint
+ */
 RobotSetpoint Red::getTargetSetpoint(int levelMode)
 {
     RobotSetpoint returnSetpoint;
@@ -71,7 +88,8 @@ RobotSetpoint Red::getTargetSetpoint(int levelMode)
 
     else if (levelMode == BLINKING_MODE)
     {
-        MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH), GetRandomValue(0, MAZE_HEIGHT)};
+        MazePosition targetTile = {GetRandomValue(0, MAZE_WIDTH),
+                                   GetRandomValue(0, MAZE_HEIGHT)};
         returnSetpoint = getSetpoint(targetTile, setPoint.rotation);
     }
 

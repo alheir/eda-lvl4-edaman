@@ -1,7 +1,7 @@
 /**
  * @file GameModel.h
- * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Control del game model
+ * @authors RESSL ~ CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
+ * @brief Controls EDA-Man behavior
  * @version 0.1
  * @date 2022-04-25
  *
@@ -11,8 +11,6 @@
 
 #ifndef _GAMEMODEL_H
 #define _GAMEMODEL_H
-
-#include <array>
 
 #define MAZE_WIDTH 28
 #define MAZE_HEIGHT 36
@@ -48,6 +46,7 @@ enum GameState
 };
 
 #include <raylib.h>
+#include <array>
 
 #include "MQTTClient.h"
 
@@ -68,7 +67,7 @@ public:
     bool shouldEndLevel();
     bool shouldEndGame();
     void nextScreen(std::string maze);
-    void pickItem(MazePosition *position);
+    void pickItem(const MazePosition &position);
     int getLevelMode();
 
 private:
@@ -81,7 +80,6 @@ private:
 
     int gameState;
     int levelMode;
-
     int remainingDots;
     int remainingEnergizers;
     float gameStateTime;

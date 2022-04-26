@@ -1,7 +1,7 @@
 /**
  * @file Enemy.cpp
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase base de robots enemigos
+ * @brief Enemy robot base class
  * @version 0.1
  * @date 2022-04-25
  *
@@ -17,11 +17,20 @@
 
 using namespace std;
 
+/**
+ * @brief Construct a new Enemy object
+ *
+ */
 Enemy::Enemy()
 {
     freeTiles.fill(false);
 }
 
+/**
+ * @brief Changes enemy's looking and behavior depending on the level mode
+ *
+ * @param levelMode
+ */
 void Enemy::setRobotMode(int levelMode)
 {
     if (!free && direction)
@@ -53,6 +62,11 @@ void Enemy::setRobotMode(int levelMode)
     }
 }
 
+/**
+ * @brief Gets the 'behavior mode' depending on the time elapsed
+ *
+ * @return int
+ */
 int Enemy::getTimeState()
 {
     if (time < 7)
@@ -89,6 +103,11 @@ int Enemy::getTimeState()
     }
 }
 
+/**
+ * @brief Updates the enemy
+ *
+ * @param deltaTime
+ */
 void Enemy::update(float deltaTime)
 {
     time += deltaTime;
@@ -101,6 +120,10 @@ void Enemy::update(float deltaTime)
     setRobotMode(gameModel->getLevelMode());
 }
 
+/**
+ * @brief Moves the enemy
+ *
+ */
 void Enemy::move()
 {
     if (!lock)
@@ -115,9 +138,42 @@ void Enemy::move()
         else
             findPath(getSetpoint(initialPosition, 0.0f));
     }
-    moveEnemy();
+
+    switch (direction)
+    {
+    case UP:
+        setPoint.positionZ += step;
+        break;
+
+    case DOWN:
+        setPoint.positionZ -= step;
+        break;
+
+    case LEFT:
+    {
+        setPoint.positionX -= step;
+        break;
+    }
+    case RIGHT:
+        setPoint.positionX += step;
+        break;
+
+    default:
+        break;
+    }
+
+    setSetpoint(setPoint);
+
+    if (lock)
+        lock--;
 }
 
+/**
+ * @brief Changes the direction of the enemy based on the target setpoint and the
+ * current position
+ *
+ * @param targetSetpoint setpoint to reach
+ */
 void Enemy::findPath(RobotSetpoint targetSetpoint)
 {
     MazePosition targetPosition = getMazePosition(targetSetpoint);
@@ -147,7 +203,8 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     {
         checkFreeTiles();
 
-        int count = (int)freeTiles[0] + (int)freeTiles[1] + (int)freeTiles[2] + (int)freeTiles[3];
+        int count = (int)freeTiles[0] + (int)freeTiles[1] +
+                    (int)freeTiles[2] + (int)freeTiles[3];
 
         // Constants DOWN=1, RIGHT=2, UP=3, LEFT=4 are used implicitly in values from variable "i"
 
@@ -171,8 +228,12 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
             {
                 if (freeTiles[i])
                 {
-                    Vector2 distance = {setPoint.positionX + nextStep[i].x - targetSetpoint.positionX,
-                                        setPoint.positionZ + nextStep[i].y - targetSetpoint.positionZ};
+                    Vector2 distance = {setPoint.positionX +
+                                            nextStep[i].x -
+                                            targetSetpoint.positionX,
+                                        setPoint.positionZ +
+                                            nextStep[i].y -
+                                            targetSetpoint.positionZ};
 
                     distances[i] = (distance.x * distance.x) + (distance.y * distance.y);
                 }
@@ -194,6 +255,10 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     }
 }
 
+/**
+ * @brief Updates contiguous free tiles for the robot
+ *
+ */
 void Enemy::checkFreeTiles()
 {
     freeTiles.fill(false);
@@ -231,35 +296,4 @@ void Enemy::checkFreeTiles()
 
     // variable already used
     crash = false;
-}
-
-void Enemy::moveEnemy()
-{
-    switch (direction)
-    {
-    case UP:
-    {
-        setPoint.positionZ += step;
-        break;
-    }
-    case DOWN:
-    {
-        setPoint.positionZ -= step;
-        break;
-    }
-    case LEFT:
-    {
-        setPoint.positionX -= step;
-        break;
-    }
-    case RIGHT:
-    {
-        setPoint.positionX += step;
-        break;
-    }
-    }
-
-    setSetpoint(setPoint);
-    if (lock)
-        lock--;
 }

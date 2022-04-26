@@ -1,9 +1,7 @@
-// Clase de pink
-
 /**
  * @file Pink.h
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase de robot pink
+ * @brief Pink robot class
  * @version 0.1
  * @date 2022-04-25
  *

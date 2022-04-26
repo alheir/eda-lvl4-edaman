@@ -1,7 +1,7 @@
 /**
  * @file Player.h
  * @authors CATTANEO, HEIR, MENDIZABAL, SCHMUNCK - Grupo 10
- * @brief Clase de robot player
+ * @brief Player robot class
  * @version 0.1
  * @date 2022-04-25
  *
