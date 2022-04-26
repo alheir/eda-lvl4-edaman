@@ -9,10 +9,6 @@
  *
  */
 
-#include <iostream>
-#include <vector>
-#include <string>
-
 #include "GameModel.h"
 
 using namespace std;
@@ -45,7 +41,7 @@ bool GameModel::isTileFree(const MazePosition& position)
 
     char tile = maze[position.y * MAZE_WIDTH + position.x];
 
-    return (tile == ' ') || (tile == '+') || (tile == '#') || (tile == '_');
+    return (tile == ' ') || (tile == '+') || (tile == '#');
 }
 
 int GameModel::checkRobotCollision()
@@ -125,7 +121,6 @@ int GameModel::checkRobotCollision()
 void GameModel::start(string maze)
 {
     this->maze = maze;
-    // this->maze.resize(MAZE_SIZE);
 
     remainingDots = 0;
     remainingEnergizers = 0;
@@ -156,44 +151,33 @@ void GameModel::update(float deltaTime)
         for (auto robot : robots)
         {
             robot->start();
+            robot->update(deltaTime);
+            robot->move();
         }
-        gameState = GameStarting;
-        levelMode = SETUP_MODE;
+
+        gameView->setMessage(GameViewMessageReady);
+        gameView->playAudio("mainStart");
+        WaitTime(4000);
+
+        gameView->setMessage(GameViewMessageNone);
+        gameView->setLives(lives);
+        gameView->setEatenFruits(eatenFruits);
+
+        gameState = GamePlaying;
+        levelMode = NORMAL_MODE;
+
+        for (auto robot : robots)
+            robot->resetTime();
+
         gameStateTime = 0;
-        freeTimer = 0;
     }
-    else if (gameState == GameStarting)
-    {     
-        for (int i = 0; i < robots.size(); i++)
-        {
-            robots[i]->update(deltaTime);
-            robots[i]->move();
-        }
-        {
-            // Just for testing
-            gameView->playAudio("mainStart");
-            WaitTime(4000);
-            gameView->setMessage(GameViewMessageReady);
-            gameView->setLives(lives);
-            //gameView->setEatenFruits(eatenFruits);
 
-            gameState = GamePlaying;
-            gameView->setMessage(GameViewMessageNone);
-            levelMode = NORMAL_MODE;
-
-            for (auto robot : robots)
-                robot->resetTime();
-        }
-
-    }
     else if (gameState == GamePlaying)
     {
         gameStateTime += deltaTime;
-        freeTimer += deltaTime;
 
         if (levelMode == BLINKING_MODE)
         {
-            freeTimer = 0;
             if (gameStateTime > 7)
             {
                 levelMode = NORMAL_MODE;
@@ -229,13 +213,13 @@ void GameModel::update(float deltaTime)
         }
     }
 }
+
 void GameModel::pickItem(MazePosition *position)
 {
     char tile = this->maze[position->x + MAZE_WIDTH * position->y];
     if (tile == '+' || tile == '#')
     {
         this->maze[position->x + MAZE_WIDTH * position->y] = ' ';
-        //gameView->setTiles(position->x, position->y, 0, " ");
         gameView->clearDot(position->x, position->y);
 
         switch (tile)
@@ -315,6 +299,8 @@ void GameModel::nextScreen(std::string maze)
     gameState = GameStart;
 
     this->maze = maze;
+    gameView->start(maze);
+    gameView->playAudio("mainWon");
 
     eatenDots = 0;
     remainingDots = 0;
@@ -327,10 +313,6 @@ void GameModel::nextScreen(std::string maze)
         else if (c == '#')
             remainingEnergizers++;
     }
-
-    gameView->start(maze);
-
-    gameView->playAudio("mainWon");
 }
 
 bool GameModel::shouldEndLevel()
@@ -345,22 +327,18 @@ int GameModel::getLevelMode()
 
 void GameModel::enableFree()
 {   
-    if (levelMode != SETUP_MODE)
+    for (auto robot : robots)
     {
-        for (auto robot : robots)
+        if (robot->direction == 0)
         {
-            if (robot->direction == 0)
+            if (eatenDots >= robot->dotsForFree)
             {
-                if (eatenDots >= robot->dotsForFree)
+                if (gameStateTime >= robot->timeForFree)
                 {
-                    if (freeTimer >= robot->timeForFree)
-                    {
+                    if (levelMode != BLINKING_MODE)
                         robot->free = true;
-                    }
-                                   
-                }
-            }        
-        }
-        
+                }         
+            }
+        }        
     }
 }

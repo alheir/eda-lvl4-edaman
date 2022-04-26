@@ -40,8 +40,9 @@ void Pink::start()
 
     initialPosition = { 13, 18 };
     mazePosition = initialPosition;
+    setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
-    setRobotMode(SETUP_MODE);
+    setRobotMode(NORMAL_MODE);
 }
 
 RobotSetpoint Pink::getTargetSetpoint(int levelMode)

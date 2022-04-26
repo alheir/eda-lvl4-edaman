@@ -23,7 +23,7 @@ Orange::Orange(MQTTClient *mqttClient, GameModel *gameModel, Player *player)
     imageIndex = 22;
     eyesColor = ORANGE;
 
-    setRobotMode(SETUP_MODE);
+    setRobotMode(NORMAL_MODE);
 }
 
 void Orange::start()
@@ -42,7 +42,7 @@ void Orange::start()
     mazePosition = initialPosition;
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
-    setRobotMode(SETUP_MODE);
+    setRobotMode(NORMAL_MODE);
 }
 
 RobotSetpoint Orange::getTargetSetpoint(int levelMode)

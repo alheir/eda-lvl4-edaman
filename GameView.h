@@ -10,8 +10,6 @@
 #define _GAMEVIEW_H
 
 #include <list>
-#include <string>
-#include <vector>
 
 #include "MQTTClient.h"
 

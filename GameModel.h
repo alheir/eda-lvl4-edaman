@@ -17,8 +17,7 @@
 #define MAZE_SIZE (MAZE_WIDTH * MAZE_HEIGHT)
 
 enum LevelMode {
-    SETUP_MODE = 1,
-    NORMAL_MODE,
+    NORMAL_MODE = 1,
     BLINKING_MODE,
     RETURN_CAGE
 };
@@ -45,10 +44,6 @@ enum GameState
     GameFinish
 };
 
-#include <string>
-#include <list>
-#include <vector>
-
 #include <raylib.h>
 
 #include "MQTTClient.h"
@@ -67,15 +62,11 @@ public:
     void addRobot(Robot *robot);
     bool isTileFree(const MazePosition &position);
 
-    // nuestros metodos
     bool shouldEndLevel();
     void nextScreen(std::string maze);
     void pickItem(MazePosition *position);
     int getLevelMode();
-
-    float freeTimer;        //xd
     
-
 private:
     MQTTClient *mqttClient;
     GameView *gameView;
@@ -83,21 +74,21 @@ private:
     std::string maze;
     std::vector<Robot *> robots;
 
-    int gameState;
-    
+    int gameState;    
     int levelMode;
 
     int remainingDots;
     int remainingEnergizers;
     float gameStateTime;
 
-    int score; // agregado
     int lives;
+    int score;
+    int enemyScore;
+    int enemyScoreIndex;
+
     std::list<int> eatenFruits;
     bool eatenEnemies[4];
-    int enemyScore;
     int eatenDots;
-    int enemyScoreIndex;
 
     int checkRobotCollision();
     void loseLife();

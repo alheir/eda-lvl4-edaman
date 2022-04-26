@@ -110,7 +110,7 @@ void GameView::update(float deltaTime)
     {
         blink1Up = nextBlink1Up;
 
-        setTiles(3, 0, blink1Up ? SCORE_COLOR : 0, "1UP");
+        //setTiles(3, 0, blink1Up ? SCORE_COLOR : 0, "1UP");
     }
 
     if (gameViewMessage == GameViewMessageNone)

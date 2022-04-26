@@ -32,13 +32,12 @@ void Enemy::resetTime()
 
 void Enemy::setRobotMode(int levelMode)
 {
-    if (!free && (levelMode != SETUP_MODE))
+    if (!free && direction)
         levelMode = RETURN_CAGE;
 
     switch (levelMode)
     {
         case NORMAL_MODE:
-        case SETUP_MODE:
         {
             setDisplay(imageIndex);
             setEyes(eyesColor, eyesColor);
@@ -101,7 +100,6 @@ int Enemy::getTimeState()
 void Enemy::update(float deltaTime)
 {
     time += deltaTime;
-    //enableFree(time);
 
     if (!lock)
     {
@@ -204,6 +202,9 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     }
 }
 
+/* 
+ * 
+ */
 void Enemy::checkFreeTiles()
 {
     freeTiles.fill(false);

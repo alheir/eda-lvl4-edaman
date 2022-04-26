@@ -10,7 +10,6 @@
  */
 
 #include <iostream>
-#include <cstring>
 
 #include <raylib.h>
 
@@ -131,9 +130,6 @@ int main(int, char **)
             gameModel.nextScreen(maze);
         }
     }
-
-    // Not necessary (causes memoryleaks)
-    // CloseWindow();
 
     cout << "Disconnected." << endl;
 }

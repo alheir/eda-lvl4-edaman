@@ -24,7 +24,7 @@ Cyan::Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *
     imageIndex = 20;
     eyesColor = SKYBLUE;
 
-    setRobotMode(SETUP_MODE);
+    setRobotMode(NORMAL_MODE);
 }
 
 void Cyan::start()
@@ -43,7 +43,7 @@ void Cyan::start()
     mazePosition = initialPosition;
     setPoint = getRobotSetpoint(mazePosition, 0.0f);
 
-    setRobotMode(SETUP_MODE);
+    setRobotMode(NORMAL_MODE);
 }
 
 RobotSetpoint Cyan::getTargetSetpoint(int levelMode)
