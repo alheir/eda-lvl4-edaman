@@ -18,9 +18,7 @@ class Cyan : public Enemy
 {
 public:
     Cyan(MQTTClient *mqttClient, GameModel *gameModel, Player *player, Enemy *red);
-
     void start();
-
     RobotSetpoint getTargetSetpoint(int levelMode);
 
 private:

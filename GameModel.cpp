@@ -156,6 +156,7 @@ void GameModel::update(float deltaTime)
         }
 
         gameView->setMessage(GameViewMessageReady);
+        gameView->stopAudio("backgroundEnergizer");
         gameView->playAudio("mainStart");
         WaitTime(4000);
 
@@ -212,6 +213,12 @@ void GameModel::update(float deltaTime)
             }
         }
     }
+    else if (gameState == GameFinish)
+    {
+        gameView->stopAudio("backgroundEnergizer");
+        gameView->playAudio("mainIntermission");
+        gameView->setHighScore(score);
+    }
 }
 
 void GameModel::pickItem(MazePosition *position)
@@ -261,12 +268,8 @@ void GameModel::loseLife()
 
     if (--lives)
     {
-        for (int i = 0; i < robots.size(); i++)
-        {
-            robots[i]->start();
-            robots[i]->move();
-        }
         gameState = GameStart;
+        gameView->setLives(lives);
     }
     else
     {

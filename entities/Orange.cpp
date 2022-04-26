@@ -36,7 +36,7 @@ void Orange::start()
     imageIndex = 22;
     eyesColor = ORANGE;
     dotsForFree = 60;
-    timeForFree = 9;
+    timeForFree = 8;
 
     initialPosition = { 16, 17 };
     mazePosition = initialPosition;
