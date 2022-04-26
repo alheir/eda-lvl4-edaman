@@ -55,6 +55,7 @@ public:
     RobotSetpoint getSetpoint();
     MazePosition getMazePosition();
     int getDirection();
+    void setDisplay(int imageIndex);
     bool crash;
     bool free;
 
@@ -74,18 +75,14 @@ protected:
     int imageIndex;
     Color eyesColor;
 
-    
-
     MazePosition mazePosition;
     RobotSetpoint setPoint;
     float step;
     
-
     MazePosition getMazePosition(RobotSetpoint setpoint);
     RobotSetpoint getRobotSetpoint(MazePosition mazePosition, float rotation);
     void setSetpoint(RobotSetpoint setpoint);
     void liftTo(float positionX, float positionZ);
-    void setDisplay(int imageIndex);
     void setEyes(Color leftEye, Color rightEye);
     void setDisplayColor(Color color);
     

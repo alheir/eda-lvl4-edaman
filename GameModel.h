@@ -97,6 +97,7 @@ private:
     bool eatenEnemies[4];
     int enemyScore;
     int eatenDots;
+    int enemyScoreIndex;
 
     int checkRobotCollision();
     void loseLife();

@@ -43,7 +43,6 @@ void Enemy::setRobotMode(int levelMode)
         case SETUP_MODE:
         {
             setDisplay(imageIndex);
-            // setDisplayColor(eyesColor);
             setEyes(eyesColor, eyesColor);
             step = 0.1f / 13;
             break;
@@ -51,7 +50,6 @@ void Enemy::setRobotMode(int levelMode)
         case BLINKING_MODE:
         {
             setDisplay(24);
-            // setDisplayColor(BLUE);
             setEyes(BLUE, BLUE);
             step = 0.1f / 16;
             break;
@@ -59,10 +57,6 @@ void Enemy::setRobotMode(int levelMode)
         case RETURN_CAGE:
         {
             setDisplay(30);
-            /*setPoint = getRobotSetpoint(initialPosition,0);
-            forceMove();
-            free = 0;*/
-            // setDisplayColor(eyesColor);
             setEyes(eyesColor, eyesColor);
             step = 0.1f / 8;
             break;
@@ -128,11 +122,7 @@ void Enemy::move()
         else if ((mazePosition.x == initialPosition.x) && (mazePosition.y == initialPosition.y))
         {
             direction = 0;
-            if (gameModel->getLevelMode() != SETUP_MODE)
-            {
-                time = 0.0f;    // TO-DO: se puede poner un tiempo negativo, pero por algun motivo se rompe
-                                // revisar si vale la pena o lo dejamos asi       
-            }
+            resetTime();
         }
         else
             findPath(getRobotSetpoint(initialPosition, 0.0f));
@@ -148,9 +138,8 @@ void Enemy::findPath(RobotSetpoint targetSetpoint)
     if (targetPosition.x == initialPosition.x && targetPosition.y == initialPosition.y)
     {
         start();
-        free = false;
-        direction = 0;
     }
+    // leave the cage
     else if (mazePosition.y >= 15 && mazePosition.y <= 18)
     {
         if (mazePosition.x >= 11 && mazePosition.x < 13)
@@ -252,6 +241,7 @@ void Enemy::checkFreeTiles()
         }
     }
 
+    // variable already used
     crash = false;
 }
 
@@ -285,5 +275,3 @@ void Enemy::moveEnemy()
     if(lock)
         lock--;
 }
-
-
